@@ -8,6 +8,7 @@ define( 'DB_USER', '' );
 define( 'DB_PASSWORD', '' );
 define( 'DB_HOST', '' );
 
+$table_prefix = 'wp_';
 
 /**
  * Other environment specific constants
