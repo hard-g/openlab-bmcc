@@ -28,6 +28,33 @@ add_filter( 'pre_option_mo_saml_admin_customer_key', function() {
 } );
 
 /**
+ * Gets a valid SAML signup, by activation key.
+ *
+ * To avoid mischief, we expire them after 10 minutes.
+ */
+function openlabbmcc_get_saml_signup( $key ) {
+	$signup = null;
+
+	$signups = BP_Signup::get(
+		array(
+			'activation_key' => $key,
+		)
+	);
+	if ( $signups['signups'] ) {
+		$_signup = $signups['signups'][0];
+
+		$now  = time();
+		$then = mysql2date( 'U', $_signup->registered );
+
+		if ( ( $now - $then ) <= ( 10 * MINUTE_IN_SECONDS ) ) {
+			$signup = $_signup;
+		}
+	}
+
+	return $signup;
+}
+
+/**
  * Implementation note: Forked plugin has this hook introduced in mo_saml_login_user(),
  * as part of the `if` clause related to user creation.
  */
@@ -71,14 +98,8 @@ add_action( 'bp_signup_pre_validate', function() {
 		return;
 	}
 
-	$key = wp_unslash( $_POST['account-key'] );
-
-	$signups = BP_Signup::get(
-		array(
-			'activation_key' => $key,
-		)
-	);
-	$signup = $signups['signups'][0];
+	$key    = wp_unslash( $_POST['account-key'] );
+	$signup = openlabbmcc_get_saml_signup( $key );
 
 	$meta = $signup->meta;
 	$meta_profile_field_ids = explode( ',', $meta['profile_field_ids'] );
@@ -137,12 +158,10 @@ add_action( 'bp_screens', function() {
 
 	$redirect = false;
 	if ( isset( $_GET['account-key'] ) ) {
-		$signups = BP_Signup::get(
-			array(
-				'activation_key' => $key,
-			)
-		);
-		$redirect = empty( $signups['signups'] );
+		$signup = openlabbmcc_get_saml_signup( $_GET['account-key'] );
+		if ( ! $signup ) {
+			$redirect = true;
+		}
 	}
 
 	if ( ! $redirect ) {

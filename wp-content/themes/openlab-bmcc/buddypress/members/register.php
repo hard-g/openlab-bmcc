@@ -5,7 +5,6 @@
 
 /*
  * @todo Remove/modify Login interface throughout
- * @todo Expire auto-generated signups after short time to avoid mischief
  */
 ?>
 
@@ -36,15 +35,9 @@
 	$user_name_default = '';
 
 	$activation_key = wp_unslash( $_GET['account-key'] );
-	$signups = BP_Signup::get(
-		array(
-			'activation_key' => $activation_key,
-		)
-	);
+	$signup         = openlabbmcc_get_saml_signup( $activation_key );
 
-	if ( $signups['signups'] ) {
-		$signup = $signups['signups'][0];
-
+	if ( $signup ) {
 		if ( bp_get_signup_username_value() ) {
 			$user_name_default = bp_get_signup_username_value();
 		} else {

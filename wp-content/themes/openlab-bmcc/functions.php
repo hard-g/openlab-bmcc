@@ -5,15 +5,10 @@ add_action( 'wp_enqueue_scripts', function() {
 
 	if ( bp_is_register_page() && ! empty( $_GET['account-key'] ) ) {
 		$activation_key = wp_unslash( $_GET['account-key'] );
-		$signups = BP_Signup::get(
-			array(
-				'activation_key' => $activation_key,
-			)
-		);
+		$signup         = openlabbmcc_get_saml_signup( $activation_key );
 
 		$display_name_default = '';
-		if ( $signups['signups'] ) {
-			$signup               = $signups['signups'][0];
+		if ( $signup ) {
 			$display_name_default = $signup->meta['field_1'];
 		}
 
