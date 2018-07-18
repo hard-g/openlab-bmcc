@@ -156,11 +156,11 @@ add_action( 'bp_screens', function() {
 		return;
 	}
 
-	$redirect = false;
+	$redirect = true;
 	if ( isset( $_GET['account-key'] ) ) {
 		$signup = openlabbmcc_get_saml_signup( $_GET['account-key'] );
-		if ( ! $signup ) {
-			$redirect = true;
+		if ( $signup ) {
+			$redirect = false;
 		}
 	}
 
