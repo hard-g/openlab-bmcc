@@ -36,6 +36,8 @@ add_action( 'mosaml_pre_create_user', function( $args ) {
 	$usermeta = array(
 		'profile_field_ids' => array( 1 ),
 		'field_1'           => $user_fullname,
+		'first_name'        => $args['first_name'],
+		'last_name'         => $args['last_name'],
 	);
 
 	// Create WP user, but don't let WP send notification.
