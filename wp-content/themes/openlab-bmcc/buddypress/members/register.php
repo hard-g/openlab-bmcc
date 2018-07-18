@@ -5,7 +5,7 @@
 
 /*
  * @todo Remove/modify Login interface throughout
- * @todo Save fn/ln
+ * @todo Expire auto-generated signups after short time to avoid mischief
  */
 ?>
 

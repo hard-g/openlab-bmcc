@@ -108,8 +108,10 @@ add_action( 'bp_signup_pre_validate', function() {
 
 	$user_id = bp_core_activate_signup( $key );
 
-	$user = new WP_User( $user_id );
+	$user                = new WP_User( $user_id );
 	$user->user_nicename = trim( $_POST['signup_username'] );
+	$user->first_name    = $meta['first_name'];
+	$user->last_name     = $meta['last_name'];
 	wp_update_user( $user );
 
 	// Kill just in case BP double-processes.
