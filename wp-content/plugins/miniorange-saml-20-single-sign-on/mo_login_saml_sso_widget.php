@@ -538,6 +538,17 @@ function mo_saml_login_user($user_email, $firstName, $lastName, $userName, $grou
 
 
 	} elseif ( !username_exists( $userName ) && !email_exists( $user_email ) ) {
+
+		do_action(
+			'mosaml_pre_create_user',
+			array(
+				'user_email' => $user_email,
+				'first_name' => $firstName,
+				'last_name'  => $lastName,
+				'user_name'  => $userName,
+			)
+		);
+
 		$random_password = wp_generate_password( 10, false );
 		if(!empty($userName))
 		{
