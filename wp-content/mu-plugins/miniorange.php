@@ -61,6 +61,9 @@ add_action( 'mosaml_pre_create_user', function( $args ) {
 	die;
 } );
 
+/**
+ * Catch "registration" and run activation routine.
+ */
 add_action( 'bp_signup_pre_validate', function() {
 	global $wpdb;
 
@@ -116,3 +119,34 @@ add_action( 'bp_signup_pre_validate', function() {
 	wp_safe_redirect( home_url() );
 	die;
 } );
+
+/**
+ * Don't allow access to Register page without an 'account-key'.
+ */
+add_action( 'bp_screens', function() {
+	if ( ! bp_is_register_page() ) {
+		return;
+	}
+
+	// BP handles this case.
+	if ( is_user_logged_in() ) {
+		return;
+	}
+
+	$redirect = false;
+	if ( isset( $_GET['account-key'] ) ) {
+		$signups = BP_Signup::get(
+			array(
+				'activation_key' => $key,
+			)
+		);
+		$redirect = empty( $signups['signups'] );
+	}
+
+	if ( ! $redirect ) {
+		return;
+	}
+
+	wp_redirect( get_option( 'saml_login_url' ) );
+	die;
+}, 0 );

@@ -4,8 +4,6 @@
  */
 
 /*
- * @todo Redirect away (early) if there is no account-key
- * @todo Catch requests, but don't create signup - instead, update signup with new info, and activate, then set auth cookie
  * @todo Remove/modify Login interface throughout
  * @todo Save fn/ln
  */
