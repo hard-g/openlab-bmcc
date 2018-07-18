@@ -35,6 +35,8 @@
 
 	$member_types = cboxol_get_member_types();
 
+	$user_name_default = '';
+
 	$activation_key = wp_unslash( $_GET['account-key'] );
 	$signups = BP_Signup::get(
 		array(
@@ -42,23 +44,15 @@
 		)
 	);
 
-	$signup = $signups['signups'][0];
+	if ( $signups['signups'] ) {
+		$signup = $signups['signups'][0];
 
-	if ( bp_get_signup_username_value() ) {
-		$user_name_default = bp_get_signup_username_value();
-	} else {
-		$user_name_default = sanitize_title_with_dashes( substr( $signup->user_email, 0, strpos( $signup->user_email, '@' ) ) );
+		if ( bp_get_signup_username_value() ) {
+			$user_name_default = bp_get_signup_username_value();
+		} else {
+			$user_name_default = sanitize_title_with_dashes( substr( $signup->user_email, 0, strpos( $signup->user_email, '@' ) ) );
+		}
 	}
-
-	$display_name_default = $signup->meta['field_1'];
-
-	wp_localize_script(
-		'openlab-bmcc-registration',
-		'OpenLabBMCCRegistration',
-		array(
-			'displayName' => $display_name_default,
-		)
-	);
 
 	?>
 

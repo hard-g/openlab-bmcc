@@ -11,9 +11,12 @@ add_action( 'wp_enqueue_scripts', function() {
 			)
 		);
 
-		$signup = $signups['signups'][0];
+		$display_name_default = '';
+		if ( $signups['signups'] ) {
+			$signup               = $signups['signups'][0];
+			$display_name_default = $signup->meta['field_1'];
+		}
 
-		$display_name_default = $signup->meta['field_1'];
 		wp_localize_script(
 			'openlab-bmcc-registration',
 			'OpenLabBMCCRegistration',
