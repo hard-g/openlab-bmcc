@@ -446,7 +446,6 @@ class SAML2_Assertion
      */
     public function validate(XMLSecurityKey $key)
     {
-        assert('$key->type === XMLSecurityKey::RSA_SHA1');
 
         if ($this->signatureData === NULL) {
             return FALSE;
@@ -474,7 +473,7 @@ class SAML2_Assertion
      */
     public function setId($id)
     {
-        assert('is_string($id)');
+
 
         $this->id = $id;
     }
@@ -496,7 +495,7 @@ class SAML2_Assertion
      */
     public function setIssueInstant($issueInstant)
     {
-        assert('is_int($issueInstant)');
+
 
         $this->issueInstant = $issueInstant;
     }
@@ -518,7 +517,7 @@ class SAML2_Assertion
      */
     public function setIssuer($issuer)
     {
-        assert('is_string($issuer)');
+
 
         $this->issuer = $issuer;
     }
@@ -551,7 +550,7 @@ class SAML2_Assertion
      */
     public function setNameId($nameId)
     {
-        assert('is_array($nameId) || is_null($nameId)');
+
 
         $this->nameId = $nameId;
     }
@@ -697,7 +696,7 @@ class SAML2_Assertion
      */
     public function setNotBefore($notBefore)
     {
-        assert('is_int($notBefore) || is_null($notBefore)');
+
 
         $this->notBefore = $notBefore;
     }
@@ -724,7 +723,7 @@ class SAML2_Assertion
      */
     public function setNotOnOrAfter($notOnOrAfter)
     {
-        assert('is_int($notOnOrAfter) || is_null($notOnOrAfter)');
+
 
         $this->notOnOrAfter = $notOnOrAfter;
     }
@@ -781,7 +780,7 @@ class SAML2_Assertion
      */
     public function setAuthnInstant($authnInstant)
     {
-        assert('is_int($authnInstant) || is_null($authnInstant)');
+
 
         $this->authnInstant = $authnInstant;
     }
@@ -808,7 +807,7 @@ class SAML2_Assertion
      */
     public function setSessionNotOnOrAfter($sessionNotOnOrAfter)
     {
-        assert('is_int($sessionNotOnOrAfter) || is_null($sessionNotOnOrAfter)');
+
 
         $this->sessionNotOnOrAfter = $sessionNotOnOrAfter;
     }
@@ -833,7 +832,7 @@ class SAML2_Assertion
      */
     public function setSessionIndex($sessionIndex)
     {
-        assert('is_string($sessionIndex) || is_null($sessionIndex)');
+
 
         $this->sessionIndex = $sessionIndex;
     }
@@ -900,7 +899,7 @@ class SAML2_Assertion
      */
     public function setAuthnContextClassRef($authnContextClassRef)
     {
-        assert('is_string($authnContextClassRef) || is_null($authnContextClassRef)');
+
 
         $this->authnContextClassRef = $authnContextClassRef;
     }
@@ -1027,7 +1026,7 @@ class SAML2_Assertion
      */
     public function setAttributeNameFormat($nameFormat)
     {
-        assert('is_string($nameFormat)');
+
 
         $this->nameFormat = $nameFormat;
     }

@@ -200,6 +200,7 @@ function mo_login_validate(){
 		$samlResponse = new SAML2_Response($samlResponseXml);
 		$responseSignatureData = $samlResponse->	getSignatureData();
 		$assertionSignatureData = current($samlResponse->getAssertions())->getSignatureData();
+
 		if(empty($assertionSignatureData) && empty($responseSignatureData) ) {
 
 			if($relayState=='testValidate'){
@@ -524,46 +525,17 @@ function mo_saml_show_test_result($firstName,$lastName,$user_email,$groupName,$a
 }
 
 function mo_saml_login_user($user_email, $firstName, $lastName, $userName, $groupName, $dontAllowUnlistedUserRole, $defaultRole, $relayState, $checkIfMatchBy, $sessionIndex = '', $nameId = ''){
-	if($checkIfMatchBy == 'username' && username_exists( $userName ) ) {
+	$user_id = null;
+    if(($checkIfMatchBy == 'username' && username_exists( $userName )) || username_exists( $userName) ) {
 		$user 	= get_user_by('login', $userName);
 		$user_id = $user->ID;
-		if( !empty($firstName) )
-		{
-			$user_id = wp_update_user( array( 'ID' => $user_id, 'first_name' => $firstName ) );
-		}
-		if( !empty($lastName) )
-		{
-			$user_id = wp_update_user( array( 'ID' => $user_id, 'last_name' => $lastName ) );
-		}
 
-		wp_set_auth_cookie( $user_id, true );
-
-		if(!empty($relayState))
-			wp_redirect( $relayState );
-		else
-			wp_redirect( site_url() );
-		exit;
 
 	} elseif(email_exists( $user_email )) {
 
 		$user 	= get_user_by('email', $user_email );
 		$user_id = $user->ID;
-		if( !empty($firstName) )
-		{
-			$user_id = wp_update_user( array( 'ID' => $user_id, 'first_name' => $firstName ) );
-		}
-		if( !empty($lastName) )
-		{
-			$user_id = wp_update_user( array( 'ID' => $user_id, 'last_name' => $lastName ) );
-		}
 
-		wp_set_auth_cookie( $user_id, true );
-
-		if(!empty($relayState))
-			wp_redirect( $relayState );
-		else
-			wp_redirect( site_url() );
-		exit;
 
 	} elseif ( !username_exists( $userName ) && !email_exists( $user_email ) ) {
 		$random_password = wp_generate_password( 10, false );
@@ -611,24 +583,33 @@ function mo_saml_login_user($user_email, $firstName, $lastName, $userName, $grou
 				$user_id = wp_update_user( array( 'ID' => $user_id, 'role' => $defaultRole ) );
 			}
 		}
-		if(!empty($firstName))
-		{
-			$user_id = wp_update_user( array( 'ID' => $user_id, 'first_name' => $firstName ) );
-		}
-		if(!empty($lastName))
-		{
-			$user_id = wp_update_user( array( 'ID' => $user_id, 'last_name' => $lastName ) );
-		}
-		wp_set_auth_cookie( $user_id, true );
-		if(!empty($relayState))
-			wp_redirect($relayState);
-		else
-			wp_redirect(site_url());
-		exit;
+
 	}
 	elseif ( username_exists( $userName ) && !email_exists( $user_email ) ){
 		wp_die("Registration has failed as a user with the same username already exists in WordPress. Please ask your administrator to create an account for you with a unique username.","Error");
 	 }
+	 mo_saml_add_firstlast_name($user_id,$firstName,$lastName,$relayState);
+
+
+}
+
+function mo_saml_add_firstlast_name($user_id,$first_name,$last_name,$relay_state){
+	if( !empty($first_name) )
+	{
+		$user_id = wp_update_user( array( 'ID' => $user_id, 'first_name' => $first_name ) );
+	}
+	if( !empty($last_name) )
+	{
+		$user_id = wp_update_user( array( 'ID' => $user_id, 'last_name' => $last_name ) );
+	}
+
+	wp_set_auth_cookie( $user_id, true );
+
+	if(!empty($relay_state))
+		wp_redirect( $relay_state );
+	else
+		wp_redirect( site_url() );
+	exit;
 }
 
 function mo_saml_is_customer_registered() {

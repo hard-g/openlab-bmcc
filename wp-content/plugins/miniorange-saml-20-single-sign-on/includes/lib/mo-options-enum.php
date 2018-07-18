@@ -61,3 +61,11 @@ class mo_options_error_constants extends BasicEnum{
 	const Error_issuer_not_verfied = "Issuer cannot be verified.";
 	const Cause_issuer_not_verfied = "IdP Entity ID configured and the one found in SAML Response do not match";
 }
+
+class mo_options_feedback extends BasicEnum{
+ 	const Features_not_available = "Does not have the features I'm looking for";
+ 	const Not_upgrading_to_premium = "Do not want to upgrade to Premium version";
+ 	const Confusing_interface = "Confusing Interface";
+ 	const Bugs_in_plugin = "Bugs in the plugin";
+ 	const Other_reasons = "Other Reasons:";
+}

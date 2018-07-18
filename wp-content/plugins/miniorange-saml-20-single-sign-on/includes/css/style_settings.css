@@ -237,3 +237,33 @@
 	visibility: visible;
 	opacity: 1;
 }
+
+/*Included for the feedback form*/
+.mo_modal {
+	display: none;
+	position: fixed;
+	z-index: 1;
+	padding-top: 100px;
+	left: 100px;
+	top: 0;
+	margin-left:220px;
+	width: 50%;
+	height: 100%;
+
+}
+
+
+.mo_modal-content {
+	background-color: #fefefe;
+	margin: auto;
+	padding: 20px;
+	border: 1px solid #888;
+	width: 55%;
+}
+
+.mo_close {
+	color: #aaaaaa;
+	float: right;
+	font-size: 28px;
+	font-weight: bold;
+}

@@ -32,7 +32,7 @@ class Utilities {
     }
 
     public static function generateRandomBytes($length, $fallback = TRUE) {
-        assert('is_int($length)');
+
         return openssl_random_pseudo_bytes($length);
     }
 
@@ -75,7 +75,7 @@ class Utilities {
 
     public static function xpQuery(DOMNode $node, $query)
     {
-        assert('is_string($query)');
+
         static $xpCache = NULL;
 
         if ($node instanceof DOMDocument) {
@@ -145,8 +145,8 @@ class Utilities {
 
     public static function extractStrings(DOMElement $parent, $namespaceURI, $localName)
     {
-        assert('is_string($namespaceURI)');
-        assert('is_string($localName)');
+
+
 
         $ret = array();
         for ($node = $parent->firstChild; $node !== NULL; $node = $node->nextSibling) {
@@ -243,7 +243,7 @@ class Utilities {
 
     public static function validateSignature(array $info, XMLSecurityKey $key)
     {
-        assert('array_key_exists("Signature", $info)');
+
 
         /** @var XMLSecurityDSig $objXMLSecDSig */
         $objXMLSecDSig = $info['Signature'];
@@ -273,8 +273,6 @@ class Utilities {
 
     public static function castKey(XMLSecurityKey $key, $algorithm, $type = 'public')
     {
-        assert('is_string($algorithm)');
-        assert('$type === "public" || $type === "private"');
 
         // do nothing if algorithm is already the type of the key
         if ($key->type === $algorithm) {

@@ -425,6 +425,70 @@ class Customersaml {
 		curl_close ( $ch );
 		return $content;
 	}
+
+	function send_email_alert($email,$phone,$message){
+
+		$url = get_option( 'mo_saml_host_name' ) . '/moas/api/notify/send';
+		$ch = curl_init($url);
+
+		$customerKey = $this->defaultCustomerKey;
+		$apiKey =  $this->defaultApiKey;
+
+		$currentTimeInMillis = self::get_timestamp();
+		$stringToHash 		= $customerKey .  $currentTimeInMillis . $apiKey;
+		$hashValue 			= hash("sha512", $stringToHash);
+		$customerKeyHeader 	= "Customer-Key: " . $customerKey;
+		$timestampHeader 	= "Timestamp: " .  $currentTimeInMillis;
+		$authorizationHeader= "Authorization: " . $hashValue;
+		$fromEmail 			= $email;
+		$subject            = "Feedback: WordPress SAML 2.0 SSO Plugin";
+		$site_url=site_url();
+
+		global $user;
+		$user         = wp_get_current_user();
+
+
+		$query        = '[WordPress SAML SSO 2.0 Plugin: ]: ' . $message;
+
+
+		$content='<div >Hello, <br><br>First Name :'.$user->user_firstname.'<br><br>Last  Name :'.$user->user_lastname.'   <br><br>Company :<a href="'.$_SERVER['SERVER_NAME'].'" target="_blank" >'.$_SERVER['SERVER_NAME'].'</a><br><br>Phone Number :'.$phone.'<br><br>Email :<a href="mailto:'.$fromEmail.'" target="_blank">'.$fromEmail.'</a><br><br>Query :'.$query.'</div>';
+
+
+		$fields = array(
+			'customerKey'	=> $customerKey,
+			'sendEmail' 	=> true,
+			'email' 		=> array(
+				'customerKey' 	=> $customerKey,
+				'fromEmail' 	=> $fromEmail,
+				'bccEmail' 		=> $fromEmail,
+				'fromName' 		=> 'miniOrange',
+				'toEmail' 		=> 'samlsupport@miniorange.com',
+				'toName' 		=> 'samlsupport@miniorange.com',
+				'subject' 		=> $subject,
+				'content' 		=> $content
+			),
+		);
+		$field_string = json_encode($fields);
+		curl_setopt( $ch, CURLOPT_FOLLOWLOCATION, true );
+		curl_setopt( $ch, CURLOPT_ENCODING, "" );
+		curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true );
+		curl_setopt( $ch, CURLOPT_AUTOREFERER, true );
+		curl_setopt( $ch, CURLOPT_SSL_VERIFYPEER, false );    # required for https urls
+
+		curl_setopt( $ch, CURLOPT_MAXREDIRS, 10 );
+		curl_setopt($ch, CURLOPT_HTTPHEADER, array("Content-Type: application/json", $customerKeyHeader,
+			$timestampHeader, $authorizationHeader));
+		curl_setopt( $ch, CURLOPT_POST, true);
+		curl_setopt( $ch, CURLOPT_POSTFIELDS, $field_string);
+		$content = curl_exec($ch);
+
+		if(curl_errno($ch)){
+			return json_encode(array("status"=>'ERROR','statusMessage'=>curl_error($ch)));
+		}
+		curl_close($ch);
+		return ($content);
+
+	}
 	function mo_saml_forgot_password($email) {
 		$url = get_option ( 'mo_saml_host_name' ) . '/moas/rest/customer/password-reset';
 		$ch = curl_init ( $url );
@@ -512,11 +576,12 @@ class Customersaml {
 			curl_setopt($ch, CURLOPT_PROXYUSERPWD, get_option("mo_proxy_username").':'.get_option("mo_proxy_password"));
 		}
 		$content = curl_exec ( $ch );
-		
+
 		if (curl_errno ( $ch )) {
-			echo 'Error in sending curl Request';
+			echo 'Error in sending curl Request. Please check your connection.';
 			exit ();
 		}
+
 		curl_close ( $ch );
 		return $content;
 	}
