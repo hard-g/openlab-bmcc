@@ -28,6 +28,19 @@ add_filter( 'pre_option_mo_saml_admin_customer_key', function() {
 } );
 
 /**
+ * Remove the settings panel when not on the main site.
+ */
+add_action( 'admin_menu', function() {
+	$keep = bp_is_root_blog() && is_super_admin();
+
+	if ( $keep ) {
+		return;
+	}
+
+	remove_menu_page( 'mo_saml_settings' );
+}, 100 );
+
+/**
  * Gets a valid SAML signup, by activation key.
  *
  * To avoid mischief, we expire them after 10 minutes.
