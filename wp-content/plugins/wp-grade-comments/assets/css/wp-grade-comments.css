@@ -1,0 +1,60 @@
+.olgc-checkboxes {
+	text-align: right;
+}
+
+.comment-form .olgc-checkboxes label {
+	display: inline;
+}
+
+#respond .olgc-checkboxes input[type="checkbox"] {
+	width: auto;
+}
+
+#respond .olgc-checkboxes label {
+	display: inline;
+}
+
+.olgc-grade-entry {
+	margin: 1em 0 0;
+}
+
+#respond .olgc-grade-entry label {
+	font-weight: bold;
+}
+
+#respond .olgc-grade-entry input {
+	width: 50px;
+}
+
+.olgc-grade-label {
+	font-weight: bold;
+}
+
+.olgc-grade-value-script {
+	margin-right: 4px;
+}
+
+.olgc-privacy-description {
+	margin: 1em 0 0;
+	opacity: .6;
+	font-size: .9em;
+	font-style: italic;
+}
+
+.olgc-grade-toggle {
+	font-size: .9rem;
+	font-weight: bold;
+}
+
+.olgc-grade-hidden .olgc-hide-grade,
+.olgc-grade-hidden .olgc-grade-value-script {
+	display: none;
+}
+
+.olgc-grade-display .olgc-show-grade {
+	display: none;
+}
+
+.olgc-grade-display.olgc-grade-hidden .olgc-show-grade {
+	display: inline;
+}
