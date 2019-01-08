@@ -3,7 +3,7 @@
  * Common template tags
  *
  * @since 3.0.0
- * @version 3.0.0
+ * @version 3.2.0
  */
 
 // Exit if accessed directly.
@@ -573,6 +573,10 @@ function bp_nouveau_loop_classes() {
 					) );
 				}
 
+				if ( ! isset( $bp_nouveau->{$component} ) ) {
+					$bp_nouveau->{$component} = new stdClass;
+				}
+
 				// Set the global for a later use.
 				$bp_nouveau->{$component}->loop_layout = $layout_prefs;
 			}
@@ -903,8 +907,14 @@ function bp_nouveau_nav_classes() {
 		$nav_item   = $bp_nouveau->current_nav_item;
 		$classes    = array();
 
-		if ( 'directory' === $bp_nouveau->displayed_nav && ! empty( $nav_item->li_class ) ) {
-			$classes = (array) $nav_item->li_class;
+		if ( 'directory' === $bp_nouveau->displayed_nav ) {
+			if ( ! empty( $nav_item->li_class ) ) {
+				$classes = (array) $nav_item->li_class;
+			}
+
+			if ( bp_get_current_member_type() || ( bp_is_groups_directory() && bp_get_current_group_directory_type() ) ) {
+				$classes[] = 'no-ajax';
+			}
 		} elseif ( 'groups' === $bp_nouveau->displayed_nav || 'personal' === $bp_nouveau->displayed_nav ) {
 			$classes  = array( 'bp-' . $bp_nouveau->displayed_nav . '-tab' );
 			$selected = bp_current_action();
@@ -1845,14 +1855,29 @@ function bp_nouveau_search_default_text( $text = '', $is_attr = true ) {
  * @since 3.0.0
  */
 function bp_nouveau_search_form() {
-	bp_get_template_part( 'common/search/search-form' );
+	$search_form_html = bp_buffer_template_part( 'common/search/search-form', null, false );
 
 	$objects = bp_nouveau_get_search_objects();
 	if ( empty( $objects['primary'] ) || empty( $objects['secondary'] ) ) {
+		echo $search_form_html;
 		return;
 	}
 
 	if ( 'dir' === $objects['primary'] ) {
+		/**
+		 * Filter here to edit the HTML output of the directory search form.
+		 *
+		 * NB: This will take in charge the following BP Core Components filters
+		 *     - bp_directory_members_search_form
+		 *     - bp_directory_blogs_search_form
+		 *     - bp_directory_groups_search_form
+		 *
+		 * @since 1.9.0
+		 *
+		 * @param string $search_form_html The HTML output for the directory search form.
+		 */
+		echo apply_filters( "bp_directory_{$objects['secondary']}_search_form", $search_form_html );
+
 		if ( 'activity' === $objects['secondary'] ) {
 			/**
 			 * Fires before the display of the activity syndication options.
@@ -1885,13 +1910,46 @@ function bp_nouveau_search_form() {
 			 */
 			do_action( 'bp_members_directory_member_sub_types' );
 		}
-	} elseif ( 'group' === $objects['primary'] && 'activity' === $objects['secondary'] ) {
-		/**
-		 * Fires inside the syndication options list, after the RSS option.
-		 *
-		 * @since 1.2.0
-		 */
-		do_action( 'bp_group_activity_syndication_options' );
+	} elseif ( 'group' === $objects['primary'] ) {
+		if ( 'members' !== $objects['secondary'] ) {
+			/**
+			 * Filter here to edit the HTML output of the displayed group search form.
+			 *
+			 * @since 3.2.0
+			 *
+			 * @param string $search_form_html The HTML output for the directory search form.
+			 */
+			echo apply_filters( "bp_group_{$objects['secondary']}_search_form", $search_form_html );
+
+		} else {
+			/**
+			 * Filters the Members component search form.
+			 *
+			 * @since 1.9.0
+			 *
+			 * @param string $search_form_html HTML markup for the member search form.
+			 */
+			echo apply_filters( 'bp_directory_members_search_form', $search_form_html );
+		}
+
+		if ( 'members' === $objects['secondary'] ) {
+			/**
+			 * Fires at the end of the group members search unordered list.
+			 *
+			 * Part of bp_groups_members_template_part().
+			 *
+			 * @since 1.5.0
+			 */
+			do_action( 'bp_members_directory_member_sub_types' );
+
+		} elseif ( 'activity' === $objects['secondary'] ) {
+			/**
+			 * Fires inside the syndication options list, after the RSS option.
+			 *
+			 * @since 1.2.0
+			 */
+			do_action( 'bp_group_activity_syndication_options' );
+		}
 	}
 }
 
@@ -2177,11 +2235,11 @@ function bp_nouveau_get_customizer_link( $args = array() ) {
 function bp_nouveau_signup_hook( $when = '', $prefix = '' ) {
 	$hook = array( 'bp' );
 
-	if ( ! $when ) {
+	if ( $when ) {
 		$hook[] = $when;
 	}
 
-	if ( ! $prefix ) {
+	if ( $prefix ) {
 		if ( 'page' === $prefix ) {
 			$hook[] = 'register';
 		} elseif ( 'steps' === $prefix ) {
@@ -2241,21 +2299,25 @@ function bp_nouveau_signup_form( $section = 'account_details' ) {
 	}
 
 	foreach ( $fields as $name => $attributes ) {
-		$classes = '';
-
 		list( $label, $required, $value, $attribute_type, $type, $class ) = array_values( $attributes );
-
-		if ( $required ) {
-			$required = ' ' . _x( '(required)', 'signup required field', 'buddypress' );
-		}
 
 		// Text fields are using strings, radios are using their inputs
 		$label_output = '<label for="%1$s">%2$s</label>';
 		$id           = $name;
+		$classes      = '';
+
+		if ( $required ) {
+			/* translators: Do not translate placeholders. 2 = form field name, 3 = "(required)". */
+			$label_output = __( '<label for="%1$s">%2$s %3$s</label>', 'buddypress' );
+		}
 
 		// Output the label for regular fields
 		if ( 'radio' !== $type ) {
-			printf( $label_output, esc_attr( $name ), esc_html( sprintf( $label, $required ) ) );
+			if ( $required ) {
+				printf( $label_output, esc_attr( $name ), esc_html( $label ), __( '(required)', 'buddypress' ) );
+			} else {
+				printf( $label_output, esc_attr( $name ), esc_html( $label ) );
+			}
 
 			if ( ! empty( $value ) && is_callable( $value ) ) {
 				$value = call_user_func( $value );
@@ -2415,15 +2477,24 @@ function bp_nouveau_submit_button( $action ) {
 		do_action( $submit_data['before'] );
 	}
 
-	// Output the submit button.
-	printf(
-		'<div class="submit">
-			<input type="submit" %s/>
-		</div>',
+	$submit_input = sprintf( '<input type="submit" %s/>',
 		bp_get_form_field_attributes( 'submit', $submit_data['attributes'] )  // Safe.
 	);
 
-	wp_nonce_field( $submit_data['nonce'] );
+	// Output the submit button.
+	if ( isset( $submit_data['wrapper'] ) && false === $submit_data['wrapper'] ) {
+		echo $submit_input;
+
+	// Output the submit button into a wrapper.
+	} else {
+		printf( '<div class="submit">%s</div>', $submit_input );
+	}
+
+	if ( empty( $submit_data['nonce_key'] ) ) {
+		wp_nonce_field( $submit_data['nonce'] );
+	} else {
+		wp_nonce_field( $submit_data['nonce'], $submit_data['nonce_key'] );
+	}
 
 	if ( ! empty( $submit_data['after'] ) ) {
 
