@@ -354,10 +354,10 @@ class BP_Group_Documents {
 
         //preferred place for documents - in the upload folder, sorted by group
         if ( function_exists('bp_core_avatar_upload_path') ) {
-            $document_url = str_replace(WP_CONTENT_DIR , WP_CONTENT_URL , bp_core_avatar_upload_path()) . '/group-documents/' . $this->group_id . '/' . $this->file;
+            $document_url = str_replace(WP_CONTENT_DIR , content_url() , bp_core_avatar_upload_path()) . '/group-documents/' . $this->group_id . '/' . $this->file;
         } else {
             $path = get_blog_option(BP_ROOT_BLOG , 'upload_path'); //wp-content/blogs.dir/1/files
-            $document_url = WP_CONTENT_URL . str_replace('wp-content' , '' , $path);
+            $document_url = content_url() . str_replace('wp-content' , '' , $path);
             $document_url .= '/group-documents/' . $this->group_id . '/' . $this->file;
         }
 
@@ -376,7 +376,7 @@ class BP_Group_Documents {
                 if ( defined('BP_GROUP_DOCUMENTS_FILE_URL') ) {
                     $document_url = BP_GROUP_DOCUMENTS_FILE_URL . $this->file;
                 } else { //if not there, check legacy location
-                    $document_url = WP_PLUGIN_URL . '/' . BP_GROUP_DOCUMENTS_DIR . '/documents/' . $this->file;
+                    $document_url = plugins_url() . '/' . BP_GROUP_DOCUMENTS_DIR . '/documents/' . $this->file;
                 }
             }
         }
@@ -567,7 +567,7 @@ class BP_Group_Documents {
             return false;
         }
 
-        $img_folder = WP_PLUGIN_URL . '/' . BP_GROUP_DOCUMENTS_DIR . '/images/icons/';
+        $img_folder = plugins_url() . '/' . BP_GROUP_DOCUMENTS_DIR . '/images/icons/';
 
         $img_url = $img_folder . $icons[$extension];
 

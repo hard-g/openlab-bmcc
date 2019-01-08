@@ -553,7 +553,8 @@ class BP_Group_Documents_CurrentGroup_Widget extends WP_Widget {
 			echo '<div class="widget-error">' . sprintf( __( 'There are no %s to display.', 'bp-group-documents' ), $this->bp_group_documents_name ) . '</div></p>';
 		    }
 		    if ( is_user_logged_in() ) {
-			if ( BP_Group_Documents::current_user_can( 'add', $instance['group_id'] ) ) {
+				$documentForGroup = new BP_Group_Documents();
+			if ( $documentForGroup->current_user_can( 'add', $instance['group_id'] ) ) {
 			    $url = bp_get_group_permalink( $bp->groups->current_group ) . BP_GROUP_DOCUMENTS_SLUG . '/add';
 			    ?>
 										<div class="generic-button group-button public"><a href="<?php echo esc_url( $url ); ?>" class="generic-button"><?php _e( "Add New", 'buddypress' ); ?></a></div>

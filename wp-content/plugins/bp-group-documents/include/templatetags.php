@@ -404,10 +404,12 @@ class BP_Group_Documents_Template {
 
     /**
      * Displays an "Add new" button
-     */
+	 */
     public function show_add_new_button() {
         if ( is_user_logged_in() ) {
-            if ( BP_Group_Documents::current_user_can('add' , bp_get_current_group_id()) ) {
+			$document = new BP_Group_Documents();
+			
+            if ( $document->current_user_can('add' , bp_get_current_group_id()) ) {
                 $url = bp_get_group_permalink() . BP_GROUP_DOCUMENTS_SLUG . '/add';
                 ?>
                 <div>
