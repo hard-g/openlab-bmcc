@@ -3,8 +3,9 @@ Contributors: dwenaus, boonebgorges, r-a-y
 Description: Allow users to receive email notifications of group activity. Weekly or daily digests are available.
 Tags: buddypress, bp, activities, activity, groups, group, emails, email, notifications, notification, subscribe, subscription, digest, summary
 Requires at least: 3.2 (BP 1.5)
+Requires PHP: 5.3
 Tested up to: 4.9 (BP 2.9)
-Stable tag: 3.8.1
+Stable tag: 3.8.2
 
 == Description ==
 
@@ -90,8 +91,8 @@ For bug reports or to add patches or translation files, please visit the [GES Gi
 
 == Changelog ==
 
-= 3.8.1 =
-* Re-release of 3.8.0 to fix broken wordpress.org zip.
+= 3.8.2 =
+* Improve logic in activation routine, to avoid fatal errors in cases where load order is non-standard.
 
 = 3.8.0 =
 * Drop support for PHP 5.2, and improve support for PHP 7.2.
