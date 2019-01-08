@@ -81,7 +81,7 @@ class BP_Docs_Component extends BP_Component {
 		// Redirect to the correct place after a comment
 		add_action( 'comment_post_redirect', array( &$this, 'comment_post_redirect' ), 99, 2 );
 
-		// Doc comments are always from trusted members (for the moment), so approve them
+		// Doc comments are often from trusted members, so approve them pretty often.
 		add_action( 'pre_comment_approved', array( $this, 'approve_doc_comments' ), 999, 2 );
 
 		// Filter the location of the comments template to allow it to be included with
@@ -412,7 +412,7 @@ class BP_Docs_Component extends BP_Component {
 				// The user can edit, so we check for edit locks
 				// Because we're not using WP autosave at the moment, ensure that
 				// the lock interval always returns as in process
-				add_filter( 'wp_check_post_lock_window', create_function( false, 'return time();' ) );
+				add_filter( 'wp_check_post_lock_window', 'time' );
 
 				if ( $doc ) {
 					$lock = bp_docs_check_post_lock( $doc->ID );
@@ -582,21 +582,30 @@ class BP_Docs_Component extends BP_Component {
 	/**
 	 * Approve Doc comments as necessary.
 	 *
-	 * Docs handles its own comment permissions, so we override WP's value
+	 * Docs handles its own comment permissions,
+	 * so we override WP's value in some instances.
 	 *
 	 * @since 1.3.3
-	 * @param string $approved
-	 * @param array $commentdata
-	 * @return string $approved
+	 * @param mixed $approved The approval status. Values: 1, 0, 'spam' or WP_Error.
+	 * @param array $commentdata Comment data.
+	 * @return mixed $approved
 	 */
 	public function approve_doc_comments( $approved, $commentdata ) {
 		$post = get_post( $commentdata['comment_post_ID'] );
-		if ( bp_docs_get_post_type_name() === $post->post_type ) {
-			if ( bp_docs_user_can( 'post_comments', bp_loggedin_user_id(), $post->ID ) ) {
-				$approved = 1;
-			} else {
-				$approved = 0;
-			}
+
+		/**
+		 * Maybe force comment approval. Only act if:
+		 * the approval status is currently 0 (not approved, but not spam or a WP_Error)
+		 * and the comment is on a BP Doc,
+		 * the user is logged in
+		 * the user can post comments on this particular doc.
+		 */
+		if ( $approved === 0
+			&& bp_docs_get_post_type_name() === $post->post_type
+			&& bp_loggedin_user_id()
+			&& bp_docs_user_can( 'post_comments', bp_loggedin_user_id(), $post->ID )
+		) {
+			$approved = 1;
 		}
 
 		return $approved;
@@ -685,7 +694,7 @@ class BP_Docs_Component extends BP_Component {
 		$post = get_post( $comment->comment_post_ID );
 
 		if ( $bp->bp_docs->post_type_name == $post->post_type ) {
-			add_filter( 'pre_option_comments_notify', create_function( false, 'return 0;' ) );
+			add_filter( 'pre_option_comments_notify', '__return_zero' );
 		}
 	}
 
@@ -902,10 +911,23 @@ class BP_Docs_Component extends BP_Component {
 
 	public static function filter_markup() {
 		$has_search = ! empty( $_GET['s'] );
+
+		$form_action = bp_get_requested_url();
+		$form_action = remove_query_arg(
+			array(
+				'search_submit',
+				's',
+				'paged',
+			),
+			$form_action
+		);
+		$form_action = preg_replace( '|page/[0-9]+/|', '', $form_action );
+
 		?>
 		<div id="docs-filter-section-search" class="docs-filter-section<?php if ( $has_search ) : ?> docs-filter-section-open<?php endif ?>">
-			<form action="" method="get">
-				<input name="s" value="<?php the_search_query() ?>">
+			<form action="<?php echo esc_url( $form_action ); ?>" method="get">
+				<label for="docs-search" class="screen-reader-text"><?php echo esc_html_e( 'Search', 'buddypress-docs' ); ?></label>
+				<input id="docs-search" name="s" value="<?php the_search_query() ?>">
 				<input name="search_submit" type="submit" value="<?php _e( 'Search', 'buddypress-docs' ) ?>" />
 				<?php do_action( 'bp_docs_directory_filter_search_form' ) ?>
 			</form>
@@ -1006,11 +1028,19 @@ class BP_Docs_Component extends BP_Component {
 
 		// Load the main CSS only on the proper pages
 		if ( in_array( bp_docs_get_docs_slug(), $this->slugstocheck ) || bp_docs_is_docs_component() ) {
-			wp_enqueue_style( 'bp-docs-css', $this->includes_url . 'css/screen.css' );
+			if ( is_rtl() ) {
+				wp_enqueue_style( 'bp-docs-css', $this->includes_url . 'css-rtl/screen.css' );
+			} else {
+				wp_enqueue_style( 'bp-docs-css', $this->includes_url . 'css/screen.css' );
+			}
 		}
 
 		if ( bp_docs_is_doc_edit() || bp_docs_is_doc_create() ) {
-			wp_enqueue_style( 'bp-docs-edit-css', $this->includes_url . 'css/edit.css' );
+			if ( is_rtl() ) {
+				wp_enqueue_style( 'bp-docs-edit-css', $this->includes_url . 'css-rtl/edit.css' );
+			} else {
+				wp_enqueue_style( 'bp-docs-edit-css', $this->includes_url . 'css/edit.css' );
+			}
 			wp_enqueue_style( 'thickbox' );
 		}
 	}

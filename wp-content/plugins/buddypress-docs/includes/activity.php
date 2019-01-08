@@ -11,7 +11,7 @@
  *
  * @since 1.0-beta
  *
- * @param obj $comment_id The id of the comment that's just been saved
+ * @param int $comment_id The comment ID.
  * @return int $activity_id The id number of the activity created
  */
 function bp_docs_post_comment_activity( $comment_id ) {
@@ -36,9 +36,6 @@ function bp_docs_post_comment_activity( $comment_id ) {
 	if ( ! $doc_id ) {
 		return false;
 	}
-
-	// Make sure that BP doesn't record this comment with its native functions
-	remove_action( 'comment_post', 'bp_blogs_record_comment', 10, 2 );
 
 	// See if we're associated with a group
 	$group_id = bp_is_active( 'groups' ) ? bp_docs_get_associated_group_id( $doc_id ) : 0;
@@ -96,7 +93,28 @@ function bp_docs_post_comment_activity( $comment_id ) {
 
 	return $activity_id;
 }
-add_action( 'comment_post', 'bp_docs_post_comment_activity', 8 );
+/**
+ * Catch comments that are moving from moderation to approved status.
+ * This hook is a dynamic hook: comment_{$new_status}_{$comment->comment_type}
+ * where $comment->comment_type is an empty string in the case of standard comments.
+ */
+add_action( 'comment_approved_', 'bp_docs_post_comment_activity', 8 );
+
+/**
+ * Pass new comments to our activity creation function, if they are approved.
+ *
+ * @since 2.2
+ *
+ * @param int $comment_id         The comment ID.
+ * @param mixed $comment_approved 1 if the comment is approved, 0 if not, 'spam' if spam.
+ * @return int $activity_id The id number of the activity created
+ */
+function bp_docs_post_comment_activity_if_approved( $comment_id, $comment_approved ) {
+	if ( 1 === $comment_approved ) {
+		bp_docs_post_comment_activity( $comment_id );
+	}
+}
+add_action( 'comment_post', 'bp_docs_post_comment_activity_if_approved', 8, 2 );
 
 /**
  * Post an activity item on doc save.
@@ -152,6 +170,11 @@ function bp_docs_post_activity( $query ) {
 
 	// Don't create activity if the Doc title or content hasn't changed.
 	if ( ! $query->is_new_doc && ( $query->previous_revision instanceof WP_Post ) && $doc->post_title === $query->previous_revision->post_title && $doc->post_content === $query->previous_revision->post_content ) {
+		return;
+	}
+
+	// Don't create activity if the post is not "publish" status.
+	if ( 'publish' != $doc->post_status ) {
 		return;
 	}
 
@@ -221,10 +244,13 @@ function bp_docs_delete_doc_activity( $new_status, $old_status, $post ) {
 		return;
 	}
 
-	if ( 'trash' != $new_status ) {
+	/*
+	 * Only continue the activity deletion process
+	 * if the doc is being switched to a non-public status.
+	 */
+	if ( ! in_array( $new_status, array( 'trash', 'bp_docs_pending', 'draft' ) ) ) {
 		return;
 	}
-
 
 	$activities = bp_activity_get(
 		array(
@@ -413,6 +439,10 @@ add_filter( 'bp_activity_prefetch_object_data', 'bp_docs_prefetch_activity_objec
  * @since 1.0-beta
  */
 function bp_docs_activity_filter_options() {
+	if ( function_exists( 'bp_is_group' ) && bp_is_group() && ! bp_docs_is_docs_enabled_for_group( bp_get_current_group_id() ) ) {
+		return;
+	}
+
 	?>
 
 	<option value="bp_doc_created"><?php _e( 'New Docs', 'buddypress-docs' ); ?></option>
