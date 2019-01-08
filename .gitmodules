@@ -1,9 +1,0 @@
-[submodule "wp-content/themes/openlab-theme"]
-	path = wp-content/themes/openlab-theme
-	url = git@github.com:cuny-academic-commons/openlab-theme
-[submodule "wp-content/plugins/cbox-openlab-core"]
-	path = wp-content/plugins/cbox-openlab-core
-	url = git@github.com:cuny-academic-commons/cbox-openlab-core
-[submodule "wp-content/plugins/commons-in-a-box"]
-	path = wp-content/plugins/commons-in-a-box
-	url = git@github.com:cuny-academic-commons/commons-in-a-box
