@@ -191,3 +191,15 @@ add_action( 'bp_screens', function() {
 add_action( 'wp_enqueue_scripts', function() {
 	wp_enqueue_script( 'openlab-bmcc-login', content_url() . '/mu-plugins/assets/js/login.js', array( 'openlab-nav-js' ) );
 } );
+
+/**
+ * On user deletion, delete related signups.
+ */
+add_action(
+	'wpmu_delete_user',
+	function( $user_id ) {
+		global $wpdb;
+		$user = new WP_User( $user_id );
+		$wpdb->query( $wpdb->prepare( "DELETE FROM {$wpdb->signups} WHERE user_email = %s", $user->user_email ) );
+	}
+);
