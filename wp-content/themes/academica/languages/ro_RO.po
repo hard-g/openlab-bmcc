@@ -1,0 +1,369 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Academica – WordPress.com\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: Wed Mar 25 2015 12:02:26 GMT+0200 (EET)\n"
+"PO-Revision-Date: Wed Mar 25 2015 12:35:22 GMT+0200 (EET)\n"
+"Last-Translator: Pavel Ciorici <cioricip@gmail.com>\n"
+"Language-Team: \n"
+"Language: Romanian\n"
+"Plural-Forms: nplurals=3; plural=(n==1 ? 0 :(((n%100>19)||(( n%100==0)&&(n!"
+"=0)))? 2 : 1))\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"X-Poedit-Basepath: .\n"
+"X-Poedit-SearchPath-0: ..\n"
+"X-Poedit-KeywordsList: _:1;gettext:1;dgettext:2;ngettext:1,2;dngettext:2,3;"
+"__:1;_e:1;_c:1;_n:1,2;_n_noop:1,2;_nc:1,2;__ngettext:1,2;__ngettext_noop:1,2;"
+"_x:1,2c;_ex:1,2c;_nx:1,2,4c;_nx_noop:1,2,3c;_n_js:1,2;_nx_js:1,2,3c;"
+"esc_attr__:1;esc_html__:1;esc_attr_e:1;esc_html_e:1;esc_attr_x:1,2c;"
+"esc_html_x:1,2c;comments_number_link:2,3;t:1;st:1;trans:1;transChoice:1,2\n"
+"X-Loco-Target-Locale: ro_RO\n"
+"X-Generator: Loco - https://localise.biz/"
+
+#: ../404.php:24
+msgid "Oops! That page can&rsquo;t be found."
+msgstr "Oops! Pagina accesată nu poate fi găsită."
+
+#: ../404.php:28
+msgid ""
+"It looks like nothing was found at this location. Maybe try one of the links "
+"below or a search?"
+msgstr ""
+"Nici un rezultat. Poate încercați unul din linkurile de mai jos sau să "
+"faceți o căutare nouă?"
+
+#: ../404.php:33
+msgid "Most Used Categories"
+msgstr "Categorii Populare"
+
+#: ../archive.php:16
+#, php-format
+msgid "Category Archives: %s"
+msgstr "Categoria %s"
+
+#: ../archive.php:19
+#, php-format
+msgid "Tag Archives: %s"
+msgstr "Tagul: %s"
+
+#: ../archive.php:23
+#, php-format
+msgid "Author Archives: %s"
+msgstr "Arhiva Autorului: %s"
+
+#: ../archive.php:26
+#, php-format
+msgid "Daily Archives: %s"
+msgstr "Arhiva Zilei: %s"
+
+#: ../archive.php:29
+#, php-format
+msgid "Monthly Archives: %s"
+msgstr "Arhiva Lunii: %s"
+
+#: ../archive.php:32
+#, php-format
+msgid "Yearly Archives: %s"
+msgstr "Arhiva Anului: %s"
+
+#: ../archive.php:35
+msgid "Archives"
+msgstr "Arhiva"
+
+#: ../archive.php:56
+msgid ""
+"It seems we can&rsquo;t find what you&rsquo;re looking for. Perhaps "
+"searching can help."
+msgstr "Nici un rezultat. Încercați o căutare nouă."
+
+#: ../comments.php:15 ../content.php:21 ../functions.php:219
+msgid "Leave a comment"
+msgstr "Lasă un comentariu"
+
+#: ../comments.php:23
+msgid "Comment navigation"
+msgstr "Navigare"
+
+#: ../comments.php:24
+msgid "&larr; Older Comments"
+msgstr "&larr; Comentarii vechi"
+
+#: ../comments.php:25
+msgid "Newer Comments &rarr;"
+msgstr ""
+"Comentarii noi \n"
+"&rarr;"
+
+#: ../comments.php:34
+msgid "Comments are closed."
+msgstr "Comentariile sunt închise."
+
+#: ../content-page.php:17 ../content-single.php:22 ../image.php:64
+msgid "Pages:"
+msgstr "Pagini:"
+
+#: ../content-page.php:23 ../content-single.php:15 ../content.php:24 ../image.php:
+#: 91
+msgid "Edit"
+msgstr "Modifică"
+
+#: ../content-single.php:13
+msgid "Tags:"
+msgstr "Taguri:"
+
+#: ../content.php:16 ../inc/widgets.php:74 ../inc/wpzoom-widgets.php:75
+#, php-format
+msgid "Permanent Link to %s"
+msgstr "Link către %s"
+
+#: ../footer.php:22
+#, php-format
+msgid "Theme: %1$s by %2$s."
+msgstr ""
+"Tema: \n"
+"%1$s by %2$s."
+
+#: ../functions.php:24
+msgid "Top Menu"
+msgstr "Top Menu"
+
+#: ../functions.php:25
+msgid "Footer Menu"
+msgstr "Footer Menu"
+
+#: ../functions.php:81
+msgid "Sidebar: Left"
+msgstr "Sidebar: Stânga"
+
+#: ../functions.php:90
+msgid "Sidebar: Right"
+msgstr "Sidebar: Dreapta"
+
+#: ../functions.php:99
+msgid "Footer"
+msgstr "Footer"
+
+#: ../functions.php:122
+msgid "Start here"
+msgstr "Începe aici"
+
+#: ../functions.php:194 ../functions.php:522
+#, php-format
+msgid "Page %s"
+msgstr "Pagina %s"
+
+#: ../functions.php:229
+msgid "Continue reading <span class=\"meta-nav\">&rarr;</span>"
+msgstr ""
+"Continuare \n"
+"<span class=\"meta-nav\">&rarr;</span>"
+
+#. Translators: used between list items, there is a space after the comma.
+#: ../functions.php:332
+msgid ", "
+msgstr ","
+
+#: ../functions.php:343
+#, php-format
+msgid "View all posts by %s"
+msgstr "Toate posturile scrise de %s"
+
+#. Translators: 1 is the author's name, 2 is category, and 3 is the date.
+#: ../functions.php:349
+#, php-format
+msgid ""
+"<span class=\"by-author\">By %1$s </span>in <span class=\"category\">%2$s</span> "
+"on <span class=\"datetime\">%3$s</span>."
+msgstr ""
+"<span class=\"by-author\">Scris de %1$s </span>în <span "
+"class=\"category\">%2$s</span> pe <span class=\"datetime\">%3$s</span>."
+
+#: ../functions.php:351
+#, php-format
+msgid "<span class=\"by-author\">By %1$s </span>on <span class=\"datetime\">%3$s</span>."
+msgstr ""
+"<span class=\"by-author\">Scris de %1$s </span>pe <span "
+"class=\"datetime\">%3$s</span>."
+
+#: ../functions.php:375
+msgid "Post navigation"
+msgstr "Navigare"
+
+#: ../functions.php:377
+msgid "<span class=\"meta-nav\">&larr;</span> Older posts"
+msgstr "<span class=\"meta-nav\">&larr;</span> Înapoi"
+
+#: ../functions.php:378
+msgid "Newer posts <span class=\"meta-nav\">&rarr;</span>"
+msgstr "Înainte <span class=\"meta-nav\">&rarr;</span>"
+
+#: ../functions.php:390
+msgid "Post Layout"
+msgstr "Layoutul Postului"
+
+#: ../functions.php:404
+msgid "Choose layout for this post:"
+msgstr "Selectează layoutul pentru acest post:"
+
+#: ../functions.php:408
+msgid "Default"
+msgstr "Default"
+
+#: ../functions.php:412
+msgid "Only Left Sidebar"
+msgstr "Cu Sidebar Stânga doar"
+
+#: ../functions.php:416
+msgid "Full Width (no sidebars)"
+msgstr "Full Width (fără sidebaruri)"
+
+#: ../functions.php:457
+msgid "Home"
+msgstr "Acasă"
+
+#: ../functions.php:508
+#, php-format
+msgid "Search results for &#39;%s&#39;"
+msgstr ""
+"Rezultate pentru \n"
+"&#39;%s&#39;"
+
+#: ../functions.php:511
+#, php-format
+msgid "Posts tagged &#39;%s&#39;"
+msgstr ""
+"Posturi cu tagul: \n"
+"&#39;%s&#39;"
+
+#: ../functions.php:515
+#, php-format
+msgid "Articles posted by %s"
+msgstr "Articole scrise de %s"
+
+#: ../functions.php:518
+msgid "Error 404"
+msgstr "Eroare 404"
+
+#: ../image.php:71
+#, php-format
+msgid ""
+"Published <span class=\"entry-date\"><time class=\"entry-date\" datetime=\"%1$s\" "
+"pubdate>%2$s</time></span> at <a href=\"%3$s\" title=\"Link to full-size "
+"image\">%4$s &times; %5$s</a> in <a href=\"%6$s\" title=\"Return to %7$s\" "
+"rel=\"gallery\">%7$s</a>."
+msgstr ""
+"Publicat <span class=\"entry-date\"><time class=\"entry-date\" datetime=\"%1$s\" "
+"pubdate>%2$s</time></span> la <a href=\"%3$s\" title=\"Link to full-size "
+"image\">%4$s &times; %5$s</a> în <a href=\"%6$s\" title=\"Return to %7$s\" "
+"rel=\"gallery\">%7$s</a>."
+
+#: ../image.php:83
+#, php-format
+msgid ""
+"<a class=\"comment-link\" href=\"#respond\" title=\"Post a comment\">Post a "
+"comment</a> or leave a trackback: <a class=\"trackback-link\" href=\"%s\" "
+"title=\"Trackback URL for your post\" rel=\"trackback\">Trackback URL</a>."
+msgstr ""
+"<a class=\"comment-link\" href=\"#respond\" title=\"Post a comment\">Adaugă un "
+"comentariu</a> sau lasă un trackback: <a class=\"trackback-link\" href=\"%s\" "
+"title=\"Trackback URL for your post\" rel=\"trackback\">Trackback URL</a>."
+
+#: ../image.php:85
+#, php-format
+msgid ""
+"Comments are closed, but you can leave a trackback: <a class=\"trackback-"
+"link\" href=\"%s\" title=\"Trackback URL for your post\" "
+"rel=\"trackback\">Trackback URL</a>."
+msgstr "Comentariile sunt închise, dar poți lăsa un trackback."
+
+#. Only comments open
+#: ../image.php:87
+msgid ""
+"Trackbacks are closed, but you can <a class=\"comment-link\" href=\"#respond\" "
+"title=\"Post a comment\">post a comment</a>."
+msgstr "Trackbackurile sunt închise."
+
+#. Comments and trackbacks closed
+#: ../image.php:89
+msgid "Both comments and trackbacks are currently closed."
+msgstr "Comentariile sunt închise."
+
+#: ../image.php:95
+msgid "&larr; Previous"
+msgstr ""
+"Precedent \n"
+"&larr; "
+
+#: ../image.php:96
+msgid "Next &rarr;"
+msgstr ""
+"Următorul \n"
+"&rarr;"
+
+#: ../index.php:25
+msgid ""
+"Apologies, but no results were found. Perhaps searching will help find a "
+"related post."
+msgstr "Ne pare rau, dar nu a fost găsit nici un rezultat. "
+
+#: ../search.php:12
+#, php-format
+msgid "Search Results for: %s"
+msgstr "Rezultate pentru: %s"
+
+#: ../search.php:30
+msgid ""
+"Sorry, but nothing matched your search terms. Please try again with some "
+"different keywords."
+msgstr "Din păcate nu a fost găsit nici un rezultat. Mai încercați odata."
+
+#: ../searchform.php:7 ../searchform.php:8 ../searchform.php:9
+msgid "Search"
+msgstr "Caută"
+
+#: ../single.php:29
+msgctxt "Previous post link"
+msgid "&larr;"
+msgstr "&larr;"
+
+#: ../single.php:30
+msgctxt "Next post link"
+msgid "&rarr;"
+msgstr "&rarr;"
+
+#: ../inc/widgets.php:52 ../inc/wpzoom-widgets.php:54
+#, php-format
+msgctxt "Widget title link"
+msgid "%s &raquo;"
+msgstr "%s &raquo;"
+
+#: ../inc/widgets.php:125 ../inc/wpzoom-widgets.php:130
+msgid "Title:"
+msgstr "Titlu:"
+
+#: ../inc/widgets.php:129 ../inc/wpzoom-widgets.php:134
+msgid "Choose category:"
+msgstr "Alege categoria:"
+
+#: ../inc/widgets.php:131 ../inc/wpzoom-widgets.php:136
+msgid "- Recent in all categories -"
+msgstr "- Posturi recente din toate categoriile -"
+
+#: ../inc/widgets.php:141 ../inc/wpzoom-widgets.php:146
+msgid "Number of posts to show:"
+msgstr "Numărul de articole:"
+
+#: ../inc/wpzoom-widgets.php:150
+msgid "Display as:"
+msgstr "Afișează ca:"
+
+#: ../inc/wpzoom-widgets.php:153
+msgid "Image list"
+msgstr "Listă"
+
+#: ../inc/wpzoom-widgets.php:157
+msgid "Image grid"
+msgstr "Grid"

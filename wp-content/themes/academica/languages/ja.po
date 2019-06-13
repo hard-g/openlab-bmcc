@@ -1,0 +1,401 @@
+# Translation of Academica in Japanese
+# This file is distributed under the same license as the Academica package.
+msgid ""
+msgstr ""
+"PO-Revision-Date: 2014-07-17 00:57:50+0000\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: GlotPress/0.1\n"
+"Project-Id-Version: Academica\n"
+
+msgid "Academica is an education- and school-oriented CMS theme with a three-column layout and modern design. It is easy to customize and comes with a custom widget, three templates for Posts and Pages, and a featured content slider."
+msgstr "Academica は教育・学校向けの CMS テーマで、3カラムレイアウト現代的なデザインが特徴です。カスタマイズするのは簡単で、カスタムウィジェット、3つの投稿・ページテンプレート、おすすめコンテンツスライダーなどが含まれています。"
+
+msgid "Full Width"
+msgstr "全幅"
+
+msgid "Sidebar Left"
+msgstr "サイドバー左"
+
+msgid "Sidebar Right"
+msgstr "サイドバー右"
+
+#: social-icons.php:11
+msgid "YouTube"
+msgstr "YouTube"
+
+#: social-icons.php:10
+msgid "LinkedIn"
+msgstr "LinkedIn"
+
+#: social-icons.php:9
+msgid "Facebook"
+msgstr "Facebook"
+
+#: social-icons.php:8
+msgid "Flickr"
+msgstr "Flickr"
+
+#: social-icons.php:7
+msgid "Twitter"
+msgstr "Twitter"
+
+#: single.php:30
+msgctxt "Previous post link"
+msgid "&larr;"
+msgstr "&larr;"
+
+#: single.php:31
+msgctxt "Next post link"
+msgid "&rarr;"
+msgstr "&rarr;"
+
+#: searchform.php:7 searchform.php:8 searchform.php:9
+msgid "Search"
+msgstr "検索"
+
+#: search.php:30
+msgid "Sorry, but nothing matched your search terms. Please try again with some different keywords."
+msgstr "ご指定の検索条件に一致する投稿がありませんでした。他のキーワードでもう一度検索してみてください。"
+
+#: search.php:12
+msgid "Search Results for: %s"
+msgstr "検索結果: %s"
+
+#: index.php:30
+msgid "Apologies, but no results were found. Perhaps searching will help find a related post."
+msgstr "一致する結果がありませんでした。検索してみると、関連投稿が見つかるかもしれません。"
+
+#: inc/widgets.php:165 inc/wpzoom-widgets.php:157
+msgid "Image grid"
+msgstr "画像グリッド"
+
+#: inc/widgets.php:161 inc/wpzoom-widgets.php:153
+msgid "Image list"
+msgstr "一覧から選ぶ"
+
+#: inc/widgets.php:158 inc/wpzoom-widgets.php:150
+msgid "Display as:"
+msgstr "表示形式:"
+
+#: inc/widgets.php:142 inc/wpzoom-widgets.php:134
+msgid "Choose category:"
+msgstr "カテゴリーを選択:"
+
+#: inc/widgets.php:144 inc/wpzoom-widgets.php:136
+msgid "- Recent in all categories -"
+msgstr "- 全カテゴリの最近の投稿 -"
+
+#: inc/widgets.php:154 inc/wpzoom-widgets.php:146
+msgid "Number of posts to show:"
+msgstr "表示する投稿数:"
+
+#: inc/widgets.php:53 inc/wpzoom-widgets.php:54
+msgctxt "Widget title link"
+msgid "%s &raquo;"
+msgstr "%s &raquo;"
+
+#: inc/widgets.php:138 inc/wpzoom-widgets.php:130
+msgid "Title:"
+msgstr "タイトル:"
+
+#: inc/theme-options.php:113
+msgid "Add social networking icons to the top of the theme by entering the URLs to your profiles."
+msgstr "プロフィールに URL を入力してテーマ上部に SNS アイコンを追加できます。"
+
+#: inc/theme-options.php:185
+msgid "%s Theme Options"
+msgstr "%s テーマ設定"
+
+#: inc/theme-options.php:242
+msgid "Header Social Icons"
+msgstr "ヘッダーのソーシャルアイコン"
+
+#: inc/theme-options.php:40 inc/theme-options.php:284
+msgid "YouTube URL"
+msgstr "YouTube URL"
+
+#: inc/theme-options.php:69 inc/theme-options.php:70
+msgid "Theme Options"
+msgstr "テーマオプション"
+
+#: inc/theme-options.php:37 inc/theme-options.php:263
+msgid "Flickr URL"
+msgstr "Flickr URL"
+
+#: inc/theme-options.php:38 inc/theme-options.php:270
+msgid "Facebook URL"
+msgstr "Facebook URL"
+
+#: inc/theme-options.php:39 inc/theme-options.php:277
+msgid "LinkedIn URL"
+msgstr "LinkedIn URL"
+
+#: inc/theme-options.php:30
+msgid "Social Profiles"
+msgstr "ソーシャルプロフィール"
+
+#: inc/theme-options.php:36 inc/theme-options.php:256
+msgid "Twitter URL"
+msgstr "Twitter URL"
+
+#: image.php:96
+msgid "Next &rarr;"
+msgstr "次へ &rarr;"
+
+#: image.php:89
+msgid "Both comments and trackbacks are currently closed."
+msgstr "コメント・トラックバックは受け付けていません。"
+
+#: image.php:95
+msgid "&larr; Previous"
+msgstr "&larr; 前へ"
+
+#: image.php:87
+msgid "Trackbacks are closed, but you can <a class=\"comment-link\" href=\"#respond\" title=\"Post a comment\">post a comment</a>."
+msgstr "現在トラックバックは受け付けていませんが、<a class=\"comment-link\" href=\"#respond\" title=\"コメントを投稿\">コメントを投稿</a>できます。"
+
+#: image.php:85
+msgid "Comments are closed, but you can leave a trackback: <a class=\"trackback-link\" href=\"%s\" title=\"Trackback URL for your post\" rel=\"trackback\">Trackback URL</a>."
+msgstr "現在コメントは受け付けていませんが、トラックバックを送信できます: <a class=\"trackback-link\" href=\"%s\" title=\"あなたの投稿用のトラックバック URL\" rel=\"trackback\">トラックバック URL</a>"
+
+#: image.php:71
+msgid "Published <span class=\"entry-date\"><time class=\"entry-date\" datetime=\"%1$s\" pubdate>%2$s</time></span> at <a href=\"%3$s\" title=\"Link to full-size image\">%4$s &times; %5$s</a> in <a href=\"%6$s\" title=\"Return to %7$s\" rel=\"gallery\">%7$s</a>."
+msgstr "投稿日: <span class=\"entry-date\"><time class=\"entry-date\" datetime=\"%1$s\" pubdate>%2$s</time></span><a href=\"%3$s\" title=\"フルサイズ画像へのリンク\">%4$s &times; %5$s</a> | <a href=\"%6$s\" title=\"%7$s へ戻る\" rel=\"gallery\">%7$s</a>."
+
+#: image.php:83
+msgid "<a class=\"comment-link\" href=\"#respond\" title=\"Post a comment\">Post a comment</a> or leave a trackback: <a class=\"trackback-link\" href=\"%s\" title=\"Trackback URL for your post\" rel=\"trackback\">Trackback URL</a>."
+msgstr "<a class=\"comment-link\" href=\"#respond\" title=\"コメントを投稿\">コメントを投稿</a>するか、トラックバックを送信できます: <a class=\"trackback-link\" href=\"%s\" title=\"この投稿のトラックバック URL\" rel=\"trackback\">トラックバック URL</a>"
+
+#: header-image.php:37 slider.php:49
+msgid "Permalink to %s"
+msgstr "%s へのパーマリンク"
+
+#: functions.php:615
+msgid "Search results for &#39;%s&#39;"
+msgstr "検索結果: %s"
+
+#: functions.php:618
+msgid "Posts tagged &#39;%s&#39;"
+msgstr "「%s」タグがついた投稿"
+
+#: functions.php:622
+msgid "Articles posted by %s"
+msgstr "%s の投稿"
+
+#: functions.php:625
+msgid "Error 404"
+msgstr "404 エラー"
+
+#: functions.php:564
+msgid "Home"
+msgstr "ホーム"
+
+#: functions.php:502
+msgid "Only Left Sidebar"
+msgstr "左サイドバーのみ"
+
+#: functions.php:506
+msgid "Full Width (no sidebars)"
+msgstr "幅広 (サイドバーなし)"
+
+#: functions.php:480
+msgid "Post Layout"
+msgstr "投稿レイアウト"
+
+#: functions.php:494
+msgid "Choose layout for this post:"
+msgstr "この投稿のレイアウトを選択:"
+
+#: functions.php:498
+msgid "Default"
+msgstr "デフォルト"
+
+#: functions.php:467
+msgid "<span class=\"meta-nav\">&larr;</span> Older posts"
+msgstr "<span class=\"meta-nav\">&larr;</span> 過去の投稿"
+
+#: functions.php:468
+msgid "Newer posts <span class=\"meta-nav\">&rarr;</span>"
+msgstr "新しい投稿 <span class=\"meta-nav\">&rarr;</span>"
+
+#: functions.php:439
+msgid "<span class=\"by-author\">By %1$s </span>in <span class=\"category\">%2$s</span> on <span class=\"datetime\">%3$s</span>."
+msgstr "<span class=\"by-author\">投稿者: %1$s </span>in <span class=\"category\">%2$s</span> 投稿日: <span class=\"datetime\">%3$s</span>."
+
+#: functions.php:441
+msgid "<span class=\"by-author\">By %1$s </span>on <span class=\"datetime\">%3$s</span>."
+msgstr "<span class=\"by-author\">投稿者: %1$s </span>投稿日: <span class=\"datetime\">%3$s</span>"
+
+#: functions.php:465
+msgid "Post navigation"
+msgstr "投稿ナビゲーション"
+
+#: functions.php:433
+msgid "View all posts by %s"
+msgstr "%s のすべての投稿を表示"
+
+#: functions.php:422
+msgid ", "
+msgstr ", "
+
+#: functions.php:290
+msgid "Continue reading <span class=\"meta-nav\">&rarr;</span>"
+msgstr "続きを読む <span class=\"meta-nav\">&rarr;</span>"
+
+#: functions.php:255 functions.php:629
+msgid "Page %s"
+msgstr "ページ %s"
+
+#: functions.php:187 functions.php:194
+msgid "Start here"
+msgstr "ここからスタート"
+
+#: functions.php:202 functions.php:214
+msgid "Latest Posts"
+msgstr "最新の投稿"
+
+#: functions.php:146
+msgid "Sidebar: Pages (Left)"
+msgstr "サイドバー: 固定ページ (左)"
+
+#: functions.php:155
+msgid "Sidebar: Pages (Right)"
+msgstr "サイドバー: 固定ページ (右)"
+
+#: functions.php:164
+msgid "Footer"
+msgstr "フッター"
+
+#: functions.php:92
+msgid "Sidebar: Left"
+msgstr "サイドバー: 左"
+
+#: functions.php:101
+msgid "Sidebar: Right"
+msgstr "サイドバー: 右"
+
+#: functions.php:110
+msgid "Sidebar: Homepage (Left)"
+msgstr "サイドバー: ホームページ (左)"
+
+#: functions.php:119
+msgid "Sidebar: Homepage (Right)"
+msgstr "サイドバー: ホームページ (右)"
+
+#: functions.php:128
+msgid "Sidebar: Homepage (Middle)"
+msgstr "サイドバー: ホームページ (中)"
+
+#: functions.php:137
+msgid "Sidebar: Archive Pages"
+msgstr "サイドバー: アーカイブページ"
+
+#: functions.php:36
+msgid "Top Menu"
+msgstr "トップメニュー"
+
+#: functions.php:37
+msgid "Footer Menu"
+msgstr "フッターメニュー"
+
+#: functions.php:57
+msgid "The featured content section displays on the front page above the first post in the content area."
+msgstr "おすすめコンテンツセクションは、フロントページの最新投稿の上部に表示されます。"
+
+#: footer.php:14
+msgid "Theme: %1$s by %2$s."
+msgstr "Theme: %1$s by %2$s."
+
+#: content-single.php:21
+msgid "Tags:"
+msgstr "タグ:"
+
+#: content-gallery.php:64 content.php:11 content.php:24 inc/widgets.php:75
+#: inc/widgets.php:82 inc/wpzoom-widgets.php:75
+msgid "Permanent Link to %s"
+msgstr "%s のパーマリンク"
+
+#: content-page.php:13 content-single.php:13 image.php:64
+msgid "Pages:"
+msgstr "ページ:"
+
+#: content-gallery.php:48
+msgid "This gallery contains <strong>%1$s photo</strong>."
+msgid_plural "This gallery contains <strong>%1$s photos</strong>."
+msgstr[0] "このギャラリーには<strong>%1$s枚の画像</strong>が含まれています。"
+
+#: content-aside.php:11 content-gallery.php:72 content-page.php:20
+#: content-single.php:23 content.php:32 image.php:91
+msgid "Edit"
+msgstr "編集"
+
+#: comments.php:34
+msgid "Comments are closed."
+msgstr "コメントは受け付けていません。"
+
+#: comments.php:25
+msgid "Newer Comments &rarr;"
+msgstr "新しいコメント &rarr;"
+
+#: comments.php:24
+msgid "&larr; Older Comments"
+msgstr "&larr; 古いコメント"
+
+#: comments.php:23
+msgid "Comment navigation"
+msgstr "コメントナビゲーション"
+
+#: comments.php:15 content-gallery.php:69 content.php:29 functions.php:280
+msgid "Leave a comment"
+msgstr "コメントする"
+
+#: archive.php:56
+msgid "It seems we can&rsquo;t find what you&rsquo;re looking for. Perhaps searching can help."
+msgstr "お探しのコンテンツを見つけられませんでした。検索をお試しください。"
+
+#: archive.php:35
+msgid "Archives"
+msgstr "アーカイブ"
+
+#: archive.php:32
+msgid "Yearly Archives: %s"
+msgstr "年別アーカイブ: %s"
+
+#: archive.php:29
+msgid "Monthly Archives: %s"
+msgstr "月別アーカイブ: %s"
+
+#: archive.php:26
+msgid "Daily Archives: %s"
+msgstr "日別アーカイブ: %s"
+
+#: archive.php:19
+msgid "Tag Archives: %s"
+msgstr "タグ別アーカイブ: %s"
+
+#: archive.php:23
+msgid "Author Archives: %s"
+msgstr "作成者別アーカイブ: %s"
+
+#: archive.php:16
+msgid "Category Archives: %s"
+msgstr "カテゴリー別アーカイブ: %s"
+
+#: 404.php:26
+msgid "Most Used Categories"
+msgstr "よく使われているカテゴリー"
+
+#: 404.php:34
+msgid "Try looking in the monthly archives. %1$s"
+msgstr "月別アーカイブを見てみてください。%1$s"
+
+#: 404.php:16
+msgid "Oops! That page can&rsquo;t be found."
+msgstr "お探しのページが見つかりません。"
+
+#: 404.php:19
+msgid "It looks like nothing was found at this location. Maybe try one of the links below or a search?"
+msgstr "ここには何も見つかりませんでした。以下のリンクまたは検索をお試しください。"

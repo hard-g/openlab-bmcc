@@ -1,0 +1,161 @@
+/*
+Theme Name: Academica
+Description: RTL stylesheet
+*/
+
+
+/* =General
+-------------------------------------------------------------- */
+
+body {
+	direction: rtl;
+	unicode-bidi: embed;
+	text-align: right;
+}
+
+ul,
+ol {
+	margin-left: auto;
+	margin-right: 36px;
+}
+
+blockquote {
+	border-left: 0;
+	border-right: 2px dotted #aaa;
+	padding-left: auto;
+	padding-right: 20px;
+}
+
+
+/* =Header
+-------------------------------------------------------------- */
+
+#main-nav ul li,
+#logo {
+	float: right;
+}
+
+#main-nav ul ul {
+	left: auto;
+	right: 0;
+}
+
+#main-nav ul ul ul {
+	left: auto;
+	right: 140px;
+}
+
+#search,
+#social {
+	clear: left;
+	float: left;
+}
+
+#crumbs a {
+	display: inline-block;
+}
+
+/* =Content
+-------------------------------------------------------------- */
+
+.column {
+	float: right;
+	margin-left: 30px;
+	margin-right: auto;
+}
+
+.column-last,
+.column-double.column-right .column-content {
+	margin-left: 0;
+}
+
+.column-double.column-right .title-header,
+.page-template-template-sidebar-left-php .title-header {
+	padding: 0 230px 0 0;
+}
+
+.page-template-template-sidebar-right-php .title-header,
+.column-full .title-header {
+	padding-right: 0;
+}
+
+.posts .post div.thumb {
+	float: right;
+	margin-left: 10px;
+	margin-right: auto;
+}
+
+li > a,
+.entry-meta a,
+p.pages a,
+p.pages strong {
+	display: inline-block;
+}
+
+
+/* =Comments
+-------------------------------------------------------------- */
+
+.commentlist img.avatar {
+	float: right;
+	margin-left: 15px;
+	margin-right: auto;
+}
+
+.commentlist div.reply {
+	left: 0;
+	right: auto;
+}
+
+.comment-meta a {
+	display: inline-block;
+}
+
+
+/* =Widgets
+-------------------------------------------------------------- */
+
+.widget ul {
+	margin-left: auto;
+	margin-right: 20px;
+}
+
+.academica-featured-posts-gallery ul,
+.widget_twitter ul,
+.widget_rss ul {
+	margin: 0;
+}
+
+.widget ul.menu ul {
+	border-left: 0;
+	border-right: 1px solid #CCCCCC;
+	margin-left: auto;
+	margin-right: 10px;
+	padding-left: auto;
+	padding-right: 10px;
+}
+
+#searchform input {
+	text-align: right;
+}
+
+#wp-calendar #next {
+	text-align: left;
+}
+
+.academica-featured-posts-gallery .grid {
+	float: right;
+	margin: 0 0 15px 10px;
+}
+
+
+/* =Footer
+-------------------------------------------------------------- */
+
+#footer-column {
+	float: left;
+}
+
+#footer p.copy a {
+	display: inline-block;
+}

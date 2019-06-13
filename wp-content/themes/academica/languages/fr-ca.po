@@ -1,0 +1,402 @@
+# Translation of Academica in French (Canada)
+# This file is distributed under the same license as the Academica package.
+msgid ""
+msgstr ""
+"PO-Revision-Date: 2014-07-06 03:57:39+0000\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: GlotPress/0.1\n"
+"Project-Id-Version: Academica\n"
+
+msgid "Academica is an education- and school-oriented CMS theme with a three-column layout and modern design. It is easy to customize and comes with a custom widget, three templates for Posts and Pages, and a featured content slider."
+msgstr "Conçu spécialement pour les sites éducatifs ou d’organisations scolaires, Academica est un thème axé sur la gestion de contenu comprenant trois colonnes dans une disposition moderne. Facile à personnaliser, il comporte un widget spécial, trois modèles d’articles et de pages et un carrousel de contenu à la une."
+
+msgid "Full Width"
+msgstr "Pleine largeur"
+
+msgid "Sidebar Left"
+msgstr "Colonne latérale gauche"
+
+msgid "Sidebar Right"
+msgstr "Colonne latérale droite"
+
+#: social-icons.php:11
+msgid "YouTube"
+msgstr "YouTube"
+
+#: social-icons.php:10
+msgid "LinkedIn"
+msgstr "LinkedIn"
+
+#: social-icons.php:9
+msgid "Facebook"
+msgstr "Facebook"
+
+#: social-icons.php:8
+msgid "Flickr"
+msgstr "Flickr"
+
+#: social-icons.php:7
+msgid "Twitter"
+msgstr "Twitter"
+
+#: single.php:30
+msgctxt "Previous post link"
+msgid "&larr;"
+msgstr "&larr;"
+
+#: single.php:31
+msgctxt "Next post link"
+msgid "&rarr;"
+msgstr "&rarr;"
+
+#: searchform.php:7 searchform.php:8 searchform.php:9
+msgid "Search"
+msgstr "Chercher"
+
+#: search.php:30
+msgid "Sorry, but nothing matched your search terms. Please try again with some different keywords."
+msgstr "Désolé, mais rien ne correspond à vos critères. Réessayez en modifiant les termes de recherche."
+
+#: search.php:12
+msgid "Search Results for: %s"
+msgstr "Résultats de recherche pour : %s"
+
+#: index.php:30
+msgid "Apologies, but no results were found. Perhaps searching will help find a related post."
+msgstr "Désolé, mais aucun résultat n&rsquo;a été trouvé. Nous vous invitons à lancer une recherche afin de trouver du contenu connexe."
+
+#: inc/widgets.php:165 inc/wpzoom-widgets.php:157
+msgid "Image grid"
+msgstr "Grille d’images"
+
+#: inc/widgets.php:161 inc/wpzoom-widgets.php:153
+msgid "Image list"
+msgstr "Liste d’image"
+
+#: inc/widgets.php:158 inc/wpzoom-widgets.php:150
+msgid "Display as:"
+msgstr "Afficher comme :"
+
+#: inc/widgets.php:142 inc/wpzoom-widgets.php:134
+msgid "Choose category:"
+msgstr "Choisir la catégorie :"
+
+#: inc/widgets.php:144 inc/wpzoom-widgets.php:136
+msgid "- Recent in all categories -"
+msgstr "- Récemment dans toutes les catégories -"
+
+#: inc/widgets.php:154 inc/wpzoom-widgets.php:146
+msgid "Number of posts to show:"
+msgstr "Nombre d’articles à afficher&nbsp;:"
+
+#: inc/widgets.php:53 inc/wpzoom-widgets.php:54
+msgctxt "Widget title link"
+msgid "%s &raquo;"
+msgstr "%s &raquo;"
+
+#: inc/widgets.php:138 inc/wpzoom-widgets.php:130
+msgid "Title:"
+msgstr "Titre&nbsp;:"
+
+#: inc/theme-options.php:113
+msgid "Add social networking icons to the top of the theme by entering the URLs to your profiles."
+msgstr "Ajoutez les icônes des réseaux sociaux en haut du thème en indiquant les adresses URL de vos profils."
+
+#: inc/theme-options.php:185
+msgid "%s Theme Options"
+msgstr "Options du thème %s"
+
+#: inc/theme-options.php:242
+msgid "Header Social Icons"
+msgstr "Icônes de réseaux sociaux d’en-tête"
+
+#: inc/theme-options.php:40 inc/theme-options.php:284
+msgid "YouTube URL"
+msgstr "Adresse URL YouTube"
+
+#: inc/theme-options.php:69 inc/theme-options.php:70
+msgid "Theme Options"
+msgstr "Options du thème"
+
+#: inc/theme-options.php:37 inc/theme-options.php:263
+msgid "Flickr URL"
+msgstr "Adresse URL Flickr"
+
+#: inc/theme-options.php:38 inc/theme-options.php:270
+msgid "Facebook URL"
+msgstr "Adresse  URL Facebook"
+
+#: inc/theme-options.php:39 inc/theme-options.php:277
+msgid "LinkedIn URL"
+msgstr "Adresse URL LinkedIn"
+
+#: inc/theme-options.php:30
+msgid "Social Profiles"
+msgstr "Profils de réseaux sociaux"
+
+#: inc/theme-options.php:36 inc/theme-options.php:256
+msgid "Twitter URL"
+msgstr "Adresse URL Twitter"
+
+#: image.php:96
+msgid "Next &rarr;"
+msgstr "Suivant &rarr;"
+
+#: image.php:89
+msgid "Both comments and trackbacks are currently closed."
+msgstr "Les commentaires et rétroliens sont fermés."
+
+#: image.php:95
+msgid "&larr; Previous"
+msgstr "&larr; Précédent"
+
+#: image.php:87
+msgid "Trackbacks are closed, but you can <a class=\"comment-link\" href=\"#respond\" title=\"Post a comment\">post a comment</a>."
+msgstr "Les rétroliens sont fermés, mais vous pouvez <a class=\"comment-link\" href=\"#respond\" title=\"Laisser un commentaire\">laisser un commentaire</a>"
+
+#: image.php:85
+msgid "Comments are closed, but you can leave a trackback: <a class=\"trackback-link\" href=\"%s\" title=\"Trackback URL for your post\" rel=\"trackback\">Trackback URL</a>."
+msgstr "Les commentaires sont fermés mais vous pouvez laisser une rétrolien : <a class=\"trackback-link\" href=\"%s\" title=\"Adresse de rétrolien pour votre article\" rel=\"trackback\">Adresse URL du rétrolien</a>."
+
+#: image.php:71
+msgid "Published <span class=\"entry-date\"><time class=\"entry-date\" datetime=\"%1$s\" pubdate>%2$s</time></span> at <a href=\"%3$s\" title=\"Link to full-size image\">%4$s &times; %5$s</a> in <a href=\"%6$s\" title=\"Return to %7$s\" rel=\"gallery\">%7$s</a>."
+msgstr "Publié(e) le <span class=\"entry-date\"><time class=\"entry-date\" datetime=\"%1$s\" pubdate>%2$s</time></span> à <a href=\"%3$s\" title=\"Link to full-size image\">%4$s &times; %5$s</a> dans <a href=\"%6$s\" title=\"Return to %7$s\" rel=\"gallery\">%7$s</a>."
+
+#: image.php:83
+msgid "<a class=\"comment-link\" href=\"#respond\" title=\"Post a comment\">Post a comment</a> or leave a trackback: <a class=\"trackback-link\" href=\"%s\" title=\"Trackback URL for your post\" rel=\"trackback\">Trackback URL</a>."
+msgstr "<a class=\"comment-link\" href=\"#respond\" title=\"Laisser un commentaire\">Laisser un commentaire</a> ou un rétrolien : <a class=\"trackback-link\" href=\"%s\" title=\"URL du r&eacute;trolien\" rel=\"trackback\">Adresse URL du rétrolien</a>."
+
+#: header-image.php:37 slider.php:49
+msgid "Permalink to %s"
+msgstr "Permalien vers %s"
+
+#: functions.php:615
+msgid "Search results for &#39;%s&#39;"
+msgstr "Résultat de recherche pour &#39;%s&#39;"
+
+#: functions.php:618
+msgid "Posts tagged &#39;%s&#39;"
+msgstr "Articles marqués « %s »"
+
+#: functions.php:622
+msgid "Articles posted by %s"
+msgstr "Articles publiés par %s"
+
+#: functions.php:625
+msgid "Error 404"
+msgstr "Erreur 404"
+
+#: functions.php:564
+msgid "Home"
+msgstr "Accueil"
+
+#: functions.php:502
+msgid "Only Left Sidebar"
+msgstr "Colonne latérale gauche seulement"
+
+#: functions.php:506
+msgid "Full Width (no sidebars)"
+msgstr "Pleine Largeur (Sans Colonne latérale)"
+
+#: functions.php:480
+msgid "Post Layout"
+msgstr "Mise en Page Articles"
+
+#: functions.php:494
+msgid "Choose layout for this post:"
+msgstr "Sélectionner une disposition pour cet article :"
+
+#: functions.php:498
+msgid "Default"
+msgstr "Valeur par défaut"
+
+#: functions.php:467
+msgid "<span class=\"meta-nav\">&larr;</span> Older posts"
+msgstr "<span class=\"meta-nav\">&larr;</span> Articles Précédents"
+
+#: functions.php:468
+msgid "Newer posts <span class=\"meta-nav\">&rarr;</span>"
+msgstr "Articles ultérieurs <span class=\"meta-nav\">&rarr;</span>"
+
+#: functions.php:439
+msgid "<span class=\"by-author\">By %1$s </span>in <span class=\"category\">%2$s</span> on <span class=\"datetime\">%3$s</span>."
+msgstr "<span class=\"by-author\">Par %1$s </span>dans <span class=\"category\">%2$s</span> le <span class=\"datetime\">%3$s</span>."
+
+#: functions.php:441
+msgid "<span class=\"by-author\">By %1$s </span>on <span class=\"datetime\">%3$s</span>."
+msgstr "<span class=\"by-author\">Par %1$s </span>le <span class=\"datetime\">%3$s</span>."
+
+#: functions.php:465
+msgid "Post navigation"
+msgstr "Navigation des articles"
+
+#: functions.php:433
+msgid "View all posts by %s"
+msgstr "Voir tous les articles par %s"
+
+#: functions.php:422
+msgid ", "
+msgstr ", "
+
+#: functions.php:290
+msgid "Continue reading <span class=\"meta-nav\">&rarr;</span>"
+msgstr "Lire la suite <span class=\"meta-nav\">&rarr;</span>"
+
+#: functions.php:255 functions.php:629
+msgid "Page %s"
+msgstr "Page %s"
+
+#: functions.php:187 functions.php:194
+msgid "Start here"
+msgstr "Commencez ici"
+
+#: functions.php:202 functions.php:214
+msgid "Latest Posts"
+msgstr "Derniers Articles"
+
+#: functions.php:146
+msgid "Sidebar: Pages (Left)"
+msgstr "Colonne latérale : Pages (gauche)"
+
+#: functions.php:155
+msgid "Sidebar: Pages (Right)"
+msgstr "Colonne latérale : Pages (droite)"
+
+#: functions.php:164
+msgid "Footer"
+msgstr "Pied de page"
+
+#: functions.php:92
+msgid "Sidebar: Left"
+msgstr "Colonne latérale : Gauche"
+
+#: functions.php:101
+msgid "Sidebar: Right"
+msgstr "Colonne latérale : Droite"
+
+#: functions.php:110
+msgid "Sidebar: Homepage (Left)"
+msgstr "Colonne latérale : Page d’accueil (gauche)"
+
+#: functions.php:119
+msgid "Sidebar: Homepage (Right)"
+msgstr "Colonne latérale : Page d’accueil (droite)"
+
+#: functions.php:128
+msgid "Sidebar: Homepage (Middle)"
+msgstr "Colonne latérale : Page d’accueil (centre)"
+
+#: functions.php:137
+msgid "Sidebar: Archive Pages"
+msgstr "Colonne latérale : Pages d’Archives"
+
+#: functions.php:36
+msgid "Top Menu"
+msgstr "Menu Principal"
+
+#: functions.php:37
+msgid "Footer Menu"
+msgstr "Menu du pied de page"
+
+#: functions.php:57
+msgid "The featured content section displays on the front page above the first post in the content area."
+msgstr "La partie de contenu présentée s’affiche sur la page d’accueil au-dessus du premier article dans la zone de contenu."
+
+#: footer.php:14
+msgid "Theme: %1$s by %2$s."
+msgstr "Thème %1$s par %2$s."
+
+#: content-single.php:21
+msgid "Tags:"
+msgstr "Mots-clés&nbsp;:"
+
+#: content-gallery.php:64 content.php:11 content.php:24 inc/widgets.php:75
+#: inc/widgets.php:82 inc/wpzoom-widgets.php:75
+msgid "Permanent Link to %s"
+msgstr "Permalien vers %s"
+
+#: content-page.php:13 content-single.php:13 image.php:64
+msgid "Pages:"
+msgstr "Pages :"
+
+#: content-gallery.php:48
+msgid "This gallery contains <strong>%1$s photo</strong>."
+msgid_plural "This gallery contains <strong>%1$s photos</strong>."
+msgstr[0] "Cette galerie contient <strong>%1$s photo</strong>."
+msgstr[1] "Cette galerie contient <strong>%1$s photos</strong>."
+
+#: content-aside.php:11 content-gallery.php:72 content-page.php:20
+#: content-single.php:23 content.php:32 image.php:91
+msgid "Edit"
+msgstr "Modifier"
+
+#: comments.php:34
+msgid "Comments are closed."
+msgstr "Les commentaires sont fermés."
+
+#: comments.php:25
+msgid "Newer Comments &rarr;"
+msgstr "Commentaires ultérieurs &rarr;"
+
+#: comments.php:24
+msgid "&larr; Older Comments"
+msgstr "&larr; Commentaires antérieurs"
+
+#: comments.php:23
+msgid "Comment navigation"
+msgstr "Navigation des commentaires"
+
+#: comments.php:15 content-gallery.php:69 content.php:29 functions.php:280
+msgid "Leave a comment"
+msgstr "Laisser un commentaire"
+
+#: archive.php:56
+msgid "It seems we can&rsquo;t find what you&rsquo;re looking for. Perhaps searching can help."
+msgstr "Le contenu demandé n&rsquo;a pu être trouvé. Pourquoi ne pas lancer une recherche? "
+
+#: archive.php:35
+msgid "Archives"
+msgstr "Archives"
+
+#: archive.php:32
+msgid "Yearly Archives: %s"
+msgstr "Archives annuelles : %s"
+
+#: archive.php:29
+msgid "Monthly Archives: %s"
+msgstr "Archives mensuelles : %s"
+
+#: archive.php:26
+msgid "Daily Archives: %s"
+msgstr "Archives quotidiennes : %s"
+
+#: archive.php:19
+msgid "Tag Archives: %s"
+msgstr "Archives de mot-clé : %s"
+
+#: archive.php:23
+msgid "Author Archives: %s"
+msgstr "Archives d’auteur : %s"
+
+#: archive.php:16
+msgid "Category Archives: %s"
+msgstr "Archives de catégorie : %s"
+
+#: 404.php:26
+msgid "Most Used Categories"
+msgstr "Catégories les plus utilisées"
+
+#: 404.php:34
+msgid "Try looking in the monthly archives. %1$s"
+msgstr "Nous vous suggérons de parcourir les archives mensuelles. %1$s"
+
+#: 404.php:16
+msgid "Oops! That page can&rsquo;t be found."
+msgstr "Oups! Cette page est introuvable."
+
+#: 404.php:19
+msgid "It looks like nothing was found at this location. Maybe try one of the links below or a search?"
+msgstr "Aucun contenu n&rsquo; a été trouvé à l&rsquo;adresse demandée. Pourquoi ne pas essayer l&rsquo;un des liens ci-dessouss, ou encore, lancer une recherche?"

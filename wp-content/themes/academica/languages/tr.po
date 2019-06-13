@@ -1,0 +1,402 @@
+# Translation of Academica in Turkish
+# This file is distributed under the same license as the Academica package.
+msgid ""
+msgstr ""
+"PO-Revision-Date: 2014-06-23 10:33:18+0000\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"X-Generator: GlotPress/0.1\n"
+"Project-Id-Version: Academica\n"
+
+msgid "Academica is an education- and school-oriented CMS theme with a three-column layout and modern design. It is easy to customize and comes with a custom widget, three templates for Posts and Pages, and a featured content slider."
+msgstr ""
+
+msgid "Full Width"
+msgstr "Tam Genişlik"
+
+msgid "Sidebar Left"
+msgstr ""
+
+msgid "Sidebar Right"
+msgstr ""
+
+#: social-icons.php:11
+msgid "YouTube"
+msgstr "YouTube"
+
+#: social-icons.php:10
+msgid "LinkedIn"
+msgstr "LinkedIn"
+
+#: social-icons.php:9
+msgid "Facebook"
+msgstr "Facebook"
+
+#: social-icons.php:8
+msgid "Flickr"
+msgstr "Flickr"
+
+#: social-icons.php:7
+msgid "Twitter"
+msgstr "Twitter"
+
+#: single.php:30
+msgctxt "Previous post link"
+msgid "&larr;"
+msgstr "&larr;"
+
+#: single.php:31
+msgctxt "Next post link"
+msgid "&rarr;"
+msgstr "&rarr;"
+
+#: searchform.php:7 searchform.php:8 searchform.php:9
+msgid "Search"
+msgstr "Ara"
+
+#: search.php:30
+msgid "Sorry, but nothing matched your search terms. Please try again with some different keywords."
+msgstr "Üzgünüz fakat aradığınız kriterler ile örtüşen sonuç bulunamadı. Lütfen başka kriterler ile tekrar deneyin."
+
+#: search.php:12
+msgid "Search Results for: %s"
+msgstr "Arama sonuçları: %s"
+
+#: index.php:30
+msgid "Apologies, but no results were found. Perhaps searching will help find a related post."
+msgstr "Üzgünüz, fakat hiç sonuç bulunamadı. Belki arama kutusunu kullanarak ilişkili bir yazı bulabilirsiniz."
+
+#: inc/widgets.php:165 inc/wpzoom-widgets.php:157
+msgid "Image grid"
+msgstr "Resim Izgarası"
+
+#: inc/widgets.php:161 inc/wpzoom-widgets.php:153
+msgid "Image list"
+msgstr "Resim listesi"
+
+#: inc/widgets.php:158 inc/wpzoom-widgets.php:150
+msgid "Display as:"
+msgstr "Görüntüleme şekli:"
+
+#: inc/widgets.php:142 inc/wpzoom-widgets.php:134
+msgid "Choose category:"
+msgstr ""
+
+#: inc/widgets.php:144 inc/wpzoom-widgets.php:136
+msgid "- Recent in all categories -"
+msgstr ""
+
+#: inc/widgets.php:154 inc/wpzoom-widgets.php:146
+msgid "Number of posts to show:"
+msgstr "Gösterilecek yazı sayısı:"
+
+#: inc/widgets.php:53 inc/wpzoom-widgets.php:54
+msgctxt "Widget title link"
+msgid "%s &raquo;"
+msgstr ""
+
+#: inc/widgets.php:138 inc/wpzoom-widgets.php:130
+msgid "Title:"
+msgstr "Başlık:"
+
+#: inc/theme-options.php:113
+msgid "Add social networking icons to the top of the theme by entering the URLs to your profiles."
+msgstr ""
+
+#: inc/theme-options.php:185
+msgid "%s Theme Options"
+msgstr "%s Tema Seçenekleri"
+
+#: inc/theme-options.php:242
+msgid "Header Social Icons"
+msgstr ""
+
+#: inc/theme-options.php:40 inc/theme-options.php:284
+msgid "YouTube URL"
+msgstr "YouTube URL"
+
+#: inc/theme-options.php:69 inc/theme-options.php:70
+msgid "Theme Options"
+msgstr "Tema Seçenekleri"
+
+#: inc/theme-options.php:37 inc/theme-options.php:263
+msgid "Flickr URL"
+msgstr "Flickr URL"
+
+#: inc/theme-options.php:38 inc/theme-options.php:270
+msgid "Facebook URL"
+msgstr "Facebook URL"
+
+#: inc/theme-options.php:39 inc/theme-options.php:277
+msgid "LinkedIn URL"
+msgstr "LinkedIn URL"
+
+#: inc/theme-options.php:30
+msgid "Social Profiles"
+msgstr "Sosyal Profiller"
+
+#: inc/theme-options.php:36 inc/theme-options.php:256
+msgid "Twitter URL"
+msgstr "Twitter URL'si"
+
+#: image.php:96
+msgid "Next &rarr;"
+msgstr "Sonraki &arr;"
+
+#: image.php:89
+msgid "Both comments and trackbacks are currently closed."
+msgstr "Yorumlar ve geri izlemeler şimdilik kapalı"
+
+#: image.php:95
+msgid "&larr; Previous"
+msgstr "&larr; Önceki"
+
+#: image.php:87
+msgid "Trackbacks are closed, but you can <a class=\"comment-link\" href=\"#respond\" title=\"Post a comment\">post a comment</a>."
+msgstr "Geri izlemeler kapatıldı, ama <a class=\"comment-link\" href=\"#respond\" title=\"Bir yorum gönder\">bir yorum gönderebilirsiniz</a>."
+
+#: image.php:85
+msgid "Comments are closed, but you can leave a trackback: <a class=\"trackback-link\" href=\"%s\" title=\"Trackback URL for your post\" rel=\"trackback\">Trackback URL</a>."
+msgstr "Yorumlar kapalı, ama geri besleme bırakabilirsiniz: <a class=\"trackback-link\" href=\"%s\" title=\"Yazınızdan Trackback Bağlantısı\" rel=\"trackback\">Trackback Bağlantısı</a>. "
+
+#: image.php:71
+msgid "Published <span class=\"entry-date\"><time class=\"entry-date\" datetime=\"%1$s\" pubdate>%2$s</time></span> at <a href=\"%3$s\" title=\"Link to full-size image\">%4$s &times; %5$s</a> in <a href=\"%6$s\" title=\"Return to %7$s\" rel=\"gallery\">%7$s</a>."
+msgstr "<span class=\"entry-date\"><time class=\"entry-date\" datetime=\"%1$s\" pubdate>%2$s</time></span> tarihinde <a href=\"%3$s\" title=\"Link to full-size image\">%4$s &times; %5$s</a> üzerinde <a href=\"%6$s\" title=\"Return to %7$s\" rel=\"gallery\">%7$s</a> içinde yayımlandı."
+
+#: image.php:83
+msgid "<a class=\"comment-link\" href=\"#respond\" title=\"Post a comment\">Post a comment</a> or leave a trackback: <a class=\"trackback-link\" href=\"%s\" title=\"Trackback URL for your post\" rel=\"trackback\">Trackback URL</a>."
+msgstr "<a class=\"comment-link\" href=\"#respond\" title=\"Post a comment\">Bir yorum yazın</a> veya bir geri besleme bırakın: <a class=\"trackback-link\" href=\"%s\" title=\"Trackback URL for your post\" rel=\"trackback\">Geri Besleme Adresi</a>. "
+
+#: header-image.php:37 slider.php:49
+msgid "Permalink to %s"
+msgstr "%s için kalıcı bağlantı"
+
+#: functions.php:615
+msgid "Search results for &#39;%s&#39;"
+msgstr "&#39;%s&#39; için arama sonuçları"
+
+#: functions.php:618
+msgid "Posts tagged &#39;%s&#39;"
+msgstr "Yazılar &#39;%s&#39; ile etiketlendi"
+
+#: functions.php:622
+msgid "Articles posted by %s"
+msgstr "%s tarafından yazılan makaleler"
+
+#: functions.php:625
+msgid "Error 404"
+msgstr "Hata 404"
+
+#: functions.php:564
+msgid "Home"
+msgstr "Başlangıç"
+
+#: functions.php:502
+msgid "Only Left Sidebar"
+msgstr "Sadece Sol Kenar Çubuğu"
+
+#: functions.php:506
+msgid "Full Width (no sidebars)"
+msgstr "Tam Genişlik (kenar çubuğu yok)"
+
+#: functions.php:480
+msgid "Post Layout"
+msgstr "Yazı Düzeni"
+
+#: functions.php:494
+msgid "Choose layout for this post:"
+msgstr "Bu yazı için yerleşim düzeni seçin:"
+
+#: functions.php:498
+msgid "Default"
+msgstr "Varsayılan"
+
+#: functions.php:467
+msgid "<span class=\"meta-nav\">&larr;</span> Older posts"
+msgstr "<span class=\"meta-nav\">&larr;</span> Eski yazılar"
+
+#: functions.php:468
+msgid "Newer posts <span class=\"meta-nav\">&rarr;</span>"
+msgstr "Yeni yazılar <span class=\"meta-nav\">&rarr;</span>"
+
+#: functions.php:439
+msgid "<span class=\"by-author\">By %1$s </span>in <span class=\"category\">%2$s</span> on <span class=\"datetime\">%3$s</span>."
+msgstr "<span class=\"by-author\">%1$s tarafından </span> <span class=\"category\">%2$s</span> içinde <span class=\"datetime\">%3$s</span> üzerinde."
+
+#: functions.php:441
+msgid "<span class=\"by-author\">By %1$s </span>on <span class=\"datetime\">%3$s</span>."
+msgstr "<span class=\"by-author\">%1$s tarafından </span> <span class=\"datetime\">%3$s</span> üzerinde."
+
+#: functions.php:465
+msgid "Post navigation"
+msgstr "Yazı dolaşımı"
+
+#: functions.php:433
+msgid "View all posts by %s"
+msgstr "%s tarafından yazılmış tüm yazıları görüntüle"
+
+#: functions.php:422
+msgid ", "
+msgstr ", "
+
+#: functions.php:290
+msgid "Continue reading <span class=\"meta-nav\">&rarr;</span>"
+msgstr "Okumaya devam et <span class=\"meta-nav\">&rarr;</span>"
+
+#: functions.php:255 functions.php:629
+msgid "Page %s"
+msgstr "Sayfa %s"
+
+#: functions.php:187 functions.php:194
+msgid "Start here"
+msgstr "Buradan başla"
+
+#: functions.php:202 functions.php:214
+msgid "Latest Posts"
+msgstr "Son Yazılar"
+
+#: functions.php:146
+msgid "Sidebar: Pages (Left)"
+msgstr "Kenar çubuğu: Sayfalar (Sol)"
+
+#: functions.php:155
+msgid "Sidebar: Pages (Right)"
+msgstr "Kenar çubuğu: Sayfalar (Sağ)"
+
+#: functions.php:164
+msgid "Footer"
+msgstr "Alt Kısım"
+
+#: functions.php:92
+msgid "Sidebar: Left"
+msgstr "Kenar Çubuğu: Sol"
+
+#: functions.php:101
+msgid "Sidebar: Right"
+msgstr "Kenar Çubuğu: Sağ"
+
+#: functions.php:110
+msgid "Sidebar: Homepage (Left)"
+msgstr "Kenar Çubuğu: Anasayfa (Sol)"
+
+#: functions.php:119
+msgid "Sidebar: Homepage (Right)"
+msgstr "Kenar çubuğu: Anasayfa (Sağ)"
+
+#: functions.php:128
+msgid "Sidebar: Homepage (Middle)"
+msgstr "Kenar çubuğu: Anasayfa (Orta)"
+
+#: functions.php:137
+msgid "Sidebar: Archive Pages"
+msgstr "Kenar çubuğu: Arşiv Sayfaları"
+
+#: functions.php:36
+msgid "Top Menu"
+msgstr "Üst Menü"
+
+#: functions.php:37
+msgid "Footer Menu"
+msgstr ""
+
+#: functions.php:57
+msgid "The featured content section displays on the front page above the first post in the content area."
+msgstr "Öne çıkan içerik bölümü, ön sayfa içerik alanındaki ilk yazının üstünde görüntülenir."
+
+#: footer.php:14
+msgid "Theme: %1$s by %2$s."
+msgstr "Tema: %2$s tarafından %1$s."
+
+#: content-single.php:21
+msgid "Tags:"
+msgstr "Etiketler:"
+
+#: content-gallery.php:64 content.php:11 content.php:24 inc/widgets.php:75
+#: inc/widgets.php:82 inc/wpzoom-widgets.php:75
+msgid "Permanent Link to %s"
+msgstr "%s için Kalıcı Bağlantı"
+
+#: content-page.php:13 content-single.php:13 image.php:64
+msgid "Pages:"
+msgstr "Sayfalar:"
+
+#: content-gallery.php:48
+msgid "This gallery contains <strong>%1$s photo</strong>."
+msgid_plural "This gallery contains <strong>%1$s photos</strong>."
+msgstr[0] "Bu galeri <strong>%1$s fotoğraf</strong> içeriyor."
+msgstr[1] "Bu galeri <strong>%1$s fotoğraf</strong> içeriyor."
+
+#: content-aside.php:11 content-gallery.php:72 content-page.php:20
+#: content-single.php:23 content.php:32 image.php:91
+msgid "Edit"
+msgstr "Düzenle"
+
+#: comments.php:34
+msgid "Comments are closed."
+msgstr "Yorumlar kapalı."
+
+#: comments.php:25
+msgid "Newer Comments &rarr;"
+msgstr "Yeni yorumlar &arr;"
+
+#: comments.php:24
+msgid "&larr; Older Comments"
+msgstr "&arr; Eski yorumlar"
+
+#: comments.php:23
+msgid "Comment navigation"
+msgstr "Yorum dolaşımı"
+
+#: comments.php:15 content-gallery.php:69 content.php:29 functions.php:280
+msgid "Leave a comment"
+msgstr "Yorum yapın"
+
+#: archive.php:56
+msgid "It seems we can&rsquo;t find what you&rsquo;re looking for. Perhaps searching can help."
+msgstr "Aradığınız sayfa bulunamadı. Belki arama kutusu aradığınızı bulma konusunda yardımcı olabilir."
+
+#: archive.php:35
+msgid "Archives"
+msgstr "Arşivler"
+
+#: archive.php:32
+msgid "Yearly Archives: %s"
+msgstr "Yıllık arşivler: %s"
+
+#: archive.php:29
+msgid "Monthly Archives: %s"
+msgstr "Aylık arşivler: %s"
+
+#: archive.php:26
+msgid "Daily Archives: %s"
+msgstr "Günlük arşivler: %s"
+
+#: archive.php:19
+msgid "Tag Archives: %s"
+msgstr "Etiket arşivi: %s"
+
+#: archive.php:23
+msgid "Author Archives: %s"
+msgstr "Yazar arşivleri: %s"
+
+#: archive.php:16
+msgid "Category Archives: %s"
+msgstr "Kategori arşivi: %s"
+
+#: 404.php:26
+msgid "Most Used Categories"
+msgstr "En çok Kullanılan Kategoriler"
+
+#: 404.php:34
+msgid "Try looking in the monthly archives. %1$s"
+msgstr "Aylık arşivlere bakmayı deneyin. %1$s"
+
+#: 404.php:16
+msgid "Oops! That page can&rsquo;t be found."
+msgstr "Üzgünüz! Bu sayfa bulunamıyor."
+
+#: 404.php:19
+msgid "It looks like nothing was found at this location. Maybe try one of the links below or a search?"
+msgstr "Burada hiçbir şeyin bulunmadığı görülüyor. Belki alttaki bağlantılardan birini veya bir arama yapmayı denemelisin?"
