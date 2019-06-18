@@ -385,45 +385,6 @@ class Openlab_Clone_Course_Group {
 			) );
 		}
 
-		return;
-
-		// bbPress 1
-		// rekey for better lookups
-		$source_forum_topics_keyed = array();
-		foreach ( $source_forum_topics as $sft ) {
-			if ( ! in_array( $sft->post_author, $source_group_admins ) ) {
-				continue;
-			}
-			$source_forum_topics_keyed[ $sft->ID ] = $sft;
-		}
-
-		// And their first posts
-		global $wpdb, $bp, $bbdb;
-		$source_forum_topic_ids = implode( ',', wp_list_pluck( $source_forum_topics, 'topic_id' ) );
-		$source_forum_posts = $wpdb->get_results( "SELECT topic_id, post_text FROM {$bbdb->posts} WHERE topic_id IN ({$source_forum_topic_ids}) AND post_position = 1" );
-
-		foreach ( $source_forum_posts as $sfp ) {
-			if ( isset( $source_forum_topics_keyed[ $sfp->topic_id ] ) ) {
-				$source_forum_topics_keyed[ $sfp->topic_id ]->post_text = $sfp->post_text;
-			}
-		}
-
-		// Then post them
-		foreach ( $source_forum_topics_keyed as $sftk ) {
-			bp_forums_new_topic( array(
-				'forum_id' => $forum_id,
-				'topic_title' => $sftk->topic_title,
-				'topic_slug' => $sftk->topic_slug,
-				'topic_poster' => $sftk->topic_poster,
-				'topic_poster_name' => $sftk->topic_poster_name,
-				'topic_last_poster' => $sftk->topic_last_poster,
-				'topic_last_poster_name' => $sftk->topic_last_poster_name,
-				'topic_start_time' => $sftk->topic_start_time,
-				'topic_time' => $sftk->topic_time,
-				'topic_text' => $sftk->post_text,
-			) );
-		}
-
 		// @todo - forum attachments
 	}
 
@@ -517,19 +478,37 @@ class Openlab_Clone_Course_Site {
 	protected function migrate_site_settings() {
 		global $wpdb;
 
+		$upload_dir = wp_upload_dir();
+
+		$source_site_upload_dir = $upload_dir['basedir'];
+		$dest_site_upload_dir   = str_replace( $this->source_site_id, $this->site_id, $source_site_upload_dir );
+		$source_site_url        = get_blog_option( $this->source_site_id, 'home' );
+		$dest_site_url          = get_blog_option( $this->site_id, 'home' );
+
 		switch_to_blog( $this->source_site_id );
 
 		// get all old options
 		$all_options = wp_load_alloptions();
 		$options = array();
 		foreach ( array_keys( $all_options ) as $key ) {
-			$options[ $key ] = get_option( $key );  // have to do this to deal with arrays
+			$option_value = get_option( $key ); // have to do this to deal with arrays
+			$options[ $key ] = $option_value;
 		}
 
 		// theme mods -- don't show up in all_options.
 		// Only add options for the current theme
 		$theme = get_option( 'current_theme' );
 		$mods = get_option( 'mods_' . $theme );
+		$mods = map_deep(
+			$mods,
+			function( $v ) use ( $source_site_url, $source_site_upload_dir, $dest_site_url, $dest_site_upload_dir ) {
+				return str_replace(
+					array( $source_site_url, $source_site_upload_dir ),
+					array( $dest_site_url, $dest_site_upload_dir ),
+					$v
+				);
+			}
+		);
 
 		$preserve_option = array(
 			'siteurl',
@@ -547,6 +526,17 @@ class Openlab_Clone_Course_Site {
 		switch_to_blog( $this->site_id );
 		foreach ( $options as $key => $value ) {
 			if ( ! in_array( $key, $preserve_option ) ) {
+				$value = map_deep(
+					$value,
+					function( $v ) use ( $source_site_url, $source_site_upload_dir, $dest_site_url, $dest_site_upload_dir ) {
+						return str_replace(
+							array( $source_site_url, $source_site_upload_dir ),
+							array( $dest_site_url, $dest_site_upload_dir ),
+							$v
+						);
+					}
+				);
+
 				update_option( $key, $value );
 			}
 		}

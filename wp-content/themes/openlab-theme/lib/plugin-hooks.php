@@ -204,7 +204,7 @@ add_filter( 'bbp_get_user_subscribe_link', 'openlab_style_bbp_subscribe_link', 1
  * bbPress maps everything onto Participant. We don't want to have to use that.
  */
 function openlab_bbp_map_group_forum_meta_caps( $caps = array(), $cap = '', $user_id = 0, $args = array() ) {
-	if ( ! bp_is_group() ) {
+	if ( ! function_exists( 'bp_is_group' ) || ! bp_is_group() ) {
 		return $caps;
 	}
 	switch ( $cap ) {
@@ -413,7 +413,9 @@ function openlab_prevent_bbpress_from_recalculating_group_root_reply_count( $id 
 		return $id;
 	}
 
+	// phpcs:disable
 	$db = debug_backtrace();
+	// phpcs:enable
 	$caller = '';
 	foreach ( $db as $key => $step ) {
 		if ( ! empty( $step['function'] ) && 'bbp_get_forum_id' === $step['function'] ) {
@@ -453,7 +455,9 @@ function openlab_remove_bbpress_forum_title( $title ) {
 	// Pretty cool technique.
 	$is_display_forums = false;
 	$is_single_forum_template = false;
+	// phpcs:disable
 	foreach ( debug_backtrace() as $db ) {
+	// phpcs:enable
 		if ( ! empty( $db['class'] ) && 'BBP_Forums_Group_Extension' === $db['class'] && ! empty( $db['function'] ) && 'display_forums' === $db['function'] ) {
 			$is_display_forums = true;
 		}

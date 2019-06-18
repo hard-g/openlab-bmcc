@@ -283,6 +283,15 @@ class BP_Legacy extends BP_Theme_Compat {
 		}
 
 		/**
+		 * Filters whether directory filter settings ('scope', etc) should be stored in a persistent cookie.
+		 *
+		 * @since 4.0.0
+		 *
+		 * @param bool $store_filter_settings Whether to store settings. Defaults to true for logged-in users.
+		 */
+		$store_filter_settings = apply_filters( 'bp_legacy_store_filter_settings', is_user_logged_in() );
+
+		/**
 		 * Filters core JavaScript strings for internationalization before AJAX usage.
 		 *
 		 * @since 2.0.0
@@ -290,6 +299,7 @@ class BP_Legacy extends BP_Theme_Compat {
 		 * @param array $value Array of key/value pairs for AJAX usage.
 		 */
 		$params = apply_filters( 'bp_core_get_js_strings', array(
+			// Strings for display.
 			'accepted'            => __( 'Accepted', 'buddypress' ),
 			'close'               => __( 'Close', 'buddypress' ),
 			'comments'            => __( 'comments', 'buddypress' ),
@@ -303,6 +313,9 @@ class BP_Legacy extends BP_Theme_Compat {
 			'show_x_comments'     => __( 'Show all comments (%d)', 'buddypress' ),
 			'unsaved_changes'     => __( 'Your profile has unsaved changes. If you leave the page, the changes will be lost.', 'buddypress' ),
 			'view'                => __( 'View', 'buddypress' ),
+
+			// Settings.
+			'store_filter_settings' => $store_filter_settings,
 		) );
 		wp_localize_script( $asset['handle'], 'BP_DTheme', $params );
 
@@ -1623,14 +1636,22 @@ function bp_legacy_theme_ajax_messages_send_reply() {
 
 	check_ajax_referer( 'messages_send_message' );
 
-	$result = messages_new_message( array( 'thread_id' => (int) $_REQUEST['thread_id'], 'content' => $_REQUEST['content'] ) );
+	$thread_id = (int) $_POST['thread_id'];
+
+	// Cannot respond to a thread you're not already a recipient on.
+	if ( ! bp_current_user_can( 'bp_moderate' ) && ( ! messages_is_valid_thread( $thread_id ) || ! messages_check_thread_access( $thread_id ) ) ) {
+		echo "-1<div id='message' class='error'><p>" . __( 'There was a problem sending that reply. Please try again.', 'buddypress' ) . '</p></div>';
+		die;
+	}
+
+	$result = messages_new_message( array( 'thread_id' => $thread_id, 'content' => $_REQUEST['content'] ) );
 
 	if ( !empty( $result ) ) {
 
 		// Pretend we're in the message loop.
 		global $thread_template;
 
-		bp_thread_has_messages( array( 'thread_id' => (int) $_REQUEST['thread_id'] ) );
+		bp_thread_has_messages( array( 'thread_id' => $thread_id ) );
 
 		// Set the current message to the 2nd last.
 		$thread_template->message = end( $thread_template->thread->messages );
