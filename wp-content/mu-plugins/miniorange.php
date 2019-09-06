@@ -24,7 +24,7 @@ add_action( 'init', function() {
 add_filter(
 	'login_url',
 	function( $login_url, $redirect, $force_reauth ) {
-		if ( 1 === get_current_blog_id ) {
+		if ( 1 === get_current_blog_id() ) {
 			return $login_url;
 		}
 
