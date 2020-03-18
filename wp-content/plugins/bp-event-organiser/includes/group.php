@@ -157,6 +157,10 @@ function bpeo_filter_query_for_bp_group( $query ) {
 
 	// Convert group IDs to a tax query.
 	$tq = $query->get( 'tax_query' );
+	if ( '' === $tq ) {
+		$tq = array();
+	}
+
 	$group_terms = array();
 	foreach ( $group_ids as $group_id ) {
 		$group_terms[] = 'group_' . $group_id;
@@ -328,6 +332,30 @@ function bpeo_group_event_meta_cap( $caps, $cap, $user_id, $args ) {
 				if ( is_super_admin() || $can_access ) {
 					$caps = array( 'read' );
 				}
+			}
+
+			break;
+
+		/*
+		 * Give group members access to private events in their private groups. Ugh.
+		 */
+		case 'read_private_events' :
+			if ( ! bp_is_group() ) {
+				return $caps;
+			}
+
+			$can_access = false;
+			$group = groups_get_current_group();
+
+			if ( isset( buddypress()->groups->current_group->is_user_member ) ) {
+				$can_access = buddypress()->groups->current_group->is_user_member;
+
+			} elseif ( groups_is_user_member( bp_loggedin_user_id(), $group->id ) ) {
+				$can_access = true;
+			}
+
+			if ( is_super_admin() || $can_access ) {
+				$caps = array( 'read' );
 			}
 
 			break;
@@ -970,7 +998,14 @@ function bpeo_ges_add_ical_link( $content, $activity ) {
 		return $content;
 	}
 
-	$ical_link = __( 'Download iCalendar file:', 'bp-event-organiser' );
+	$ical_link = '';
+
+	// Add spacing in email for BuddyPress 3.0+.
+	if ( function_exists( 'bp_check_theme_template_pack_dependency' ) ) {
+		$ical_link .= "\n\n";
+	}
+
+	$ical_link .= __( 'Download iCalendar file:', 'bp-event-organiser' );
 	$ical_link .= "\n";
 
 	if ( ! empty( $activity->hide_sidewide ) ) {
