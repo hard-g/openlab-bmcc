@@ -267,3 +267,15 @@ add_filter(
 	10,
 	2
 );
+
+/**
+ * Filter Reply-To on WP emails.
+ */
+add_filter(
+	'wp_mail',
+	function( $args ) {
+		$args['headers'][] = 'Reply-To: ' . 'no-reply@bmcc.cuny.edu';
+
+		return $args;
+	}
+);
