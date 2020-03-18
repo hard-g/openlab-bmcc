@@ -19,6 +19,8 @@
  */
 
 require __DIR__ . '/env.php';
+if ( WP_DEBUG ) {
+}
 
 /** Database Charset to use in creating database tables. */
 define('DB_CHARSET', 'utf8');
