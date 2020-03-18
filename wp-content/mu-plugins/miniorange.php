@@ -250,3 +250,20 @@ add_action(
 		$wpdb->query( $wpdb->prepare( "DELETE FROM {$wpdb->signups} WHERE user_email = %s", $user->user_email ) );
 	}
 );
+
+/**
+ * Filter Reply-To on BP emails.
+ */
+add_filter(
+	'bp_email_validate',
+	function( $retval, $email ) {
+		$email->set_reply_to( '' );
+		$email->set_headers( [
+			'Reply-To' => 'no-reply@bmcc.cuny.edu',
+		] );
+
+		return $retval;
+	},
+	10,
+	2
+);
