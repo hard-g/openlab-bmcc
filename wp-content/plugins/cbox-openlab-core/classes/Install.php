@@ -35,9 +35,11 @@ class Install {
 	 */
 	public function install() {
 		// If safe mode isn't on, then let's set the execution time to unlimited.
+		// phpcs:disable
 		if ( ! ini_get( 'safe_mode' ) ) {
 			set_time_limit( 0 );
 		}
+		// phpcs:enable
 
 		$this->install_default_member_types();
 		$this->install_default_group_types();
@@ -911,7 +913,7 @@ class Install {
 			);
 
 			/* translators: link to Customizer */
-			$welcome_text = sprintf( __( 'Modify the text of this and other widgets using the <a href="%s">Customizer</a>.', 'openlab-theme' ), get_admin_url( cbox_get_main_site_id(), 'customize.php?autofocus[section]=sidebar-widgets-footer' ) );
+			$welcome_text = sprintf( __( 'Modify the text of this and other widgets using the <a href="%s">Customizer</a>.', 'openlab-theme' ), get_admin_url( cboxol_get_main_site_id(), 'customize.php?autofocus[section]=sidebar-widgets-footer' ) );
 
 			CBox_Widget_Setter::set_widget(
 				array(

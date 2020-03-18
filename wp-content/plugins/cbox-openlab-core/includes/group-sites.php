@@ -1393,7 +1393,7 @@ function cboxol_copy_blog_page( $group_id ) {
 
 	$msg = '';
 	if ( ! $src_id ) {
-		$msg = __( 'Select a source blog.' );
+		$msg = __( 'Select a source blog.', 'cbox-openlab-core' );
 	}
 
 	if ( $msg ) {
@@ -1412,11 +1412,16 @@ function cboxol_copy_blog_page( $group_id ) {
 
 	cboxol_set_group_site_id( $group_id, $id );
 
-	$content_mail = sprintf( __( "New site created by %1$1s\n\nAddress: http://%2$2s\nName: %3$3s" ), $current_user->user_login, $validate['domain'] . $validate['path'], stripslashes( $validate['blog_title'] ) );
+	$content_mail = sprintf( __( "New site created by %1$1s\n\nAddress: http://%2$2s\nName: %3$3s", 'cbox-openlab-core' ), $current_user->user_login, $validate['domain'] . $validate['path'], stripslashes( $validate['blog_title'] ) );
 
-	wp_mail( get_site_option( 'admin_email' ), sprintf( __( '[%s] New Blog Created' ), $current_site->site_name ), $content_mail, 'From: "Site Admin" <' . get_site_option( 'admin_email' ) . '>' );
+	wp_mail(
+		get_site_option( 'admin_email' ),
+		sprintf( __( '[%s] New Blog Created', 'cbox-openlab-core' ), $current_site->site_name ),
+		$content_mail,
+		'From: "Site Admin" <' . get_site_option( 'admin_email' ) . '>'
+	);
 
-	$msg = __( 'Site Created' );
+	$msg = __( 'Site Created', 'cbox-openlab-core' );
 	// now copy
 	$blogtables = $wpdb->base_prefix . $src_id . '_';
 	$newtables = $wpdb->base_prefix . $new_id . '_';
@@ -1478,8 +1483,11 @@ function cboxol_copy_blog_page( $group_id ) {
 				}
 			}
 
+			$source_site_upload_dir = $upload_dir['basedir'];
+			$dest_site_upload_dir   = str_replace( $src_id, $new_id, $source_site_upload_dir );
+
 			// Copy uploaded files.
-			cboxol_copyr( str_replace( $new_id, $src_id, $upload_dir['basedir'] ), $upload_dir['basedir'] );
+			cboxol_copyr( $source_site_upload_dir, $dest_site_upload_dir );
 
 			// update options
 			$skip_options = array(
@@ -1507,14 +1515,28 @@ function cboxol_copy_blog_page( $group_id ) {
 			if ( $options ) {
 				switch_to_blog( $new_id );
 
+				$source_site_url = get_blog_option( $src_id, 'home' );
+				$dest_site_url   = get_blog_option( $new_id, 'home' );
+
 				foreach ( $options as $o ) {
 					if ( ! in_array( $o->option_name, $skip_options ) && substr( $o->option_name, 0, 6 ) != '_trans' ) {
-						update_option( $o->option_name, maybe_unserialize( $o->option_value ) );
+						$value = maybe_unserialize( $o->option_value );
+						$value = map_deep(
+							maybe_unserialize( $o->option_value ),
+							function( $v ) use ( $source_site_url, $source_site_upload_dir, $dest_site_url, $dest_site_upload_dir ) {
+								return str_replace(
+									array( $source_site_url, $source_site_upload_dir ),
+									array( $dest_site_url, $dest_site_upload_dir ),
+									$v
+								);
+							}
+						);
+						update_option( $o->option_name, $value );
 					}
 				}
 
 				restore_current_blog();
-				$msg = __( 'Blog Copied' );
+				$msg = __( 'Blog Copied', 'cbox-openlab-core' );
 			}
 		}
 	}
@@ -1663,7 +1685,7 @@ function cboxol_blogname_is_illegal( $blogname ) {
  * @return array
  */
 function cboxol_add_links_to_nav_menu( $items ) {
-	if ( get_current_blog_id() === cbox_get_main_site_id() ) {
+	if ( get_current_blog_id() === cboxol_get_main_site_id() ) {
 		return $items;
 	}
 
