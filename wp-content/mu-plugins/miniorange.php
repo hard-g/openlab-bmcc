@@ -106,9 +106,11 @@ function openlabbmcc_get_saml_signup( $key ) {
 		$now  = time();
 		$then = mysql2date( 'U', $_signup->registered );
 
-		if ( ( $now - $then ) <= ( 10 * MINUTE_IN_SECONDS ) ) {
+//		if ( ( $now - $then ) <= ( 10 * MINUTE_IN_SECONDS ) ) {
 			$signup = $_signup;
-		}
+//		} else {
+//			BP_Signup::delete( [ $_signup->id ] );
+//		}
 	}
 
 	return $signup;
