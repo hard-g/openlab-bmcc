@@ -3,9 +3,9 @@
 /**
  * Plugin Name: PDF Embedder
  * Plugin URI: http://wp-pdf.com/
- * Description: Embed PDFs straight into your posts and pages, with flexible width and height. No third-party services required.
- * Version: 3.1.8
- * Author: Dan Lester
+ * Description: Embed PDFs straight into your posts and pages, with flexible width and height. No third-party services required. Compatible with Gutenberg Editor WordPress
+ * Version: 4.4
+ * Author: Lever Technology LLC
  * Author URI: http://wp-pdf.com/
  * License: GPL3
  * Text Domain: pdf-embedder
@@ -15,7 +15,7 @@ require_once( plugin_dir_path(__FILE__).'/core/core_pdf_embedder.php' );
 
 class pdfemb_basic_pdf_embedder extends core_pdf_embedder {
 
-	protected $PLUGIN_VERSION = '3.1.8';
+	protected $PLUGIN_VERSION = '4.4';
 	
 	// Singleton
 	private static $instance = null;
@@ -29,7 +29,7 @@ class pdfemb_basic_pdf_embedder extends core_pdf_embedder {
 	
 	// Basic specific
 
-    protected static $poweredby_optionname='pdfemb_poweredby';
+    protected static $poweredby_optionname='poweredby';
 
     public function pdfemb_activation_hook($network_wide) {
         parent::pdfemb_activation_hook($network_wide);
@@ -38,7 +38,7 @@ class pdfemb_basic_pdf_embedder extends core_pdf_embedder {
         $old_options = get_site_option($this->get_options_name());
 
         if (!$old_options) {
-            update_site_option(self::$poweredby_optionname, true);
+            update_site_option(self::$poweredby_optionname, 'off');
         }
     }
 
@@ -181,8 +181,9 @@ class pdfemb_basic_pdf_embedder extends core_pdf_embedder {
 	}
 
 	protected function get_translation_array() {
-		return array_merge(parent::get_translation_array(),
-				Array('poweredby' => get_site_option(self::$poweredby_optionname, false)));
+		return array_merge(parent::get_translation_array()
+			// ,Array('poweredby' => get_site_option(self::$poweredby_optionname, false))
+		);
 	}
 
 	public function pdfemb_attachment_fields_to_edit($form_fields, $post) {

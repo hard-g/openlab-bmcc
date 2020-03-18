@@ -1,9 +1,9 @@
-=== PDF Embedder ===
-Contributors: levertechadmin, danlester
+﻿=== PDF Embedder ===
+Contributors: levertechadmin
 Tags: doc, pdf, pdf viewer, office, google, document, embed, intranet
 Requires at least: 3.5
-Tested up to: 4.9
-Stable tag: 3.1.8
+Tested up to: 5.2.2
+Stable tag: 4.4
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -31,7 +31,7 @@ Once installed and Activated, click Add Media from any page or post, just like a
 
 When you insert into your post, it will appear in the editor as a 'shortcode' as follows:
 
-[pdf-embedder url="https://mysite.com/wp-content/uploads/2015/01/Plan-Summary.pdf"]
+[pdf-embedder url='https://mysite.com/wp-content/uploads/2015/01/Plan-Summary.pdf']
 
 You can change the default appearance - e.g. width, and toolbar position/appearance through **Settings -> PDF Embedder**.
 
@@ -203,6 +203,34 @@ the Plugins section of your Wordpress admin
 
 == Changelog ==
 
+= 4.4 =
+
+Fixed code for policy compatibility
+
+= 4.3 =
+
+Fixed Scrollbar issues with Firefox and iOS devices. Improved compatibility
+
+= 4.2 =
+
+Fixed script problem on some Gutenberg editor installations. Improved compatibility
+
+= 4.1 =
+
+Added compatibility for Wordpress 5.2.1
+
+= 4.0 =
+
+Fixed general bug & added compatibility
+
+= 3.2.1 =
+
+Added compatibility for WordPress 5.2.1
+
+= 3.2 =
+
+Added compatibility with Gutenberg Editor
+
 = 3.1.8 =
 
 Updated version of underlying pdf.js library, fixes some rendering bugs.
@@ -219,7 +247,7 @@ When scrollbars are always visible, no longer cuts off edge of PDF underneath.
 
 Ready for compatibility with WordPress 4.8.
 
-New mouse wheel scrolling in Firefox wasn't working with some themes.
+New mouse wheel scrolling in Firefox wasn’t working with some themes.
 
 Latest version of pdf.js library, and newest code bringing the free version into line with the premium versions.
 
@@ -233,8 +261,6 @@ Improved responsiveness and redraw of pages.
 
 Plugin now respects the SCRIPT_DEBUG flag in wp-config.php and displays non-minified versions of the JS files if this is set to true.
 Helps debugging any issues.
-
-Added NL language.
 
 = 2.8.2 =
 
