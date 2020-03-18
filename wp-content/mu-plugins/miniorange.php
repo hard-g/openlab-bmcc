@@ -2,6 +2,7 @@
 
 // For testing only.
 add_action( 'init', function() {
+	return;
 	if ( empty( $_GET['saml_test'] ) ) {
 		return;
 	}
@@ -18,6 +19,52 @@ add_action( 'init', function() {
 	mo_saml_login_user( $user_email, $first_name, $last_name, $user_name, [], '', '', '', 'email', '12345', $user_name );
 	die;
 } );
+
+// Force all sites to redirect via the main site.
+add_filter(
+	'login_url',
+	function( $login_url, $redirect, $force_reauth ) {
+		if ( 1 === get_current_blog_id() ) {
+			return $login_url;
+		}
+
+		$login_url = get_site_url( 1, 'wp-login.php', 'login' );
+
+		if ( $redirect ) {
+			$login_url = add_query_arg( 'redirect_to', urlencode( $redirect ), $login_url );
+		}
+
+		if ( $force_reauth ) {
+			$login_url = add_query_arg( 'reauth', '1', $login_url );
+		}
+
+		return $login_url;
+	},
+	10,
+	3
+);
+
+add_action(
+	'login_init',
+	function() {
+		if ( 1 === get_current_blog_id() ) {
+			return;
+		}
+
+		if ( isset( $_GET['saml_sso'] ) && 'false' === $_GET['saml_sso'] ) {
+			return;
+		}
+
+		$login_url = get_site_url( 1, 'wp-login.php', 'login' );
+
+		if ( isset( $_GET['redirect_to'] ) ) {
+			$redirect_to = urldecode( $_GET['redirect_to'] );
+			$login_url   = add_query_arg( 'redirect_to', urlencode( $redirect ), $login_url );
+		}
+
+		wp_safe_redirect( $login_url );
+	}
+);
 
 add_filter( 'pre_option_mo_saml_admin_email', function() {
 	return 'admin@openlab.citytech.cuny.edu';
