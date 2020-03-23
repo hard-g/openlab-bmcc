@@ -276,7 +276,14 @@ add_filter(
 add_filter(
 	'wp_mail',
 	function( $args ) {
-		$args['headers'][] = 'Reply-To: ' . 'no-reply@bmcc.cuny.edu';
+		$headers = $args['headers'];
+		if ( ! is_array( $headers ) ) {
+			$headers = (array) $headers;
+		}
+
+		$headers[] = 'Reply-To: ' . 'no-reply@bmcc.cuny.edu';
+
+		$args['headers'] = $headers;
 
 		return $args;
 	}
