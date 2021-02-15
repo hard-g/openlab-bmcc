@@ -8,9 +8,9 @@ class Mappress_Options extends Mappress_Obj {
 		$autoupdate,
 		$apiKey,
 		$apiKeyServer,
-		$apiToken,
-		$autodisplay = 'top',
+		$autodisplay,
 		$betas,
+		$clustering = false,
 		$country,
 		$css = true,
 		$defaultIcon,
@@ -20,6 +20,9 @@ class Mappress_Options extends Mappress_Obj {
 		$engine = 'leaflet',
 		$filter,
 		$footer = true,
+		$geocoder,
+		$highlight,
+		$highlightIcon,
 		$iconScale,
 		$initialOpenInfo,
 		$iwType = 'iw',
@@ -27,11 +30,13 @@ class Mappress_Options extends Mappress_Obj {
 		$layout = 'left',
 		$license,
 		$mapbox,
+		$mapboxStyles = array(),
 		$mashupBody = 'poi',
 		$mashupClick = 'poi',
-		$maxPois = 0,
+		$mashupKml,
 		$metaKeys = array(),
 		$metaSyncSave = true,
+		$mini = 400,
 		$poiList = false,
 		$poiZoom = 15,
 		$postTypes = array('post', 'page'),
@@ -46,7 +51,8 @@ class Mappress_Options extends Mappress_Obj {
 		$thumbSize,
 		$thumbWidth = 64,
 		$thumbHeight = 64,
-		$tiles = 'google'
+		$tooltips = false,
+		$wpml = true
 		;
 
 	function __construct($options = '') {
@@ -83,12 +89,13 @@ class Mappress_Settings {
 		$this->add_section('demo', __('Sample Map', 'mappress-google-maps-for-wordpress'));
 
 		$this->add_section('basic', __('Basic Settings', 'mappress-google-maps-for-wordpress'));
-		$this->add_field('engine', __('Mapping Engine', 'mappress-google-maps-for-wordpress'), 'basic');
+		$this->add_field('engine', __('Mapping API', 'mappress-google-maps-for-wordpress'), 'basic');
+
+		if ($this->options->engine == 'google')
+			$this->add_field('apiKey', __('Google API key', 'mappress-google-maps-for-wordpress'), 'basic');
 
 		if ($this->options->engine == 'leaflet')
-			$this->add_field('mapbox', __('MapBox access token', 'mappress-google-maps-for-wordpress'), 'basic');
-		else
-			$this->add_field('apiKey', __('Google API key', 'mappress-google-maps-for-wordpress'), 'basic');
+			$this->add_field('mapbox', __('Mapbox access token', 'mappress-google-maps-for-wordpress'), 'basic');
 
 		// License: single blogs, or main blog on multisite
 		if (Mappress::$pro && (!is_multisite() || (is_super_admin() && is_main_site())) )
@@ -99,30 +106,33 @@ class Mappress_Settings {
 		$this->add_field('autodisplay', __('Automatic display', 'mappress-google-maps-for-wordpress'), 'maps');
 		$this->add_field('alignment', __('Map alignment', 'mappress-google-maps-for-wordpress'), 'maps');
 		$this->add_field('directions', __('Directions', 'mappress-google-maps-for-wordpress'), 'maps');
+		// TBD $this->add_field('mapOptions', __('Map options'), 'maps');
 
 		$this->add_section('pois', __('POI Settings', 'mappress-google-maps-for-wordpress'));
 		$this->add_field('poiZoom', __('Default zoom', 'mappress-google-maps-for-wordpress'), 'pois');
 		$this->add_field('initialOpenInfo', __('Open first POI', 'mappress-google-maps-for-wordpress'), 'pois');
+		// TBD $this->add_field('tooltips', __('Tooltips'), 'pois');
 
 		if (Mappress::$pro) {
 			$this->add_section('mashups', __('Mashups', 'mappress-google-maps-for-wordpress'));
 			$this->add_section('icons', __('Icons', 'mappress-google-maps-for-wordpress'));
-			if ($this->options->engine != 'leaflet')
 				$this->add_section('styles', __('Styled Maps', 'mappress-google-maps-for-wordpress'));
 			$this->add_section('geocoding', __('Geocoding', 'mappress-google-maps-for-wordpress'));
 			$this->add_section('templates', __('Templates', 'mappress-google-maps-for-wordpress'));
 		}
 
 		$this->add_section('l10n', __('Localization', 'mappress-google-maps-for-wordpress'));
-		$this->add_field('language', __('Language', 'mappress-google-maps-for-wordpress'), 'l10n');
-		$this->add_field('country', __('Country', 'mappress-google-maps-for-wordpress'), 'l10n');
+		$this->add_field('language', __('Search language', 'mappress-google-maps-for-wordpress'), 'l10n');
+		$this->add_field('country', __('Search country', 'mappress-google-maps-for-wordpress'), 'l10n');
 		$this->add_field('directionsServer', __('Directions server', 'mappress-google-maps-for-wordpress'), 'l10n');
 
 		$this->add_section('misc', __('Miscellaneous', 'mappress-google-maps-for-wordpress'));
+		$this->add_field('sizes', __('Map sizes', 'mappress-google-maps-for-wordpress'), 'misc');
+		$this->add_field('footer', __('Scripts', 'mappress-google-maps-for-wordpress'), 'misc');
+		$this->add_field('wpml', 'WPML', 'misc');
+
 		if ($this->options->engine != 'leaflet')
 			$this->add_field('deregister', __('Compatiblity', 'mappress-google-maps-for-wordpress'), 'misc');
-		$this->add_field('footer', __('Scripts', 'mappress-google-maps-for-wordpress'), 'misc');
-		$this->add_field('sizes', __('Map sizes', 'mappress-google-maps-for-wordpress'), 'misc');
 	}
 
 	function add_section($section, $title) {
@@ -146,20 +156,6 @@ class Mappress_Settings {
 		foreach(array('apiKey', 'apiKeyServer') as $key) {
 			if (isset($input[$key]))
 				$input[$key] = trim($input[$key]);
-		}
-
-		// Sizes
-		foreach( $input['sizes'] as &$size ) {
-			// Strip 'px' from value but allow '%'.  also, % min/max = 5%/100%, px min/max = 200/2048
-			if (strpos($size['width'], '%'))
-				$size['width'] = max(5, min(100, (int) $size['width'])) . '%';
-			else
-				$size['width'] = max(200, min(2048, (int) $size['width']));
-
-			if (strpos($size['height'], '%'))
-				$size['height'] = max(5, min(100, (int) $size['height'])) . '%';
-			else
-				$size['height'] = max(200, min(2048, (int) $size['height']));
 		}
 
 		// If NO post types selected, set value to empty array
@@ -189,25 +185,26 @@ class Mappress_Settings {
 	}
 
 	function set_api_key($name) {
-		// Google API key; show as hidden field if using leaflet
-		$type = ($this->options->engine == 'leaflet') ? 'hidden' : 'text';
-		echo Mappress_Controls::input($name, $this->options->apiKey, array('type' => $type, 'size' => '50'));
-		echo Mappress_Controls::help('', '#toc-google-maps-api-keys');
+		echo Mappress_Controls::input($name, $this->options->apiKey, array('size' => '50'));
+		echo Mappress_Controls::help('', 'https://mappresspro.com/mappress-faq/#toc-google-maps-api-keys');
 	}
 
 	function set_autodisplay($name) {
 		$autos = array(
+			'' => __('None', 'mappress-google-maps-for-wordpress'),
 			'top' => __('Top of post', 'mappress-google-maps-for-wordpress'),
-			'bottom' => __('Bottom of post', 'mappress-google-maps-for-wordpress'),
-			'none' => __('None', 'mappress-google-maps-for-wordpress')
+			'bottom' => __('Bottom of post', 'mappress-google-maps-for-wordpress')
 		);
 		echo Mappress_Controls::radios($name, $autos, $this->options->autodisplay);
 	}
 
 	function set_country($name) {
-		$url = ($this->options->engine == 'leaflet') ? 'https://en.wikipedia.org/wiki/ISO_3166-1#Officially_assigned_code_elements' : 'http://en.wikipedia.org/wiki/CcTLD#List_of_ccTLDs';
+		$url = 'https://en.wikipedia.org/wiki/ISO_3166-1#Officially_assigned_code_elements';
 		$link = sprintf('<a style="vertical-align:text-bottom" target="_blank" href="%s">%s</a>', $url, __("(list)", 'mappress-google-maps-for-wordpress'));
-		echo Mappress_Controls::input($name, $this->options->country, array('size' => 2));
+		$codes = array('', 'AF' ,'AX' ,'AL' ,'DZ' ,'AS' ,'AD' ,'AO' ,'AI' ,'AQ' ,'AG' ,'AR' ,'AM' ,'AW' ,'AU' ,'AT' ,'AZ' ,'BS' ,'BH' ,'BD' ,'BB' ,'BY' ,'BE' ,'BZ' ,'BJ' ,'BM' ,'BT' ,'BO' ,'BQ' ,'BA' ,'BW' ,'BV' ,'BR' ,'IO' ,'VG' ,'BN' ,'BG' ,'BF' ,'BI' ,'KH' ,'CM' ,'CA' ,'CV' ,'KY' ,'CF' ,'TD' ,'CL' ,'CN' ,'CX' ,'CC' ,'CO' ,'KM' ,'CK' ,'CR' ,'HR' ,'CU' ,'CW' ,'CY' ,'CZ' ,'CD' ,'DK' ,'DJ' ,'DM' ,'DO' ,'EC' ,'EG' ,'SV' ,'GQ' ,'ER' ,'EE' ,'ET' ,'FK' ,'FO' ,'FJ' ,'FI' ,'FR' ,'GF' ,'PF' ,'TF' ,'GA' ,'GM' ,'GE' ,'DE' ,'GH' ,'GI' ,'GR' ,'GL' ,'GD' ,'GP' ,'GU' ,'GT' ,'GG' ,'GN' ,'GW' ,'GY' ,'HT' ,'HM' ,'HN' ,'HK' ,'HU' ,'IS' ,'IN' ,'ID' ,'IR' ,'IQ' ,'IE' ,'IM' ,'IL' ,'IT' ,'CI' ,'JM' ,'JP' ,'JE' ,'JO' ,'KZ' ,'KE' ,'KI' ,'XK' ,'KW' ,'KG' ,'LA' ,'LV' ,'LB' ,'LS' ,'LR' ,'LY' ,'LI' ,'LT' ,'LU' ,'MO' ,'MK' ,'MG' ,'MW' ,'MY' ,'MV' ,'ML' ,'MT' ,'MH' ,'MQ' ,'MR' ,'MU' ,'YT' ,'MX' ,'FM' ,'MD' ,'MC' ,'MN' ,'ME' ,'MS' ,'MA' ,'MZ' ,'MM' ,'NA' ,'NR' ,'NP' ,'NL' ,'AN' ,'NC' ,'NZ' ,'NI' ,'NE' ,'NG' ,'NU' ,'NF' ,'KP' ,'MP' ,'NO' ,'OM' ,'PK' ,'PW' ,'PS' ,'PA' ,'PG' ,'PY' ,'PE' ,'PH' ,'PN' ,'PL' ,'PT' ,'PR' ,'QA' ,'CG' ,'RE' ,'RO' ,'RU' ,'RW' ,'BL' ,'SH' ,'KN' ,'LC' ,'MF' ,'PM' ,'VC' ,'WS' ,'SM' ,'ST' ,'SA' ,'SN' ,'RS' ,'SC' ,'SL' ,'SG' ,'SX' ,'SK' ,'SI' ,'SB' ,'SO' ,'ZA' ,'GS' ,'KR' ,'SS' ,'ES' ,'LK' ,'SD' ,'SR' ,'SJ' ,'SZ' ,'SE' ,'CH' ,'SY' ,'TW' ,'TJ' ,'TZ' ,'TH' ,'TL' ,'TG' ,'TK' ,'TO' ,'TT' ,'TN' ,'TR' ,'TM' ,'TC' ,'TV' ,'VI' ,'UG' ,'UA' ,'AE' ,'GB' ,'US' ,'UM' ,'UY' ,'UZ' ,'VU' ,'VA' ,'VE' ,'VN' ,'WF' ,'EH' ,'YE' ,'ZM' ,'ZW');
+		sort($codes);
+		$codes = array_combine($codes, $codes);
+		echo Mappress_Controls::select($name, $codes, $this->options->country);
 		echo ' ' . __("Country code for searches", 'mappress-google-maps-for-wordpress') . ' ' . $link;
 	}
 
@@ -227,7 +224,7 @@ class Mappress_Settings {
 	function set_engine($name) {
 		$engines = array('leaflet' => __('Leaflet', 'mappress-google-maps-for-wordpress'), 'google' => __('Google', 'mappress-google-maps-for-wordpress'));
 		echo Mappress_Controls::radios($name, $engines, $this->options->engine);
-		echo Mappress_Controls::help(__('Leaflet is free and requires no API key.  Google requires an API key and has strict usage limits.', 'mappress-google-maps-for-wordpress'), '#toc-picking-a-mapping-engine');
+		echo Mappress_Controls::help(__('Leaflet is free and requires no API key.  Google requires an API key and has strict usage limits.', 'mappress-google-maps-for-wordpress'), '#toc-picking-a-mapping-api');
 	}
 
 	function set_footer($name) {
@@ -246,15 +243,37 @@ class Mappress_Settings {
 	}
 
 	function set_language($name) {
-		$url = ($this->options->engine == 'leaflet') ? 'https://en.wikipedia.org/wiki/ISO_3166-1#Officially_assigned_code_elements' : 'http://code.google.com/apis/maps/faq.html#languagesupport';
+		$url = ($this->options->engine == 'leaflet') ? 'https://en.wikipedia.org/wiki/ISO_639-1' : 'http://code.google.com/apis/maps/faq.html#languagesupport';
 		$lang_link = sprintf('<a style="vertical-align:text-bottom" target="_blank" href="%s">%s</a>', $url, __("(list)", 'mappress-google-maps-for-wordpress'));
-		echo Mappress_Controls::input($name, $this->options->language, array('size' => 2, 'maxlength' => 2));
-		echo ' ' . __('Language for map controls', 'mappress-google-maps-for-wordpress') . ' ' . $lang_link;
+		$langs = array('' => __('Default', 'mappress-google-maps-for-wordpress'), 'ab' => 'Abkhazian', 'aa' => 'Afar', 'af' => 'Afrikaans', 'ak' => 'Akan', 'sq' => 'Albanian', 'am' => 'Amharic', 'ar' => 'Arabic', 'an' => 'Aragonese', 'hy' => 'Armenian', 'as' => 'Assamese', 'av' => 'Avaric', 'ae' => 'Avestan', 'ay' => 'Aymara', 'az' => 'Azerbaijani', 'bm' => 'Bambara', 'ba' => 'Bashkir', 'eu' => 'Basque', 'be' => 'Belarusian', 'bn' => 'Bengali', 'bh' => 'Bihari languages', 'bi' => 'Bislama', 'bs' => 'Bosnian', 'br' => 'Breton', 'bg' => 'Bulgarian', 'my' => 'Burmese', 'ca' => 'Catalan, Valencian', 'km' => 'Central Khmer', 'ch' => 'Chamorro', 'ce' => 'Chechen', 'ny' => 'Chichewa, Chewa, Nyanja', 'zh' => 'Chinese', 'cv' => 'Chuvash', 'kw' => 'Cornish', 'co' => 'Corsican', 'cr' => 'Cree', 'hr' => 'Croatian', 'cs' => 'Czech', 'da' => 'Danish', 'dv' => 'Divehi, Dhivehi, Maldivian', 'nl' => 'Dutch, Flemish', 'dz' => 'Dzongkha', 'en' => 'English', 'eo' => 'Esperanto', 'et' => 'Estonian', 'ee' => 'Ewe', 'fo' => 'Faroese', 'fj' => 'Fijian', 'fi' => 'Finnish', 'fr' => 'French', 'ff' => 'Fulah', 'gd' => 'Gaelic, Scottish Gaelic', 'gl' => 'Galician', 'lg' => 'Ganda', 'ka' => 'Georgian', 'de' => 'German', 'ki' => 'Gikuyu, Kikuyu', 'el' => 'Greek (Modern)', 'kl' => 'Greenlandic, Kalaallisut', 'gn' => 'Guarani', 'gu' => 'Gujarati', 'ht' => 'Haitian, Haitian Creole', 'ha' => 'Hausa', 'he' => 'Hebrew', 'hz' => 'Herero', 'hi' => 'Hindi', 'ho' => 'Hiri Motu', 'hu' => 'Hungarian', 'is' => 'Icelandic', 'io' => 'Ido', 'ig' => 'Igbo', 'id' => 'Indonesian', 'iu' => 'Inuktitut', 'ik' => 'Inupiaq', 'ga' => 'Irish', 'it' => 'Italian', 'ja' => 'Japanese', 'jv' => 'Javanese', 'kn' => 'Kannada', 'kr' => 'Kanuri', 'ks' => 'Kashmiri', 'kk' => 'Kazakh', 'rw' => 'Kinyarwanda', 'kv' => 'Komi', 'kg' => 'Kongo', 'ko' => 'Korean', 'kj' => 'Kwanyama, Kuanyama', 'ku' => 'Kurdish', 'ky' => 'Kyrgyz', 'lo' => 'Lao', 'la' => 'Latin', 'lv' => 'Latvian', 'lb' => 'Letzeburgesch, Luxembourgish', 'li' => 'Limburgish, Limburgan, Limburger', 'ln' => 'Lingala', 'lt' => 'Lithuanian', 'lu' => 'Luba-Katanga', 'mk' => 'Macedonian', 'mg' => 'Malagasy', 'ms' => 'Malay', 'ml' => 'Malayalam', 'mt' => 'Maltese', 'gv' => 'Manx', 'mi' => 'Maori', 'mr' => 'Marathi', 'mh' => 'Marshallese', 'ro' => 'Moldovan, Moldavian, Romanian', 'mn' => 'Mongolian', 'na' => 'Nauru', 'nv' => 'Navajo, Navaho', 'nd' => 'Northern Ndebele', 'ng' => 'Ndonga', 'ne' => 'Nepali', 'se' => 'Northern Sami', 'no' => 'Norwegian', 'nb' => 'Norwegian Bokmål', 'nn' => 'Norwegian Nynorsk', 'ii' => 'Nuosu, Sichuan Yi', 'oc' => 'Occitan (post 1500)', 'oj' => 'Ojibwa', 'or' => 'Oriya', 'om' => 'Oromo', 'os' => 'Ossetian, Ossetic', 'pi' => 'Pali', 'pa' => 'Panjabi, Punjabi', 'ps' => 'Pashto, Pushto', 'fa' => 'Persian', 'pl' => 'Polish', 'pt' => 'Portuguese', 'qu' => 'Quechua', 'rm' => 'Romansh', 'rn' => 'Rundi', 'ru' => 'Russian', 'sm' => 'Samoan', 'sg' => 'Sango', 'sa' => 'Sanskrit', 'sc' => 'Sardinian', 'sr' => 'Serbian', 'sn' => 'Shona', 'sd' => 'Sindhi', 'si' => 'Sinhala, Sinhalese', 'sk' => 'Slovak', 'sl' => 'Slovenian', 'so' => 'Somali', 'st' => 'Sotho, Southern', 'nr' => 'South Ndebele', 'es' => 'Spanish, Castilian', 'su' => 'Sundanese', 'sw' => 'Swahili', 'ss' => 'Swati', 'sv' => 'Swedish', 'tl' => 'Tagalog', 'ty' => 'Tahitian', 'tg' => 'Tajik', 'ta' => 'Tamil', 'tt' => 'Tatar', 'te' => 'Telugu', 'th' => 'Thai', 'bo' => 'Tibetan', 'ti' => 'Tigrinya', 'to' => 'Tonga (Tonga Islands)', 'ts' => 'Tsonga', 'tn' => 'Tswana', 'tr' => 'Turkish', 'tk' => 'Turkmen', 'tw' => 'Twi', 'ug' => 'Uighur, Uyghur', 'uk' => 'Ukrainian', 'ur' => 'Urdu', 'uz' => 'Uzbek', 've' => 'Venda', 'vi' => 'Vietnamese', 'vo' => 'Volap_k', 'wa' => 'Walloon', 'cy' => 'Welsh', 'fy' => 'Western Frisian', 'wo' => 'Wolof', 'xh' => 'Xhosa', 'yi' => 'Yiddish', 'yo' => 'Yoruba', 'za' => 'Zhuang, Chuang', 'zu' => 'Zulu');
+		echo Mappress_Controls::select($name, $langs, $this->options->language);
+		echo ' ' . __('Language for searches and Google map controls', 'mappress-google-maps-for-wordpress') . ' ' . $lang_link;
 	}
 
 	function set_mapbox($name) {
-		echo Mappress_Controls::input($name, $this->options->mapbox, array('size' => '50', 'placeholder' => __('Enter token to use MapBox map tiles', 'mappress-google-maps-for-wordpress')));
+		echo Mappress_Controls::input($name, $this->options->mapbox, array('size' => '50', 'placeholder' => __('Enter token to use Mapbox map tiles', 'mappress-google-maps-for-wordpress')));
 		echo Mappress_Controls::help('', 'https://www.mapbox.com/help/define-access-token/');
+	}
+
+	function set_map_options($name) {
+		$labels = array(
+			'google' => array(
+				'mapTypeControl' => __('Map type control', 'mappress-google-maps-for-wordpress'),
+				'streetViewControl' => __("Street view control", 'mappress-google-maps-for-wordpress'),
+				'zoomControl' => __('Zoom control', 'mappress-google-maps-for-wordpress')
+			),
+			'leaflet' => array(
+				'mapTypeControl' => __('Map type control', 'mappress-google-maps-for-wordpress'),
+				'zoomControl' => __('Zoom control', 'mappress-google-maps-for-wordpress')
+			)
+		);
+
+		$mapOptions = $this->options->mapOptions;
+
+		foreach($labels[$this->options->engine] as $option => $label) {
+			$value = (isset($mapOptions->$option)) ? $mapOptions->$option : false;
+			echo Mappress_Controls::checkmark($name . "[$option]", $value, $label);
+		}
 	}
 
 	function set_poi_zoom($name) {
@@ -271,7 +290,7 @@ class Mappress_Settings {
 
 	function set_preview() {
 		$poi = new Mappress_Poi(array(
-			'correctedAddress' => 'San Francisco, CA',
+			'address' => 'San Francisco, CA',
 			"title" => "MapPress",
 			"body" => __("Easy Google Maps", 'mappress-google-maps-for-wordpress'),
 			"point" => array('lat' => 37.774095, 'lng' => -122.418731)
@@ -281,7 +300,7 @@ class Mappress_Settings {
 		echo "<table class='form-table'><tr><td>" . $map->display() . "</td></tr></table>";
 	}
 	function set_sizes($name) {
-		$headers = array(__('Width (px or %)', 'mappress-google-maps-for-wordpress'), __('Height (px)', 'mappress-google-maps-for-wordpress'), __('Default size', 'mappress-google-maps-for-wordpress'));
+		$headers = array(__('Width (px, %, vh, vw)', 'mappress-google-maps-for-wordpress'), __('Height (px, %, vh, vw)', 'mappress-google-maps-for-wordpress'), __('Default size', 'mappress-google-maps-for-wordpress'));
 		$rows = array();
 
 		foreach($this->options->sizes as $i => $size) {
@@ -295,12 +314,42 @@ class Mappress_Settings {
 		echo Mappress_Controls::table($headers, $rows);
 	}
 
+	function set_tooltips($name) {
+		echo Mappress_Controls::checkmark($name, $this->options->tooltips, __('Show a tooltip when mouse is over a POI', 'mappress-google-maps-for-wordpress'));
+	}
+
+
+	function set_wpml($name) {
+		echo Mappress_Controls::checkmark($name, $this->options->wpml, __("Copy maps when overwriting a translation", 'mappress-google-maps-for-wordpress'));
+		echo Mappress_Controls::help(null, 'https://mappresspro.com/mappress-documentation#wpml');
+	}
+
 	function options_page() {
 		?>
 		<div class="wrap mapp-settings-screen">
-			<h1><?php _e('MapPress', 'mappress-google-maps-for-wordpress'); ?></h1>
-			<?php echo Mappress::get_support_links(); ?>
+			<h1></h1><!-- dummy h1 because wP will attach admin notices to the first h1 on the page -->
+			<div class='mapp-settings-toolbar-top'>
+				<div class='mapp-settings-toolbar-top-header'>
+					<h1><?php _e('MapPress', 'mappress-google-maps-for-wordpress'); ?></h1>
+					<?php echo Mappress::$version; ?>
+				</div>
+				<div class='mapp-settings-toolbar-top-links'>
+					<a target='_blank' href='https://mappresspro.com/mappress/mappress-documentation'><?php _e('Get help', 'mappress-google-maps-for-wordpress');?></a>
+					<a target='_blank' href='https://mappresspro.com/whats-new/'><?php _e("What's new", 'mappress-google-maps-for-wordpress');?></a>
+					<?php if (Mappress::$pro) { ?>
+						<a target='_blank' href='https://mappresspro.com/account/' target='_blank'><?php _e("Your account", 'mappress-google-maps-for-wordpress');?></a>
+					<?php } else { ?>
+						<a class='button button-primary' href='https://mappresspro.com/mappress' target='_blank'><?php _e('Upgrade to MapPress Pro', 'mappress-google-maps-for-wordpress');?></a>
+					<?php } ?>
+				</div>
+			</div>
 				<form action="options.php" method="post">
+					<?php // Force default submit button ?>
+					<div class='mapp-settings-hidden-toolbar'>
+						<input name='save' type='submit' class='button button-primary' value='<?php _e("Save Changes", 'mappress-google-maps-for-wordpress'); ?>' />
+						<input name='reset_defaults' type='submit' class='button' value='<?php _e("Reset Defaults", 'mappress-google-maps-for-wordpress'); ?>' />
+					</div>
+
 					<?php settings_fields('mappress'); ?>
 					<?php do_settings_sections('mappress'); ?>
 
