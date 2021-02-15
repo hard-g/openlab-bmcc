@@ -2,15 +2,43 @@
 
 namespace WPMailSMTP;
 
+use WPMailSMTP\Tasks\Meta;
+
 /**
- * Class Migration helps migrate all plugin options saved into DB to a new storage location.
+ * Class Migration helps migrate plugin options, DB tables and more.
  *
- * @since 1.0.0
+ * @since 1.0.0 Migrate all plugin options saved from separate WP options into one.
+ * @since 2.1.0 Major overhaul of this class to use DB migrations (or any other migrations per version).
  */
 class Migration {
 
 	/**
+	 * Version of the latest migration.
+	 *
+	 * @since 2.1.0
+	 */
+	const VERSION = 2;
+
+	/**
+	 * Option key where we save the current migration version.
+	 *
+	 * @since 2.1.0
+	 */
+	const OPTION_NAME = 'wp_mail_smtp_migration_version';
+
+	/**
+	 * Current migration version, received from self::OPTION_NAME WP option
+	 *
+	 * @since 2.1.0
+	 *
+	 * @var int
+	 */
+	protected $cur_ver;
+
+	/**
 	 * All old values for pre 1.0 version of a plugin.
+	 *
+	 * @since 1.0.0
 	 *
 	 * @var array
 	 */
@@ -35,12 +63,16 @@ class Migration {
 	/**
 	 * Old values, taken from $old_keys options.
 	 *
+	 * @since 1.0.0
+	 *
 	 * @var array
 	 */
 	protected $old_values = array();
 
 	/**
 	 * Converted array of data from previous option values.
+	 *
+	 * @since 1.0.0
 	 *
 	 * @var array
 	 */
@@ -50,8 +82,107 @@ class Migration {
 	 * Migration constructor.
 	 *
 	 * @since 1.0.0
+	 * @since 2.1.0 Redefined constructor - major overhaul.
 	 */
 	public function __construct() {
+
+		$this->cur_ver = self::get_cur_version();
+
+		$this->maybe_migrate();
+	}
+
+	/**
+	 * Static on purpose, to get current migration version without __construct() and validation.
+	 *
+	 * @since 2.1.0
+	 *
+	 * @return int
+	 */
+	public static function get_cur_version() {
+
+		return (int) get_option( self::OPTION_NAME, 0 );
+	}
+
+	/**
+	 * Run the migration if needed.
+	 *
+	 * @since 2.1.0
+	 */
+	protected function maybe_migrate() {
+
+		if ( ! is_admin() ) {
+			return;
+		}
+
+		if ( version_compare( $this->cur_ver, self::VERSION, '<' ) ) {
+			$this->run( self::VERSION );
+		}
+	}
+
+	/**
+	 * Actual migration launcher.
+	 *
+	 * @since 2.1.0
+	 *
+	 * @param int $version The version of migration to run.
+	 */
+	protected function run( $version ) {
+
+		$function_version = (int) $version;
+
+		if ( method_exists( $this, 'migrate_to_' . $function_version ) ) {
+			$this->{'migrate_to_' . $function_version}();
+		} else {
+			$message = sprintf( /* translators: %1$s - WP Mail SMTP, %2$s - error message. */
+				esc_html__( 'There was an error while upgrading the database. Please contact %1$s support with this information: %2$s.', 'wp-mail-smtp' ),
+				'<strong>WP Mail SMTP</strong>',
+				'<code>migration from v' . self::get_cur_version() . ' to v' . self::VERSION . ' failed. Plugin version: v' . WPMS_PLUGIN_VER . '</code>'
+			);
+
+			WP::add_admin_notice( $message, WP::ADMIN_NOTICE_ERROR );
+		}
+	}
+
+	/**
+	 * Update migration version in options table.
+	 *
+	 * @since 2.1.0
+	 *
+	 * @param int $version Migration version.
+	 */
+	protected function update_db_ver( $version ) {
+
+		if ( empty( $version ) ) {
+			$version = self::VERSION;
+		}
+
+		// Autoload it, because this value is checked all the time
+		// and no need to request it separately from all autoloaded options.
+		update_option( self::OPTION_NAME, $version, true );
+	}
+
+	/**
+	 * Prevent running the same migration twice.
+	 * Run migration only when required.
+	 *
+	 * @since 2.1.0
+	 *
+	 * @param string $version The version of migration to check for potential execution.
+	 */
+	protected function maybe_required_older_migrations( $version ) {
+
+		if ( version_compare( $this->cur_ver, $version, '<' ) ) {
+			$this->run( $version );
+		}
+	}
+
+	/**
+	 * Migration from 0.x to 1.0.0.
+	 * Move separate plugin WP options to one main plugin WP option setting.
+	 *
+	 * @since 2.1.0
+	 */
+	private function migrate_to_1() {
 
 		if ( $this->is_migrated() ) {
 			return;
@@ -60,10 +191,29 @@ class Migration {
 		$this->old_values = $this->get_old_values();
 		$this->new_values = $this->get_converted_options();
 
-		Options::init()->set( $this->new_values );
+		Options::init()->set( $this->new_values, true );
 
-		// Removing all options will be enabled some time in the future.
-		// $this->clean_deprecated_data();
+		$this->update_db_ver( 1 );
+	}
+
+	/**
+	 * Migration from 1.x to 2.1.0.
+	 * Create Tasks\Meta table, if it does not exist.
+	 *
+	 * @since 2.1.0
+	 */
+	private function migrate_to_2() {
+
+		$this->maybe_required_older_migrations( 1 );
+
+		$meta = new Meta();
+
+		// Create the table if it doesn't exist.
+		if ( $meta && ! $meta->table_exists() ) {
+			$meta->create_table();
+		}
+
+		$this->update_db_ver( 2 );
 	}
 
 	/**
@@ -97,7 +247,11 @@ class Migration {
 		$old_values = array();
 
 		foreach ( $this->old_keys as $old_key ) {
-			$old_values[ $old_key ] = get_option( $old_key, '' );
+			$value = get_option( $old_key, '' );
+
+			if ( ! empty( $value ) ) {
+				$old_values[ $old_key ] = $value;
+			}
 		}
 
 		return $old_values;
@@ -114,19 +268,21 @@ class Migration {
 
 		foreach ( $this->old_keys as $old_key ) {
 
+			$old_value = isset( $this->old_values[ $old_key ] ) ? $this->old_values[ $old_key ] : '';
+
 			switch ( $old_key ) {
 				case 'pepipost_user':
 				case 'pepipost_pass':
 				case 'pepipost_port':
 				case 'pepipost_ssl':
 					// Do not migrate pepipost options if it's not activated at the moment.
-					if ( 'pepipost' === $this->old_values['mailer'] ) {
+					if ( isset( $this->old_values['mailer'] ) && $this->old_values['mailer'] === 'pepipost' ) {
 						$shortcut = explode( '_', $old_key );
 
 						if ( $old_key === 'pepipost_ssl' ) {
-							$converted[ $shortcut[0] ]['encryption'] = $this->old_values[ $old_key ];
+							$converted[ $shortcut[0] ]['encryption'] = $old_value;
 						} else {
-							$converted[ $shortcut[0] ][ $shortcut[1] ] = $this->old_values[ $old_key ];
+							$converted[ $shortcut[0] ][ $shortcut[1] ] = $old_value;
 						}
 					}
 					break;
@@ -140,29 +296,29 @@ class Migration {
 					$shortcut = explode( '_', $old_key );
 
 					if ( $old_key === 'smtp_ssl' ) {
-						$converted[ $shortcut[0] ]['encryption'] = $this->old_values[ $old_key ];
+						$converted[ $shortcut[0] ]['encryption'] = $old_value;
 					} elseif ( $old_key === 'smtp_auth' ) {
-						$converted[ $shortcut[0] ][ $shortcut[1] ] = ( $this->old_values[ $old_key ] === 'true' ? 'yes' : 'no' );
+						$converted[ $shortcut[0] ][ $shortcut[1] ] = ( $old_value === 'true' ? 'yes' : 'no' );
 					} else {
-						$converted[ $shortcut[0] ][ $shortcut[1] ] = $this->old_values[ $old_key ];
+						$converted[ $shortcut[0] ][ $shortcut[1] ] = $old_value;
 					}
 
 					break;
 
 				case 'mail_from':
-					$converted['mail']['from_email'] = $this->old_values[ $old_key ];
+					$converted['mail']['from_email'] = $old_value;
 					break;
 				case 'mail_from_name':
-					$converted['mail']['from_name'] = $this->old_values[ $old_key ];
+					$converted['mail']['from_name'] = $old_value;
 					break;
 				case 'mail_set_return_path':
-					$converted['mail']['return_path'] = ( $this->old_values[ $old_key ] === 'true' );
+					$converted['mail']['return_path'] = ( $old_value === 'true' );
 					break;
 				case 'mailer':
-					$converted['mail']['mailer'] = $this->old_values[ $old_key ];
+					$converted['mail']['mailer'] = ! empty( $old_value ) ? $old_value : 'mail';
 					break;
 				case 'wp_mail_smtp_am_notifications_hidden':
-					$converted['general']['am_notifications_hidden'] = ( $this->old_values[ $old_key ] === 'true' );
+					$converted['general']['am_notifications_hidden'] = ( isset( $old_value ) && $old_value === 'true' );
 					break;
 			}
 		}
@@ -200,10 +356,10 @@ class Migration {
 			$converted['mail']['from_name'] = WPMS_MAIL_FROM_NAME;
 		}
 		if ( defined( 'WPMS_MAILER' ) ) {
-			$converted['mail']['return_path'] = WPMS_MAILER;
+			$converted['mail']['mailer'] = WPMS_MAILER;
 		}
 		if ( defined( 'WPMS_SET_RETURN_PATH' ) ) {
-			$converted['mail']['mailer'] = WPMS_SET_RETURN_PATH;
+			$converted['mail']['return_path'] = WPMS_SET_RETURN_PATH;
 		}
 
 		/*

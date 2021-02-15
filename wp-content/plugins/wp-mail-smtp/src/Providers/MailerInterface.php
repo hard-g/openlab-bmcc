@@ -2,6 +2,9 @@
 
 namespace WPMailSMTP\Providers;
 
+use WPMailSMTP\MailCatcher;
+use WPMailSMTP\MailCatcherV6;
+
 /**
  * Interface MailerInterface.
  *
@@ -37,6 +40,15 @@ interface MailerInterface {
 	public function is_php_compatible();
 
 	/**
+	 * Whether the mailer has all its settings correctly set up and saved.
+	 *
+	 * @since 1.4.0
+	 *
+	 * @return bool
+	 */
+	public function is_mailer_complete();
+
+	/**
 	 * Get the email body.
 	 *
 	 * @since 1.0.0
@@ -68,7 +80,7 @@ interface MailerInterface {
 	 *
 	 * @since 1.2.0
 	 *
-	 * @param \WPMailSMTP\MailCatcher $phpmailer
+	 * @param MailCatcherInterface $phpmailer The MailCatcher object.
 	 */
 	public function process_phpmailer( $phpmailer );
 }
