@@ -225,7 +225,7 @@ eventorganiser.versionCompare = function(left, right) {
 	});
 
 	/* Update time format screen option */
-	$('#eofc_time_format').change(function () {
+	$('#eofc_time_format').on('change', function () {
 		format = ($('#eofc_time_format').is(":checked") ? 'HH:mm' : 'h:mmtt');
 		calendar.fullCalendar('option', 'timeFormat', format);
 		$.post(ajaxurl, {
@@ -343,7 +343,7 @@ eventorganiser.versionCompare = function(left, right) {
 			calendar.fullCalendar('gotoDate', new Date(Date.parse(dateText)));
 		}
 	});
-	$('button.ui-datepicker-trigger').button().addClass('fc-button');
+	$('button.ui-datepicker-trigger').button().addClass('fc-button').addClass('fc-state-default');
         
     /* Venue drop-down in modal */
 	$.widget("ui.combobox", {
@@ -455,7 +455,7 @@ eventorganiser.versionCompare = function(left, right) {
 
 		return $("<span class='fc-header-dropdown filter-venue'></span>").append(html);
 	}
-        $(".eo-cal-filter").change(function () {
+        $(".eo-cal-filter").on('change', function () {
             calendar.fullCalendar('rerenderEvents');
         });
         $('.filter-venue .eo-cal-filter').selectmenu({
@@ -522,7 +522,7 @@ $.widget("ui.selectmenu", {
 			'id' : this.ids[ 1 ],
 			'role': 'button',
 			'href': '#nogo',
-			'tabindex': this.element.attr( 'disabled' ) ? 1 : 0,
+			'tabindex': this.element.prop( 'disabled' ) ? 1 : 0,
 			'aria-haspopup': true,
 			'aria-owns': this.ids[ 2 ]
 		});
@@ -754,9 +754,9 @@ $.widget("ui.selectmenu", {
 			selectOptionData.push({
 				value: opt.attr( 'value' ),
 				text: self._formatText( opt.text(), opt ),
-				selected: opt.attr( 'selected' ),
-				disabled: opt.attr( 'disabled' ),
-				classes: opt.attr( 'class' ),
+				selected: opt.prop( 'selected' ),
+				disabled: opt.prop( 'disabled' ),
+				classes: opt.prop( 'class' ),
 				typeahead: opt.attr( 'typeahead'),
 				parentOptGroup: opt.parent( 'optgroup' ),
 				bgImage: o.bgImage.call( opt )
@@ -791,10 +791,10 @@ $.widget("ui.selectmenu", {
 				}
 				var thisA = $( '<a/>', thisAAttr )
 					.bind( 'focus.selectmenu', function() {
-						$( this ).parent().mouseover();
+						$( this ).parent().trigger( "mouseover" );
 					})
 					.bind( 'blur.selectmenu', function() {
-						$( this ).parent().mouseout();
+						$( this ).parent().trigger( "mouseout" );
 					});
 				var thisLi = $( '<li/>', thisLiAttr )
 					.append( thisA )
@@ -837,7 +837,7 @@ $.widget("ui.selectmenu", {
 					if ( this.list.find( 'li.' + optGroupName ).length ) {
 						this.list.find( 'li.' + optGroupName + ':last ul' ).append( thisLi );
 					} else {
-						$( '<li role="presentation" class="ui-selectmenu-group ' + optGroupName + ( selectOptionData[ i ].parentOptGroup.attr( "disabled" ) ? ' ' + 'ui-state-disabled" aria-disabled="true"' : '"' ) + '><span class="ui-selectmenu-group-label">' + selectOptionData[ i ].parentOptGroup.attr( 'label' ) + '</span><ul></ul></li>' )
+						$( '<li role="presentation" class="ui-selectmenu-group ' + optGroupName + ( selectOptionData[ i ].parentOptGroup.prop( "disabled" ) ? ' ' + 'ui-state-disabled" aria-disabled="true"' : '"' ) + '><span class="ui-selectmenu-group-label">' + selectOptionData[ i ].parentOptGroup.attr( 'label' ) + '</span><ul></ul></li>' )
 							.appendTo( this.list )
 							.find( 'ul' )
 							.append( thisLi );
@@ -1330,7 +1330,7 @@ $.widget("ui.selectmenu", {
 
 		this.listWrap
 			.removeAttr( 'style' )
-			.zIndex( this.element.zIndex() + 2 )
+			.css( 'zIndex', this.element.css('zIndex') + 2 )
 			.position( $.extend( positionDefault, o.positionOptions ) );
 	}
 });

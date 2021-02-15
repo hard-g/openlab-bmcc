@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-08-26 22:24+0000\n"
+"POT-Creation-Date: 2021-01-19 00:30+0000\n"
 "PO-Revision-Date: 2017-07-05T19:32:07+00:00\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -122,9 +122,9 @@ msgid "Displays a list of events"
 msgstr "Visar en lista med evenemang"
 
 #: classes/class-eo-event-list-widget.php:14
-#: classes/class-eo-event-list-widget.php:28 event-organiser-venues.php:466
-#: event-organiser.php:149 includes/event-organiser-cpt.php:224
-#: includes/event-organiser-cpt.php:236
+#: classes/class-eo-event-list-widget.php:28 event-organiser-venues.php:468
+#: event-organiser.php:149 includes/event-organiser-cpt.php:226
+#: includes/event-organiser-cpt.php:238
 #: includes/event-organiser-install.php:106 templates/archive-event.php:40
 msgid "Events"
 msgstr "Evenemang"
@@ -245,12 +245,12 @@ msgstr "Visa &#8220;%s&#8221;"
 msgid "A list or dropdown of event categories"
 msgstr "En lista eller 'dropdown' "
 
-#: classes/class-eo-widget-categories.php:11 event-organiser-settings.php:346
+#: classes/class-eo-widget-categories.php:11 event-organiser-settings.php:347
 msgid "Event Categories"
 msgstr "Evenemangskategorier"
 
 #: classes/class-eo-widget-categories.php:25
-#: includes/event-organiser-cpt.php:94 includes/event-organiser-cpt.php:105
+#: includes/event-organiser-cpt.php:95 includes/event-organiser-cpt.php:106
 #: includes/event-organiser-event-functions.php:1563
 #: templates/event-meta-event-single.php:62
 msgid "Categories"
@@ -282,7 +282,7 @@ msgstr "En lista eller en 'dropdown' på evenemangplatser"
 msgid "Event Venues"
 msgstr "Evenemangslokaler"
 
-#: classes/class-eo-widget-venues.php:29 event-organiser-settings.php:336
+#: classes/class-eo-widget-venues.php:29 event-organiser-settings.php:337
 #: event-organiser-venues.php:185 includes/event-organiser-cpt.php:31
 msgid "Venues"
 msgstr "Lokaler"
@@ -319,26 +319,26 @@ msgstr "Mer information &hellip;"
 msgid "Calendar View"
 msgstr "Kalendervy"
 
-#: event-organiser-calendar.php:72 includes/event-organiser-register.php:96
+#: event-organiser-calendar.php:72 includes/event-organiser-register.php:100
 msgid "today"
 msgstr "idag"
 
-#: event-organiser-calendar.php:73 includes/event-organiser-register.php:97
-#: includes/event-organiser-register.php:285
+#: event-organiser-calendar.php:73 includes/event-organiser-register.php:101
+#: includes/event-organiser-register.php:290
 msgid "day"
 msgstr "dag"
 
-#: event-organiser-calendar.php:74 includes/event-organiser-register.php:98
-#: includes/event-organiser-register.php:287
+#: event-organiser-calendar.php:74 includes/event-organiser-register.php:102
+#: includes/event-organiser-register.php:292
 msgid "week"
 msgstr "vecka"
 
-#: event-organiser-calendar.php:75 includes/event-organiser-register.php:99
-#: includes/event-organiser-register.php:289
+#: event-organiser-calendar.php:75 includes/event-organiser-register.php:103
+#: includes/event-organiser-register.php:294
 msgid "month"
 msgstr "månad"
 
-#: event-organiser-calendar.php:76 includes/event-organiser-register.php:100
+#: event-organiser-calendar.php:76 includes/event-organiser-register.php:104
 msgid "go to date"
 msgstr "gå till datum"
 
@@ -456,6 +456,21 @@ msgstr "Stäng modal"
 msgid "Open shortcut help"
 msgstr "Öppna genvägshjälp"
 
+#. //codex.wp-event-organiser.com
+#. *
+#. ***************** NOTICE: *****************
+#. *  Do not make changes to this file. Any changes made to this file
+#. * will be overwritten if the plug-in is updated.
+#. *
+#. * To overwrite this template with your own, make a copy of it (with the same name)
+#. * in your theme directory. See http://docs.wp-event-organiser.com/theme-integration for more information
+#. *
+#. * WordPress will automatically prioritise the template in your theme directory.
+#. ***************** NOTICE: *****************
+#. *
+#. * @package Event Organiser (plug-in)
+#. * @since 1.7
+#.
 #: event-organiser-calendar.php:387 event-organiser-edit.php:14
 #: templates/event-meta-event-single.php:32
 msgid "Event Details"
@@ -519,18 +534,18 @@ msgid ""
 msgstr "Kända plug-in & temakonflikter, markerade i rött, "
 
 #. / TRANSLATORS: [this plugin] has only been tested up to [required plugin] [required plugin version]
-#: event-organiser-debug.php:424
+#: event-organiser-debug.php:426
 #, php-format
 msgid "%1$s has only been tested up to %1$s %1$s"
 msgstr "%1$s har bara blivit testat upp till %1$s %1$s"
 
 #. / TRANSLATORS: [this plugin] requires [required plugin] version [required plugin version] or higher
-#: event-organiser-debug.php:437
+#: event-organiser-debug.php:439
 #, php-format
 msgid "%1$s requires %1$s version %1$s or higher"
 msgstr "%1$s kräver %1$s version %1$s eller högre"
 
-#: event-organiser-debug.php:462
+#: event-organiser-debug.php:464
 msgid "unknown"
 msgstr "okänd"
 
@@ -639,7 +654,7 @@ msgstr "dag i veckan"
 
 #: event-organiser-edit.php:225
 #: includes/event-organiser-event-functions.php:856
-#: includes/event-organiser-register.php:302
+#: includes/event-organiser-register.php:307
 msgid "until"
 msgstr "tills"
 
@@ -651,12 +666,12 @@ msgstr "Återkommande evenemang"
 msgid "Include/Exclude occurrences:"
 msgstr "Inkludera/Exkludera förkomster"
 
-#: event-organiser-edit.php:240 includes/event-organiser-register.php:279
+#: event-organiser-edit.php:240 includes/event-organiser-register.php:284
 msgid "Show dates"
 msgstr "Visa datum"
 
 #: event-organiser-edit.php:274
-#: includes/event-organiser-venue-functions.php:1026
+#: includes/event-organiser-venue-functions.php:1034
 msgid "Select a venue"
 msgstr "Välj en lokal"
 
@@ -673,7 +688,7 @@ msgstr ""
 "Google Maps kräver nu att då måste registrera dig för en API-nyckel. Om du "
 "önskar använda kartor på din sida, %1$sskriv in din nyckel%2$s."
 
-#: event-organiser-edit.php:495
+#: event-organiser-edit.php:498
 msgid "Event dates were not saved."
 msgstr "Evenemangsdatum sparades inte."
 
@@ -745,7 +760,7 @@ msgstr ""
 msgid "Go to Event Organiser settings"
 msgstr "Gå till Event Organisers inställningar"
 
-#: event-organiser-manage.php:19 includes/event-organiser-cpt.php:225
+#: event-organiser-manage.php:19 includes/event-organiser-cpt.php:227
 msgid "Event"
 msgstr "Evenemang"
 
@@ -907,8 +922,8 @@ msgstr "Kommentarer"
 msgid "Revisions"
 msgstr "Versioner"
 
-#: event-organiser-settings.php:154 event-organiser-settings.php:355
-#: includes/event-organiser-cpt.php:151
+#: event-organiser-settings.php:154 event-organiser-settings.php:356
+#: includes/event-organiser-cpt.php:152
 msgid "Event Tags"
 msgstr "Evenemangsetiketter"
 
@@ -1009,11 +1024,15 @@ msgstr ""
 msgid "Google Maps"
 msgstr "Google Maps"
 
-#: event-organiser-settings.php:255
+#: event-organiser-settings.php:250 event-organiser-settings.php:717
+msgid "None"
+msgstr "Ingen"
+
+#: event-organiser-settings.php:256
 msgid "Google API key:"
 msgstr "Google API nyckel:"
 
-#: event-organiser-settings.php:261
+#: event-organiser-settings.php:262
 #, php-format
 msgid ""
 "To use Google Maps you need to register an API key with Google. You can "
@@ -1022,15 +1041,15 @@ msgstr ""
 "För att använda Google Maps behöver du registrera en API nyckel hos Google. "
 "Du kan registrera en gratis API nyckel genom att %sfölja denna instruktion%s."
 
-#: event-organiser-settings.php:271
+#: event-organiser-settings.php:272
 msgid "Templates:"
 msgstr "Mallar:"
 
-#: event-organiser-settings.php:276
+#: event-organiser-settings.php:277
 msgid "Disable CSS:"
 msgstr "Inaktivera CSS:"
 
-#: event-organiser-settings.php:282
+#: event-organiser-settings.php:283
 msgid ""
 "Check this option to prevent any stylesheets from Event Organiser being "
 "loaded on the front-end"
@@ -1038,11 +1057,11 @@ msgstr ""
 "Kryssa i detta val för att förhindra någon stilmall från Event Organiser att "
 "ladda i front-end"
 
-#: event-organiser-settings.php:291
+#: event-organiser-settings.php:292
 msgid "Enable event pretty permalinks:"
 msgstr "Aktivera anpassade permalänkar för evenemang:"
 
-#: event-organiser-settings.php:297
+#: event-organiser-settings.php:298
 msgid ""
 "If you have pretty permalinks enabled, select to have pretty premalinks for "
 "events."
@@ -1050,35 +1069,35 @@ msgstr ""
 "Om du har aktiverat anpassade permalänkar, välj detta för att anpassa "
 "permalänkar för evenemang. "
 
-#: event-organiser-settings.php:301
+#: event-organiser-settings.php:302
 msgid "Event (single)"
 msgstr "Event (singel)"
 
-#: event-organiser-settings.php:310
+#: event-organiser-settings.php:311
 msgid "Events page"
 msgstr "Evenemangssida"
 
-#: event-organiser-settings.php:323
+#: event-organiser-settings.php:324
 msgid "Event (date archive)"
 msgstr "Evenemang (arkiverade datum)"
 
-#: event-organiser-settings.php:329
+#: event-organiser-settings.php:330
 msgid "Year archive"
 msgstr "Årsarkiv"
 
-#: event-organiser-settings.php:330
+#: event-organiser-settings.php:331
 msgid "Month archive"
 msgstr "Månadsarkiv"
 
-#: event-organiser-settings.php:331
+#: event-organiser-settings.php:332
 msgid "Day archive"
 msgstr "Dagsarkiv"
 
-#: event-organiser-settings.php:374
+#: event-organiser-settings.php:375
 msgid "Enable theme compatability mode (default)"
 msgstr "Slå på temakompatiblitetsläge (standard)"
 
-#: event-organiser-settings.php:375
+#: event-organiser-settings.php:376
 msgid ""
 "Event Organiser will attempt to ensure compatability with your theme and "
 "apply additional styles."
@@ -1086,11 +1105,11 @@ msgstr ""
 "Event Organiser kommer försöka säkerställa kompatibilitet med ditt tema "
 "(theme) och tillämpa ytterligare stilar (styles)."
 
-#: event-organiser-settings.php:378
+#: event-organiser-settings.php:379
 msgid "Enable template handling"
 msgstr "Aktivera mallhantering"
 
-#: event-organiser-settings.php:379
+#: event-organiser-settings.php:380
 msgid ""
 "Event Organiser's page templates will be used if your theme does not provide "
 "appropriate templates."
@@ -1098,24 +1117,24 @@ msgstr ""
 "Event Organisers sidmallar kommer att användas om ditt tema inte "
 "tillhandahåller passande sidmallar."
 
-#: event-organiser-settings.php:382
+#: event-organiser-settings.php:383
 msgid "Disable template handling"
 msgstr "Inaktivera mallhantering"
 
-#: event-organiser-settings.php:383
+#: event-organiser-settings.php:384
 msgid "Event Organiser's page templates will not be used."
 msgstr "Event Organisers sidmallar kommer inte att användas."
 
-#: event-organiser-settings.php:598
+#: event-organiser-settings.php:599
 msgid "Event Settings"
 msgstr "Evenemangsinställningar"
 
-#: event-organiser-settings.php:599
+#: event-organiser-settings.php:600
 #, php-format
 msgid "Event Settings: %s"
 msgstr "Evenemangsinställningar: %s"
 
-#: event-organiser-settings.php:676
+#: event-organiser-settings.php:677
 msgid ""
 "For each of the pages, the corresponding template is used. To use your own "
 "template simply give it the same name and store in your theme folder. By "
@@ -1129,23 +1148,23 @@ msgstr ""
 "standardmall. Du kan inaktivera det nedan. WordPress kommer sedan bestämma "
 "vilken mall från din temamapp den kommer att använda."
 
-#: event-organiser-settings.php:683
+#: event-organiser-settings.php:684
 msgid "Events archives:"
 msgstr "Evenemangsarkiv"
 
-#: event-organiser-settings.php:684
+#: event-organiser-settings.php:685
 msgid "Event page:"
 msgstr "Evenemangssida"
 
-#: event-organiser-settings.php:685
+#: event-organiser-settings.php:686
 msgid "Venue page:"
 msgstr "Lokalsida"
 
-#: event-organiser-settings.php:686
+#: event-organiser-settings.php:687
 msgid "Events Category page:"
 msgstr "Kategorisida för evenemang"
 
-#: event-organiser-settings.php:689
+#: event-organiser-settings.php:690
 #, php-format
 msgid ""
 "For more information see documentation <a href='%s'>on editing the "
@@ -1154,23 +1173,19 @@ msgstr ""
 "För mer information se dokumentationen <a href='%s'>on editing the "
 "templates</a>"
 
-#: event-organiser-settings.php:699
+#: event-organiser-settings.php:700
 msgid "Event management permissions"
 msgstr "Evenemangsadministrationsbehörigheter"
 
-#: event-organiser-settings.php:700
+#: event-organiser-settings.php:701
 msgid "Set permissions for events and venue management"
 msgstr "Ändra rättigheter för evenemang och lokalhantering"
 
-#: event-organiser-settings.php:705
+#: event-organiser-settings.php:706
 msgid "Role"
 msgstr "Roll"
 
-#: event-organiser-settings.php:716
-msgid "None"
-msgstr "Ingen"
-
-#: event-organiser-settings.php:745
+#: event-organiser-settings.php:746
 msgid ""
 "Choose a custom permalink structure for events, venues, event categories and "
 "event tags."
@@ -1178,7 +1193,7 @@ msgstr ""
 "Välj en specialanpassad permalänkstruktur för evenemang, lokaler, "
 "evenemangskategorier och evenemangstaggar."
 
-#: event-organiser-settings.php:746
+#: event-organiser-settings.php:747
 msgid ""
 "Please note to enable these structures you must first have pretty permalinks "
 "enabled on WordPress in Settings > Permalinks."
@@ -1186,7 +1201,7 @@ msgstr ""
 "Observera att för att aktivera dessa strukturer måste du först ha aktiverat "
 "'anpassade permalänkar' i WordPress under Inställningar > Permalänkar."
 
-#: event-organiser-settings.php:747
+#: event-organiser-settings.php:748
 msgid ""
 "You may also need to go to WordPress Settings > Permalinks and click 'Save "
 "Changes' before any changes will take effect."
@@ -1194,11 +1209,11 @@ msgstr ""
 "Du kan behöva gå till WordPress-inställningar > Permalänkar och klicka "
 "'Spara ändringar' innan ändringarna syns."
 
-#: event-organiser-settings.php:783
+#: event-organiser-settings.php:784
 msgid "Do not add to menu"
 msgstr "Lägg inte till i meny"
 
-#: event-organiser-settings.php:787
+#: event-organiser-settings.php:788
 msgid "Page list (fallback)"
 msgstr "Sidlista (reserv)"
 
@@ -1255,29 +1270,29 @@ msgstr "Slå på panel: Plats"
 msgid "Latitude/Longitude:"
 msgstr "Latitude/Longitude:"
 
-#: event-organiser-venues.php:430
+#: event-organiser-venues.php:432
 msgid "Venue name"
 msgstr "Lokalnamn"
 
-#: event-organiser-venues.php:436
+#: event-organiser-venues.php:438
 msgid "Permalink:"
 msgstr "Permalink;"
 
-#: event-organiser-venues.php:443
+#: event-organiser-venues.php:445
 msgid "Get Link"
 msgstr "Hämta länk"
 
-#: event-organiser-venues.php:465
+#: event-organiser-venues.php:467
 msgid "Slug"
 msgstr "Slug"
 
-#: features/bootstrap/FeatureContext.php:413
-#: features/bootstrap/FeatureContext.php:608
+#: features/bootstrap/FeatureContext.php:459
+#: features/bootstrap/FeatureContext.php:627
 msgid "Main Sidebar"
 msgstr "Huvudsidofält"
 
-#: features/bootstrap/FeatureContext.php:415
-#: features/bootstrap/FeatureContext.php:610
+#: features/bootstrap/FeatureContext.php:461
+#: features/bootstrap/FeatureContext.php:629
 msgid "Widgets in this area will be shown on all posts and pages."
 msgstr "Widgets i detta område kommer att visas på alla inlägg och sidor."
 
@@ -1306,7 +1321,7 @@ msgstr "Det uppstod problem att läsa feeden.Returkod: %s."
 msgid "There was an error opening the ICAL file."
 msgstr "Ett fel uppstod när ICAL-filen öppnades"
 
-#: includes/class-eo-ical-parser.php:428
+#: includes/class-eo-ical-parser.php:431
 #, php-format
 msgid ""
 "Feed contains an indefinitely recurring event. This event will recurr until "
@@ -1315,22 +1330,22 @@ msgstr ""
 "Flödet innehåller ett återkommande evenemang utan sluttid. Evenemanget "
 "kommer återkomma till och med %s."
 
-#: includes/class-eo-ical-parser.php:551 includes/class-eo-ical-parser.php:576
+#: includes/class-eo-ical-parser.php:560 includes/class-eo-ical-parser.php:585
 #, php-format
 msgid "[Lines %1$d-%2$d]"
 msgstr "[Rad %1$d-%2$d]"
 
-#: includes/class-eo-ical-parser.php:558 includes/class-eo-ical-parser.php:583
+#: includes/class-eo-ical-parser.php:567 includes/class-eo-ical-parser.php:592
 #, php-format
 msgid "[Line %1$d]"
 msgstr "[Rad %1$d]"
 
-#: includes/class-eo-ical-parser.php:1041
+#: includes/class-eo-ical-parser.php:1066
 #, php-format
 msgid "Invalid date \"%s\". Date expected in YYYYMMDD format."
 msgstr "Ogiltigt datum \"%s\". Använd YYYYMMDD som format"
 
-#: includes/class-eo-ical-parser.php:1079
+#: includes/class-eo-ical-parser.php:1104
 #, fuzzy, php-format
 msgid ""
 "Invalid datetime \"%s\". Date expected in YYYYMMDDTHHiissZ or "
@@ -1468,7 +1483,7 @@ msgstr "Organisatör:"
 msgid "This event recurs"
 msgstr "Detta evenemang är återkommande"
 
-#: includes/event-organiser-ajax.php:440 includes/event-organiser-cpt.php:228
+#: includes/event-organiser-ajax.php:440 includes/event-organiser-cpt.php:230
 msgid "Edit Event"
 msgstr "Redigera evenemang"
 
@@ -1570,237 +1585,255 @@ msgstr "Lokaladress"
 msgid "View all venues"
 msgstr "Visa alla lokaler"
 
-#: includes/event-organiser-cpt.php:95
+#: includes/event-organiser-cpt.php:96
 msgctxt "taxonomy singular name"
 msgid "Category"
 msgstr "Kategori"
 
-#: includes/event-organiser-cpt.php:96
+#: includes/event-organiser-cpt.php:97
 msgid "Search Categories"
 msgstr "Sök kategorier"
 
-#: includes/event-organiser-cpt.php:97
+#: includes/event-organiser-cpt.php:98
 msgid "All Categories"
 msgstr "Alla kategorier"
 
-#: includes/event-organiser-cpt.php:98
+#: includes/event-organiser-cpt.php:99
 msgid "Parent Category"
 msgstr "Föräldrakategori"
 
-#: includes/event-organiser-cpt.php:99
+#: includes/event-organiser-cpt.php:100
 msgid "Parent Category:"
 msgstr "Huvudkategori"
 
-#: includes/event-organiser-cpt.php:100
+#: includes/event-organiser-cpt.php:101
 msgid "Edit Category"
 msgstr "Redigera kategori"
 
-#: includes/event-organiser-cpt.php:101
+#: includes/event-organiser-cpt.php:102
 msgid "Update Category"
 msgstr "Uppdatera kategori"
 
-#: includes/event-organiser-cpt.php:102
+#: includes/event-organiser-cpt.php:103
 msgid "Add New Category"
 msgstr "Skapa ny kategori"
 
-#: includes/event-organiser-cpt.php:103
+#: includes/event-organiser-cpt.php:104
 msgid "New Category Name"
 msgstr "Nytt kategorinamn"
 
-#: includes/event-organiser-cpt.php:104
+#: includes/event-organiser-cpt.php:105
 msgid "No categories found"
 msgstr "Inga kategorier hittades"
 
-#: includes/event-organiser-cpt.php:106
+#: includes/event-organiser-cpt.php:107
 msgid "Event categories list navigation"
 msgstr "Evenemangskategorinavigering"
 
-#: includes/event-organiser-cpt.php:107
+#: includes/event-organiser-cpt.php:108
 msgid "Event categories list"
 msgstr "Evenemangskategorilista"
 
-#: includes/event-organiser-cpt.php:109
+#: includes/event-organiser-cpt.php:110
 msgid "View all categories"
 msgstr "Visa alla kategorier"
 
-#: includes/event-organiser-cpt.php:152
+#: includes/event-organiser-cpt.php:153
 msgctxt "taxonomy singular name"
 msgid "Tag"
 msgstr "Tagg"
 
-#: includes/event-organiser-cpt.php:153
+#: includes/event-organiser-cpt.php:154
 msgid "Search Tags"
 msgstr "Sök bland etiketter"
 
-#: includes/event-organiser-cpt.php:154
+#: includes/event-organiser-cpt.php:155
 msgid "All Tags"
 msgstr "Alla etiketter"
 
-#: includes/event-organiser-cpt.php:155
+#: includes/event-organiser-cpt.php:156
 msgid "Popular Tags"
 msgstr "Populära etiketter"
 
-#: includes/event-organiser-cpt.php:156
+#: includes/event-organiser-cpt.php:157
 msgid "Edit Tag"
 msgstr "Redigera etikett"
 
-#: includes/event-organiser-cpt.php:157
+#: includes/event-organiser-cpt.php:158
 msgid "Update Tag"
 msgstr "Updatera etikett"
 
-#: includes/event-organiser-cpt.php:158
+#: includes/event-organiser-cpt.php:159
 msgid "Add New Tag"
 msgstr "Skapa ny etikett"
 
-#: includes/event-organiser-cpt.php:159
+#: includes/event-organiser-cpt.php:160
 msgid "New Tag Name"
 msgstr "Nytt etikettnamn"
 
-#: includes/event-organiser-cpt.php:160
+#: includes/event-organiser-cpt.php:161
 msgid "No tags found"
 msgstr "Inga etiketter hittades"
 
-#: includes/event-organiser-cpt.php:161
+#: includes/event-organiser-cpt.php:162
 msgid "Choose from the most used tags"
 msgstr "Välj bland de vanligaste etiketterna"
 
-#: includes/event-organiser-cpt.php:162
+#: includes/event-organiser-cpt.php:163
 #: includes/event-organiser-event-functions.php:1571
 #: templates/event-meta-event-single.php:66
 msgid "Tags"
 msgstr "Etiketter"
 
-#: includes/event-organiser-cpt.php:163
+#: includes/event-organiser-cpt.php:164
 msgid "Add or remove tags"
 msgstr "Lägg till eller ta bort etiketter"
 
-#: includes/event-organiser-cpt.php:164
+#: includes/event-organiser-cpt.php:165
 msgid "Separate tags with commas"
 msgstr "Separera etiketter med ett komma"
 
-#: includes/event-organiser-cpt.php:165
+#: includes/event-organiser-cpt.php:166
 msgid "Event tags list navigation"
 msgstr "Evenemangs etikettslistenavigering"
 
-#: includes/event-organiser-cpt.php:166
+#: includes/event-organiser-cpt.php:167
 msgid "Event tags list"
 msgstr "Evenemangsetikettslista"
 
-#: includes/event-organiser-cpt.php:168
+#: includes/event-organiser-cpt.php:169
 msgid "View all tags"
 msgstr "Visa alla taggar"
 
-#: includes/event-organiser-cpt.php:226
+#: includes/event-organiser-cpt.php:228
 msgctxt "post"
 msgid "Add New"
 msgstr "Lägg till ny"
 
-#: includes/event-organiser-cpt.php:227
+#: includes/event-organiser-cpt.php:229
 msgid "Add New Event"
 msgstr "Skapa nytt evenemang"
 
-#: includes/event-organiser-cpt.php:229
+#: includes/event-organiser-cpt.php:231
 msgid "New Event"
 msgstr "Nytt evenemang"
 
-#: includes/event-organiser-cpt.php:230
+#: includes/event-organiser-cpt.php:232
 #, fuzzy
 msgid "All Events"
 msgstr "Alla evenemang"
 
-#: includes/event-organiser-cpt.php:231
+#: includes/event-organiser-cpt.php:233
 msgid "View Event"
 msgstr "Visa evenemang"
 
-#: includes/event-organiser-cpt.php:232
+#: includes/event-organiser-cpt.php:234
 msgid "Search events"
 msgstr "Sök bland evenemang"
 
-#: includes/event-organiser-cpt.php:233
+#: includes/event-organiser-cpt.php:235
 msgid "No events found"
 msgstr "Inga evenemang hittades "
 
-#: includes/event-organiser-cpt.php:234
+#: includes/event-organiser-cpt.php:236
 msgid "No events found in Trash"
 msgstr "Inga evenemang hittades i papperskorgen"
 
-#: includes/event-organiser-cpt.php:237
+#: includes/event-organiser-cpt.php:239
 msgid "Filter events list"
 msgstr "Filtrera evenemangslistan"
 
-#: includes/event-organiser-cpt.php:238
+#: includes/event-organiser-cpt.php:240
 msgid "Events list navigation"
 msgstr "Evenemangslistenavigering"
 
-#: includes/event-organiser-cpt.php:239
+#: includes/event-organiser-cpt.php:241
 msgid "Events list"
 msgstr "Evenemangslista"
 
-#: includes/event-organiser-cpt.php:240
+#: includes/event-organiser-cpt.php:242
 msgid "Event Archives"
 msgstr "Evenemangsarkiv"
 
-#: includes/event-organiser-cpt.php:241
+#: includes/event-organiser-cpt.php:243
 msgid "Insert into event"
 msgstr "Lägg till i evenemanget"
 
-#: includes/event-organiser-cpt.php:242
+#: includes/event-organiser-cpt.php:244
 msgid "Uploaded to this event"
 msgstr "Uppladdat till detta evenemang"
 
-#: includes/event-organiser-cpt.php:244
+#: includes/event-organiser-cpt.php:246
 #, php-format
 msgid "Events at %s"
 msgstr "Evenemang den %s"
 
-#: includes/event-organiser-cpt.php:245
+#. //docs.wp-event-organiser.com/theme-integration for more information
+#. *
+#. * WordPress will automatically prioritise the template in your theme directory.
+#. ***************** NOTICE: *****************
+#. *
+#. * @package Event Organiser (plug-in)
+#. * @since 1.0.0
+#.
+#. Call the template header
+#: includes/event-organiser-cpt.php:247
 #: templates/taxonomy-event-category.php:27
 #, php-format
 msgid "Event Category: %s"
 msgstr "Evenemangskategori: %s"
 
-#: includes/event-organiser-cpt.php:246 templates/taxonomy-event-tag.php:27
+#. //docs.wp-event-organiser.com/theme-integration for more information
+#. *
+#. * WordPress will automatically prioritise the template in your theme directory.
+#. ***************** NOTICE: *****************
+#. *
+#. * @package Event Organiser (plug-in)
+#. * @since 1.2.0
+#.
+#. Call the template header
+#: includes/event-organiser-cpt.php:248 templates/taxonomy-event-tag.php:27
 #, php-format
 msgid "Event Tag: %s"
 msgstr "Evenemangsetikett: %s"
 
-#: includes/event-organiser-cpt.php:247 includes/event-organiser-cpt.php:248
-#: includes/event-organiser-cpt.php:249
+#: includes/event-organiser-cpt.php:249 includes/event-organiser-cpt.php:250
+#: includes/event-organiser-cpt.php:251
 #, fuzzy, php-format
 msgid "Events: %s"
 msgstr "Evenemang:"
 
-#: includes/event-organiser-cpt.php:330
+#: includes/event-organiser-cpt.php:332
 #, php-format
 msgid "Event updated. <a href=\"%s\">View event</a>"
 msgstr "Evenemanget uppdaterades. <a href=\"%s\">Visa evenemang</a>"
 
-#: includes/event-organiser-cpt.php:331
+#: includes/event-organiser-cpt.php:333
 msgid "Event updated."
 msgstr "Evenemang uppdaterat. "
 
-#: includes/event-organiser-cpt.php:333
+#: includes/event-organiser-cpt.php:335
 #, php-format
 msgid "Event restored to revision from %s"
 msgstr "Evenemang återställt till utkast från %s"
 
-#: includes/event-organiser-cpt.php:334
+#: includes/event-organiser-cpt.php:336
 #, php-format
 msgid "Event published. <a href=\"%s\">View event</a>"
 msgstr "Evenemang publicerat. <a href=\"%s\">Visa evenemang</a>"
 
-#: includes/event-organiser-cpt.php:335
+#: includes/event-organiser-cpt.php:337
 msgid "Event saved."
 msgstr "Evenemang sparat. "
 
-#: includes/event-organiser-cpt.php:337
+#: includes/event-organiser-cpt.php:339
 #, php-format
 msgid "Event submitted. <a target=\"_blank\" href=\"%s\">Preview event</a>"
 msgstr ""
 "Evenemanget skickat. <a target=\"_blank\" href=\"%s\">Förhandsgranska "
 "evenemang</a>"
 
-#: includes/event-organiser-cpt.php:341
+#: includes/event-organiser-cpt.php:343
 #, php-format
 msgid ""
 "Event scheduled for: <strong>%1$s</strong>. <a target=\"_blank\" href=\"%2$s"
@@ -1809,30 +1842,31 @@ msgstr ""
 "Evenemanget bokat för: <strong>%1$s</strong>. <a target=\"_blank\" href="
 "\"%2$s\">Förhandsgranska evenemang</a>"
 
-#: includes/event-organiser-cpt.php:343
+#. //php.net/date
+#: includes/event-organiser-cpt.php:345
 msgid "M j, Y @ G:i"
 msgstr "j M Y @ G:i"
 
-#: includes/event-organiser-cpt.php:346
+#: includes/event-organiser-cpt.php:348
 #, php-format
 msgid "Event draft updated. <a target=\"_blank\" href=\"%s\">Preview event</a>"
 msgstr ""
 "Evenemangsutkast uppdaterat. <a target=\"_blank\" href=\"%s"
 "\">Förhandsgranska evenemang</a>"
 
-#: includes/event-organiser-cpt.php:349
+#: includes/event-organiser-cpt.php:351
 msgid "This event has been broken from a recurring event."
 msgstr "Det här evenemanget är utbrutet ur ett återkommande evenemang."
 
-#: includes/event-organiser-cpt.php:525
+#: includes/event-organiser-cpt.php:530
 msgid "Creating events"
 msgstr "Skapa evenemang"
 
-#: includes/event-organiser-cpt.php:526
+#: includes/event-organiser-cpt.php:531
 msgid "Creating events:"
 msgstr "Skapa evenemang:"
 
-#: includes/event-organiser-cpt.php:528
+#: includes/event-organiser-cpt.php:533
 msgid ""
 "The start date is the date the event starts. If the event is a recurring "
 "event, this is the start date of the first occurrence."
@@ -1840,7 +1874,7 @@ msgstr ""
 "Startdatument är det datum då evenemanget börjar. Om evenemanget är "
 "återkommande är detta startdatumet för det första tillfället. "
 
-#: includes/event-organiser-cpt.php:529
+#: includes/event-organiser-cpt.php:534
 msgid ""
 "The end date is the date the event finishes. If the event is a recurring "
 "event, this is the end date of the first occurrence."
@@ -1848,7 +1882,7 @@ msgstr ""
 "Slutdatument är det datum då evenemanget slutar. Om evenemanget är "
 "återkommande är detta slutdatumet för det sista tillfället. "
 
-#: includes/event-organiser-cpt.php:530
+#: includes/event-organiser-cpt.php:535
 msgid ""
 "All dates and times must be entered in the specified format. This format can "
 "changed in the settings page."
@@ -1856,11 +1890,11 @@ msgstr ""
 "Alla datum och tider måste skrivas in i det specifierade formatet. Detta "
 "format kan ändras på inställningssidan. "
 
-#: includes/event-organiser-cpt.php:535
+#: includes/event-organiser-cpt.php:540
 msgid "Repeating events"
 msgstr "Återkommande evenemang"
 
-#: includes/event-organiser-cpt.php:536
+#: includes/event-organiser-cpt.php:541
 msgid ""
 "To repeat an event according to some regular pattern, use the recurrence "
 "dropdown menu to select how the event is to repeat. Further options then "
@@ -1869,11 +1903,11 @@ msgstr ""
 "Om att evenemanget ska återkomma enligt ett mönster använd dropdown-menyn "
 "Återkommande för att specificera mönstret. Fler val visas då"
 
-#: includes/event-organiser-cpt.php:538
+#: includes/event-organiser-cpt.php:543
 msgid "Specify how regularly the event should repeat (default 1)"
 msgstr "Specificera hur evenemanget ska återkomma (förinställning 1)"
 
-#: includes/event-organiser-cpt.php:539
+#: includes/event-organiser-cpt.php:544
 msgid ""
 "Choose the recurrence end date. No further occurrences are added after this "
 "date, but an occurrence that starts before may finish after this date."
@@ -1882,7 +1916,7 @@ msgstr ""
 "till efter detta datum, men ett evenemang som börjar innan kan sluta efter  "
 "detta datum. "
 
-#: includes/event-organiser-cpt.php:540
+#: includes/event-organiser-cpt.php:545
 msgid ""
 "If monthly recurrence is selected, select whether this should repeat on that "
 "date of the month (e.g. on the 24th) or on the day of the month (e.g. on the "
@@ -1892,7 +1926,7 @@ msgstr ""
 "repeteras på månadens datum (t.ex. på den 24e) eller på dagen i månaden (t."
 "ex. på den tredje tisdagen)"
 
-#: includes/event-organiser-cpt.php:541
+#: includes/event-organiser-cpt.php:546
 msgid ""
 "If weekly recurrence is selected, select which days of the week the event "
 "should be repeated. If no days are selected, the day of the start date is "
@@ -1901,16 +1935,16 @@ msgstr ""
 "Om evenemanget återkommer varje vecka måste du välja vilka dagar det ska "
 "repeteras på. Om inga dagar väljs kommer startdatumets dag att väljas."
 
-#: includes/event-organiser-cpt.php:546 includes/event-organiser-cpt.php:547
+#: includes/event-organiser-cpt.php:551 includes/event-organiser-cpt.php:552
 msgid "Selecting a venue"
 msgstr "Att välja en lokal"
 
-#: includes/event-organiser-cpt.php:549
+#: includes/event-organiser-cpt.php:554
 msgid "Use the venues input field to search for existing venues"
 msgstr ""
 "Använd inmatningsfältet för lokaler för att söka efter existerande lokaler"
 
-#: includes/event-organiser-cpt.php:550
+#: includes/event-organiser-cpt.php:555
 msgid ""
 "Only pre-existing venues can be selected. To add a venue, go to the venues "
 "page."
@@ -1918,11 +1952,12 @@ msgstr ""
 "Endast existerande lokaler kan väljas. För att skapa en lokal gå till "
 "lokalsidan. "
 
-#: includes/event-organiser-cpt.php:560 includes/event-organiser-cpt.php:579
+#: includes/event-organiser-cpt.php:564 includes/event-organiser-cpt.php:581
+#: includes/event-organiser-cpt.php:590
 msgid "Overview"
 msgstr "Översikt"
 
-#: includes/event-organiser-cpt.php:561
+#: includes/event-organiser-cpt.php:565
 msgid ""
 "This is the list of all saved events. Note that <strong> recurring events "
 "appear as a single row </strong> in the table and the start and end date "
@@ -1932,7 +1967,7 @@ msgstr ""
 "evenemang visas på en enda rad </strong> i tabellen och att start- och "
 "slutdatumet är det första tillfällets start- och slutdatum. "
 
-#: includes/event-organiser-cpt.php:567
+#: includes/event-organiser-cpt.php:572
 msgid ""
 "Hovering over a row in the venues list will display action links that allow "
 "you to manage that venue. You can perform the following actions:"
@@ -1940,7 +1975,7 @@ msgstr ""
 "Om du hovrar över en rad i lokallistan kommer du att se länkar som du kan "
 "använda för att uppdatera lokalen. Du kan göra följande: "
 
-#: includes/event-organiser-cpt.php:569
+#: includes/event-organiser-cpt.php:574
 msgid ""
 "Edit takes you to the editing screen for that venue. You can also reach that "
 "screen by clicking on the venue title."
@@ -1948,15 +1983,15 @@ msgstr ""
 "Redigera tar dig till redigeringssidan för den lokalen. Du kan också nå "
 "denna sida genom att klicka på lokalens titel. "
 
-#: includes/event-organiser-cpt.php:570
+#: includes/event-organiser-cpt.php:575
 msgid "Delete will permanently remove the venue"
 msgstr "Ta bort kommer ta bort lokalen permanent"
 
-#: includes/event-organiser-cpt.php:571
+#: includes/event-organiser-cpt.php:576
 msgid "View will take you to the venue's page"
 msgstr "Visa tar dig till lokalens sida"
 
-#: includes/event-organiser-cpt.php:580
+#: includes/event-organiser-cpt.php:591
 msgid ""
 "This page shows all (occurrances of) events. You can view the summary of an "
 "event by clicking on it. If you have the necessary permissions, a link to "
@@ -1967,7 +2002,7 @@ msgstr ""
 "rättigheter kommer du också att se en länk till evenemangets "
 "redigeringssida. "
 
-#: includes/event-organiser-cpt.php:581
+#: includes/event-organiser-cpt.php:592
 msgid ""
 "By clicking the relevant tab, you can view events in Month, Week or Day "
 "mode. You can also filter the events by events by category and venue. The "
@@ -1977,11 +2012,11 @@ msgstr ""
 "respektive flik. Du kan också filtrera evenemangen på kategori och lokal. "
 "'Gå till datum'-knappen gör att du lätt kan hoppa till ett specifikt datum. "
 
-#: includes/event-organiser-cpt.php:585
+#: includes/event-organiser-cpt.php:596
 msgid "Add Event"
 msgstr "Skapa evenemang"
 
-#: includes/event-organiser-cpt.php:586
+#: includes/event-organiser-cpt.php:597
 msgid ""
 "You can create an event on this Calendar, by clicking on day or dragging "
 "over multiple days (in Month view) or multiple times (in Week and Day view). "
@@ -1996,53 +2031,53 @@ msgstr ""
 "kommer det att skapas och du kommer skickas vidare till evenemangets "
 "redigeringssida."
 
-#: includes/event-organiser-cpt.php:592
+#: includes/event-organiser-cpt.php:604
 msgid "For more information"
 msgstr "För mer information"
 
-#: includes/event-organiser-cpt.php:593
+#: includes/event-organiser-cpt.php:605
 #, php-format
 msgid "See the <a %s> documentation</a>"
 msgstr "Se <a %s> dokumentationen</a>"
 
-#: includes/event-organiser-cpt.php:594
+#: includes/event-organiser-cpt.php:606
 msgid "Debugging Event Organiser"
 msgstr "Debugga Event Organiser"
 
-#: includes/event-organiser-cpt.php:595
+#: includes/event-organiser-cpt.php:607
 msgid "Go Pro!"
 msgstr "Välj Pro!"
 
-#: includes/event-organiser-cpt.php:706 includes/event-organiser-cpt.php:729
+#: includes/event-organiser-cpt.php:717 includes/event-organiser-cpt.php:740
 msgid "Color"
 msgstr "Färg"
 
-#: includes/event-organiser-cpt.php:712
+#: includes/event-organiser-cpt.php:723
 msgid "Assign the category a colour."
 msgstr "Ge kategorin en färg"
 
 #: includes/event-organiser-event-functions.php:777
-#: includes/event-organiser-register.php:308
+#: includes/event-organiser-register.php:313
 msgid "last"
 msgstr "sista"
 
 #: includes/event-organiser-event-functions.php:777
-#: includes/event-organiser-register.php:304
+#: includes/event-organiser-register.php:309
 msgid "first"
 msgstr "första"
 
 #: includes/event-organiser-event-functions.php:777
-#: includes/event-organiser-register.php:305
+#: includes/event-organiser-register.php:310
 msgid "second"
 msgstr "andra"
 
 #: includes/event-organiser-event-functions.php:777
-#: includes/event-organiser-register.php:306
+#: includes/event-organiser-register.php:311
 msgid "third"
 msgstr "tredje"
 
 #: includes/event-organiser-event-functions.php:777
-#: includes/event-organiser-register.php:307
+#: includes/event-organiser-register.php:312
 msgid "fourth"
 msgstr "fjärde"
 
@@ -2055,34 +2090,34 @@ msgid "custom recurrence"
 msgstr "Anpassad upprepning"
 
 #: includes/event-organiser-event-functions.php:797
-#: includes/event-organiser-register.php:293
+#: includes/event-organiser-register.php:298
 msgid "every day"
 msgstr "varje dag"
 
 #: includes/event-organiser-event-functions.php:799
-#: includes/event-organiser-register.php:294
+#: includes/event-organiser-register.php:299
 #, php-format
 msgid "every %d days"
 msgstr "var %d dag"
 
 #: includes/event-organiser-event-functions.php:805
-#: includes/event-organiser-register.php:295
+#: includes/event-organiser-register.php:300
 msgid "every week on"
 msgstr "varje vecka på"
 
 #: includes/event-organiser-event-functions.php:807
-#: includes/event-organiser-register.php:296
+#: includes/event-organiser-register.php:301
 #, php-format
 msgid "every %d weeks on"
 msgstr "var %d vecka på"
 
 #: includes/event-organiser-event-functions.php:818
-#: includes/event-organiser-register.php:297
+#: includes/event-organiser-register.php:302
 msgid "every month on the"
 msgstr "varje månade den"
 
 #: includes/event-organiser-event-functions.php:820
-#: includes/event-organiser-register.php:298
+#: includes/event-organiser-register.php:303
 #, php-format
 msgid "every %d months on the"
 msgstr "var %d månad den"
@@ -2096,69 +2131,69 @@ msgstr "varje år"
 msgid "every %d years"
 msgstr "var %d år"
 
-#: includes/event-organiser-register.php:94
+#: includes/event-organiser-register.php:98
 msgid "Show More"
 msgstr "Visa mer"
 
-#: includes/event-organiser-register.php:95
+#: includes/event-organiser-register.php:99
 msgid "Show Less"
 msgstr "Visa mindre"
 
-#: includes/event-organiser-register.php:104
+#: includes/event-organiser-register.php:108
 #, fuzzy
 msgid "View all organisers"
 msgstr "Visa alla kategorier"
 
-#: includes/event-organiser-register.php:280
+#: includes/event-organiser-register.php:285
 msgid "Hide dates"
 msgstr "Göm datum"
 
-#: includes/event-organiser-register.php:283
+#: includes/event-organiser-register.php:288
 msgid "Hour"
 msgstr "Timme"
 
-#: includes/event-organiser-register.php:284
+#: includes/event-organiser-register.php:289
 msgid "Minute"
 msgstr "Minut"
 
-#: includes/event-organiser-register.php:286
+#: includes/event-organiser-register.php:291
 msgid "days"
 msgstr "dagar"
 
-#: includes/event-organiser-register.php:288
+#: includes/event-organiser-register.php:293
 msgid "weeks"
 msgstr "veckor"
 
-#: includes/event-organiser-register.php:290
+#: includes/event-organiser-register.php:295
 msgid "months"
 msgstr "månader"
 
-#: includes/event-organiser-register.php:291
+#: includes/event-organiser-register.php:296
 msgid "year"
 msgstr "år"
 
-#: includes/event-organiser-register.php:292
+#: includes/event-organiser-register.php:297
 msgid "years"
 msgstr "år"
 
-#: includes/event-organiser-register.php:299
+#: includes/event-organiser-register.php:304
 msgid "every year on the"
 msgstr "varje år den"
 
-#: includes/event-organiser-register.php:300
+#: includes/event-organiser-register.php:305
 #, php-format
 msgid "every %d years on the"
 msgstr "var %d år den"
 
-#: includes/event-organiser-register.php:301
+#: includes/event-organiser-register.php:306
 msgid "This event will repeat"
 msgstr "Detta evenemang är återkommande"
 
-#: includes/event-organiser-register.php:424
+#: includes/event-organiser-register.php:429
 msgid "Settings"
 msgstr "Inställningar"
 
-#: includes/event-organiser-register.php:592
+#: includes/event-organiser-register.php:597
 msgid ""
 "<h4>The Default Templates Have Changed</h4>Don't panic! If you've set up "
 "your own templates in your theme you won't notice any change. </br> If you "
@@ -2170,12 +2205,12 @@ msgstr ""
 "det och vill ha de gamla mallarna tillbaka, <a href='http://wp-event-"
 "organiser.com/blog/new-default-templates-in-1-7'>läs detta inlägg</a>."
 
-#: includes/event-organiser-register.php:609
+#: includes/event-organiser-register.php:614
 #, php-format
 msgid "Your site timezone is %s"
 msgstr "Din sidas tidszon är %s"
 
-#: includes/event-organiser-register.php:610
+#: includes/event-organiser-register.php:615
 msgid ""
 "Is this correct? Using a fixed offset from UTC may cause unexpected "
 "behaviour, particular if you observe Daylight Savings Time."
@@ -2183,7 +2218,7 @@ msgstr ""
 "Är detta rätt? Att använda en fast förskjutning av tiden från UTC-tid kan "
 "orsaka oväntat beteende, särskilt om man tar hänsyn till sommartid."
 
-#: includes/event-organiser-register.php:611
+#: includes/event-organiser-register.php:616
 msgid ""
 "It is strongly recommended you select a city instead, even if you don't "
 "observe Daylight Savings Time."
@@ -2191,16 +2226,16 @@ msgstr ""
 "Det rekommenderas starkt att du väljer en stad i stället, även om du "
 "använder sommartid."
 
-#: includes/event-organiser-register.php:612
+#: includes/event-organiser-register.php:617
 #, php-format
 msgid "You can <a href='%s'>change your timezone settings here</a>."
 msgstr "Du kan <a href='%s'>ändra dina tidzonsinställningar här</a>."
 
-#: includes/event-organiser-register.php:622
+#: includes/event-organiser-register.php:627
 msgid "Enter a Google Maps API key"
 msgstr "Skriv en Google Maps API nyckel"
 
-#: includes/event-organiser-register.php:624
+#: includes/event-organiser-register.php:629
 #, php-format
 msgid ""
 "Google Maps now requires you register for an API key. If you wish to use "
@@ -2213,23 +2248,23 @@ msgstr ""
 msgid "Help"
 msgstr "Hjälp"
 
-#: includes/event-organiser-venue-functions.php:991
+#: includes/event-organiser-venue-functions.php:999
 msgid "Address"
 msgstr "Adress"
 
-#: includes/event-organiser-venue-functions.php:992
+#: includes/event-organiser-venue-functions.php:1000
 msgid "City"
 msgstr "Stad"
 
-#: includes/event-organiser-venue-functions.php:993
+#: includes/event-organiser-venue-functions.php:1001
 msgid "State / Province"
 msgstr "Delstat/landskap"
 
-#: includes/event-organiser-venue-functions.php:994
+#: includes/event-organiser-venue-functions.php:1002
 msgid "Post Code"
 msgstr "Postnummer"
 
-#: includes/event-organiser-venue-functions.php:995
+#: includes/event-organiser-venue-functions.php:1003
 msgid "Country"
 msgstr "Land"
 
@@ -2326,6 +2361,15 @@ msgstr ""
 msgid "This event was posted by <a href=\"%3$s\">%2$s</a>."
 msgstr "Det här evenemanget var publicerat av <a href=\"%3$s\">%2$s</a>."
 
+#. //docs.wp-event-organiser.com/theme-integration for more information
+#. *
+#. * WordPress will automatically prioritise the template in your theme directory.
+#. ***************** NOTICE: *****************
+#. *
+#. * @package Event Organiser (plug-in)
+#. * @since 1.0.0
+#.
+#. Call the template header
 #: templates/taxonomy-event-venue.php:30
 #, php-format
 msgid "Events at: %s"

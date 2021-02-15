@@ -3,8 +3,8 @@ Contributors: stephenharris
 Donate link: http://www.wp-event-organiser.com/donate
 Tags: events, event, event categories, event organizer, events calendar, event management, ical, locations, google map, OpenStreetMap, widget, venues, maps, gigs, shows,
 Requires at least: 3.8.0
-Tested up to: 4.9.8
-Stable tag: 3.7.4
+Tested up to: 5.6.0
+Stable tag: 3.10.4
 License: GPLv3
 
 Create and maintain events, including complex reoccurring patterns, venue management (with Google Maps or OpenStreetMap), calendars and customisable event lists
@@ -21,7 +21,7 @@ Event Organiser adds event management that integrates well with your WordPress s
 
 = Available Extensions =
 * [Event Organiser Pro](http://wp-event-organiser.com/pro-features?aid=7)
-* [Event Organiser Frontend Submissinos](http://wp-event-organiser.com/extensions/event-organiser-frontend-submissions/?aid=7)
+* [Event Organiser Frontend Submissions](http://wp-event-organiser.com/extensions/event-organiser-frontend-submissions/?aid=7)
 * [Discount Codes](http://wp-event-organiser.com/extensions/event-organiser-discount-codes?aid=7)
 * [Stripe Gateway](http://wp-event-organiser.com/extensions/event-organiser-stripe?aid=7)
 * [Posterboard](https://wordpress.org/plugins/event-organiser-posterboard) (free)
@@ -221,6 +221,72 @@ More information on shortcodes is [available here](http://wp-event-organiser.com
 8. Events list (using TwentySixteen)
 
 == Changelog ==
+
+= 3.10.4 - 19th January 2021 =
+* bugfix: Fixed week/day calendar views broken in WP 5.6
+* bugfix: Fixed some jquery-migrate deprecation notices
+
+= 3.10.3 - 15th January 2021 =
+* bugfix: Fixed jQuery errors with WordPress 5.6
+* bugfix: Fixed styling regressions
+
+= 3.10.2 - 13th September 2020 =
+* bugfix: Fixed all-day toggle not working with WordPress 5.5
+
+= 3.10.1 - 14th August 2020 =
+* bugfix: Fixed iCal feeds being treated as comment feeds
+
+= 3.10.0 - 22nd July 2020 =
+* feature: Extended support for RECURRENCE-ID in iCal calendards
+* bugfix: Ensure translated screen help text is escaped
+* bugfix: Replace instances of curly braces for array access (deprecated PHP 7). 
+
+= 3.9.1 - 28th May 2020 =
+* bugfix: Fixed bug where venue can't be changed if maps are disabled
+* feature: Added additonal methods to the maps adapter API
+
+= 3.9.0 - 8th January 2020 =
+* feature: Added option to disable venue maps
+* bugfix: Ensure latitude/longtitude co-ordinates are cast as floats
+
+= 3.8.6 - 18th November 2019 =
+* bugfix: Removed call to is_feed(), uses $query->is_feed() instead. Fixes potential warning logged
+
+= 3.8.5 - 7th November 2019 =
+* bugfix: Fixed missing Leaflet files for openstreetmap
+
+= 3.8.4 - 5th November 2019 =
+* bugfix: Fixed inline editing event looses venue selection
+
+= 3.8.3 - 31st August 2019 =
+* bugfix: Fixed 'Feed not found' when importing a feed with a Byte Order Mark.
+
+= 3.8.2 - 6th August 2019 =
+* bugfix: Restored PHP 5.2 compatability
+
+= 3.8.1 - 26th July 2019 =
+* Bumped tested up-to version
+* bugfix: Fixed bug where leaflet map appeared above datepicker in the event edit screen
+
+= 3.8.0 - 15th July 2019 =
+* feature: Added `eventorganiser_ical_location` filter
+* feature: Added `eventorganiser_ical_summary` filter
+* bugfix: Fixed max zoom for leaflet
+* bugfix: Fixed recurrence notice being removed by 'hide admin notices' plugin
+* bugfix: Fixed bug where `[eo_fullcalendar]` shortcode would not display terms in the dropdown filter if they were surrounded by space, e.g. `[eo_fullcalendar event_category="foo, bar"]`
+
+= 3.7.6 - 6th March 2019 =
+* bugfix: Fixed missing translations
+* bugfix: Fix tags and categories not appearing in Gutenberg 
+
+= 3.7.5 - 1st March 2019 =
+* feature: Added eventorganiser_pre_insert_venue filter
+* bugfix: Use case-sensitive constants for PHP 7.3 [#454](https://github.com/stephenharris/Event-Organiser/issues/454)
+* bugfix: Fix issue if event categories are invalid [#455](https://github.com/stephenharris/Event-Organiser/issues/455)
+* bugfix: Fix user_events option for calendar not working
+* bugfix: Ensure table names are reigstered before removing tables. Fixes [#444](https://github.com/stephenharris/Event-Organiser/issues/444)
+* bugfix: Fix warning for PHP 7+ where string is passed, not integer
+* bugfix: Fix typo
 
 = 3.7.4 - 26th August 2018 =
 * bugfix: Fix bug with venue map shortcode when used without attributes
