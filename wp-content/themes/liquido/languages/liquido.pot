@@ -1,0 +1,79 @@
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Liquido\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-08-22 12:54+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: \n"
+"Language: \n"
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Loco https://localise.biz/\n"
+"X-Loco-Version: 2.2.2; wp-5.2.2"
+
+#: functions.php:43
+msgid "Waves"
+msgstr ""
+
+#: functions.php:56
+#, php-format
+msgid ""
+"It appears that you might have already configured %1$s. For best results it "
+"is recommended to %2$s upon child theme activation."
+msgstr ""
+
+#: functions.php:57
+msgid "reset the theme settings"
+msgstr ""
+
+#: functions.php:58
+msgid ""
+"If you have already reset the options it is safe to dismiss this message."
+msgstr ""
+
+#: functions.php:59
+msgid "Do not display again"
+msgstr ""
+
+#: includes/admin.php:13
+msgid "Liquido Theme"
+msgstr ""
+
+#: includes/admin.php:26
+#, php-format
+msgid "<em>%1$s v%2$s</em> &ndash; a child theme of %3$s"
+msgstr ""
+
+#: includes/admin.php:43 includes/options.php:95
+#, php-format
+msgid "%1$s is a child theme of %2$s"
+msgstr ""
+
+#: includes/options.php:89
+msgid "About Liquido"
+msgstr ""
+
+#. Name of the theme
+msgid "Liquido"
+msgstr ""
+
+#. Description of the theme
+msgid ""
+"Liquido is a gorgeous brand new theme that builds on top of an already "
+"amazing theme - Fluida.  It’s responsive, light, SEO ready and highly "
+"customizable. All premium features are present like WooCommerce support, "
+"translation and RTL ready, Google fonts, customizable landing page and "
+"slider, Guttenberg blocks and more."
+msgstr ""
+
+#. Author URI of the theme
+msgid "http://www.cryoutcreations.eu"
+msgstr ""
+
+#. Author of the theme
+msgid "Cryout Creations"
+msgstr ""
