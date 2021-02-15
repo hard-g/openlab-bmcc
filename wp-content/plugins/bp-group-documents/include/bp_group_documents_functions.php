@@ -141,6 +141,7 @@ function bp_group_documents_display_title() {
      *
      * taken from the PHP manual examples.  Returns the number of bites
      * when given an abrevition (eg, max_upload_size)
+	 * @version 2.0 fix 7.2 error
      */
     function return_bytes($val) {
         $val = trim($val);
@@ -148,11 +149,11 @@ function bp_group_documents_display_title() {
         switch ($last) {
             // The 'G' modifier is available since PHP 5.1.0
             case 'g':
-                $val *= 1024;
+                $val = 1024;
             case 'm':
-                $val *= 1024;
+                $val =(float)$val* 1024;
             case 'k':
-                $val *= 1024;
+                $val = (float)$val* 1024;
         }
 
         return $val;

@@ -324,15 +324,11 @@ if ( class_exists('BP_Group_Extension') ) : // Recommended, to prevent problems 
             }
         }
 
+		/**
+		 * @todo 
+		 */
         function widget_display() {
-            ?>
-            <div class="info-group">
-                <h4><?php echo esc_attr($this->name) ?></h4>
-                <p>
-                    Not yet implemented
-                </p>
-            </div>
-            <?php
+          
         }
 
         /**

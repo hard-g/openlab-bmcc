@@ -49,8 +49,9 @@ $template = new BP_Group_Documents_Template();
 				<input type="submit" class="button" value="<?php _e('Go' , 'bp-group-documents'); ?>" />
 			</form>
 		</div>
-
-		<?php if ( $template->document_list && count($template->document_list >= 1) ) { ?>
+		<?php
+	
+		if ( $template->document_list && (count($template->document_list) >= 1) ) { ?>
 			<div class="pagination no-ajax">
 				<div id="group-documents-page-count" class="pag-count">
 					<?php $template->pagination_count(); ?>
@@ -70,7 +71,7 @@ $template = new BP_Group_Documents_Template();
 	}
 	?>
 	<?php
-	if ( $template->document_list && count($template->document_list >= 1) ) {
+	if ( $template->document_list && (count($template->document_list) >= 1) ) {
 		?>
 		<ul id="bp-group-documents-list" class="item-list">
 			<?php

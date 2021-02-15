@@ -1,28 +1,28 @@
 <?php
-
-/*
-  Plugin Name: BP Group Documents
-  Plugin URI: wordpress.org/plugins/bp-group-documents/
-
-  Description: BP Group Documents creates a page within each BuddyPress group to upload and any type of file or document.
-  Version: 1.12.2
-  Revision Date: June 29, 2018
-  Requires at least: WP 3.5, BuddyPress 1.7
-  Tested up to: 4.9.5, BuddyPress 2.9.4
-  License:  GNU General Public License 3.0 or newer (GPL) http://www.gnu.org/licenses/gpl.html
-  Author: lenasterg
-  Text Domain: bp-group-documents
-  Domain Path: /languages/
-  Network Only: true
- * @todo minor, make a deregister function, 26/4/2013 stergatu
- */
-
+/**
+* Plugin Name: BP Group Documents
+* Plugin URI: wordpress.org/plugins/bp-group-documents/
+* Description: BP Group Documents creates a page within each BuddyPress group to upload and any type of file or document.
+* Version: 1.12.3
+* Revision Date: April 9, 2019
+* Requires at least: WP 4.6, BuddyPress 1.7
+* Tested up to: 5.1, BuddyPress 4.2.0
+* License:  GNU General Public License 3.0 or newer (GPL) http://www.gnu.org/licenses/gpl.html
+* Author: lenasterg
+* Text Domain: bp-group-documents
+* Domain Path: /languages/
+* Network Only: true
+* @todo minor, make a deregister function, 26/4/2013 stergatu
+*/
+ 
+// Exit if accessed directly
+defined( 'ABSPATH' ) || exit;
 
 /* Only load code that needs BuddyPress to run once BP is loaded and initialized. */
 
 //some constants that can be checked when extending this plugin
 define( 'BP_GROUP_DOCUMENTS_IS_INSTALLED', 1 );
-define( 'BP_GROUP_DOCUMENTS_VERSION', '1.12.1' );
+define( 'BP_GROUP_DOCUMENTS_VERSION', '1.12.3' );
 define( 'BP_GROUP_DOCUMENTS_DB_VERSION', '5' );
 define( 'BP_GROUP_DOCUMENTS_VALID_FILE_FORMATS', 'odt,ods,rtf,txt,doc,docx,xls,xlsx,ppt,pps,pptx,ppsx,pdf,jpg,jpeg,gif,png,zip,tar,gz' );
 define( 'BP_GROUP_DOCUMENTS_ITEMS_PER_PAGE', 20 );

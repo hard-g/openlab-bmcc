@@ -1,9 +1,9 @@
 ===BP Group Documents  ===
 Contributors: lenasterg, NTS on cti.gr
 Tags: wpms, buddypress, group, document, plugin, file, media, storage, upload, widget
-Requires at least: WP 3.5, BuddyPress 1.7
-Tested up to: 4.9.5, BuddyPress 2.9.4
-Stable tag: 1.12.2 (Requires at least: WP 3.5, BuddyPress 1.7)
+Requires at least: 4.6
+Tested up to: 5.1
+Stable tag: 1.12.3
 License: GNU General Public License 3.0 or newer (GPL) http://www.gnu.org/licenses/gpl.html
 
 
@@ -89,19 +89,23 @@ add_filter( 'bp_group_documents_download_access', 'bp_only_logged_in_can_downloa
 
 == Changelog ==
 
+= Version 1.12.3 (9/4/2019) =
+* Fix some PHP 7.x warnings
+* Fix BuddyPress warning, thanks to @venutius 
+* Fix a css issue reported in wordpress.org support forum
 
-= Version 1.12.2 (29/06/2018)
+= Version 1.12.2 (29/06/2018) =
 * Replace constant WP_PLUGIN_URL with plugins_url() 
 * Replace constant WP_CONTENT_URL with content_url()
 * Fix some deprecated warnings
 
-= Version 1.12.1 (6/10/2017)
+= Version 1.12.1 (6/10/2017) =
 * Typo fix for template folder
 
-= Version 1.12 (2/10/2017)
+= Version 1.12 (2/10/2017) =
 * Allow main plugin markup to be overridden with theme template. Props @boonebgorges
 
-= Version 1.11 (29/3/2017)
+= Version 1.11 (29/3/2017) =
 * Security fixes
 * Introduce new action: 'bp_group_documents_data_failed_save'
 
