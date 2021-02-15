@@ -9,6 +9,73 @@
  * @link     https://www.joedolson.com/wp-accessibility/
  */
 
+/**
+ * Toolbar class.
+ */
+require_once( dirname( __FILE__ ) . '/class-wp-accessibility-toolbar.php' );
+
+add_action( 'widgets_init', 'wpa_register_toolbar_widget' );
+/**
+ * Register toolbar widget.
+ */
+function wpa_register_toolbar_widget() {
+	register_widget( 'Wp_Accessibility_Toolbar' );
+}
+
+add_action( 'wp_enqueue_scripts', 'wpa_register_scripts' );
+/**
+ * Register jQuery scripts.
+ */
+function wpa_register_scripts() {
+	wp_register_script( 'wpa-toolbar', plugins_url( 'wp-accessibility/js/wpa-toolbar.js' ), array( 'jquery' ), '1.0', true );
+	wp_register_script( 'ui-a11y', plugins_url( 'wp-accessibility/toolbar/js/a11y.js' ), array( 'jquery' ), '1.0', true );
+}
+
+add_action( 'wp_enqueue_scripts', 'wpa_toolbar_enqueue_scripts' );
+/**
+ * Enqueue Toolbar scripts dependent on options.
+ */
+function wpa_toolbar_enqueue_scripts() {
+	wp_enqueue_script( 'jquery' );
+	if ( 'on' === get_option( 'wpa_toolbar' ) ) {
+		// Enqueue Toolbar JS if enabled.
+		wp_enqueue_script( 'wpa-toolbar' );
+		wp_localize_script( 'wpa-toolbar', 'wpa', wpa_toolbar_js() );
+	}
+	wp_enqueue_script( 'ui-a11y' );
+
+	// High Contrast CSS.
+	$plugin_path = plugins_url( 'wp-accessibility/toolbar/css/a11y-contrast.css' );
+	if ( file_exists( get_stylesheet_directory() . '/a11y-contrast.css' ) ) {
+		$plugin_path = get_stylesheet_directory_uri() . '/a11y-contrast.css';
+	}
+	wp_localize_script( 'ui-a11y', 'a11y_stylesheet_path', $plugin_path );
+
+	// Font files for toolbar.
+	wp_register_style( 'ui-font', plugins_url( 'toolbar/fonts/css/a11y-toolbar.css', __FILE__ ) );
+
+	// Toolbar CSS.
+	$toolbar_styles = apply_filters( 'wpa_toolbar_css', plugins_url( 'toolbar/css/a11y.css', __FILE__ ) );
+	wp_register_style( 'ui-a11y', $toolbar_styles, array( 'ui-font' ) );
+
+	// Font resizing stylesheet.
+	$fontsize_stylesheet = ( 'on' === get_option( 'wpa_alternate_fontsize' ) ) ? 'a11y-fontsize-alt' : 'a11y-fontsize';
+	$fontsize            = apply_filters( 'wpa_fontsize_css', plugins_url( 'toolbar/css/' . $fontsize_stylesheet . '.css', __FILE__ ) );
+	wp_register_style( 'ui-fontsize.css', $fontsize );
+
+	// Control toolbar font size.
+	$toolbar_size = get_option( 'wpa_toolbar_size' );
+	$toolbar_size = ( false === stripos( $toolbar_size, 'em' ) ) ? $toolbar_size . 'px' : $toolbar_size;
+	// Only enable styles when required by options.
+	if ( get_option( 'wpa_toolbar_size' ) && 'on' === get_option( 'wpa_toolbar' ) ) {
+		wp_add_inline_style( 'ui-a11y', '.a11y-toolbar ul li button { font-size: ' . $toolbar_size . ' !important; }' );
+	}
+	if ( $toolbar_styles && $fontsize ) {
+		wp_enqueue_style( 'ui-a11y' );
+		wp_enqueue_style( 'ui-fontsize.css' );
+	}
+}
+
 add_shortcode( 'wpa_toolbar', 'wpa_toolbar_shortcode' );
 /**
  * Output Toolbar shortcode
@@ -74,61 +141,33 @@ function wpa_toolbar_html( $type = 'widget', $control = 'button' ) {
 }
 
 /**
- * Generate Toolbar as JS.
+ * Generate Toolbar variables for localization in JS.
  */
 function wpa_toolbar_js() {
 	// Toolbar does not work on Edge. Disable unless I solve the issue.
 	$default    = ( false !== (bool) get_option( 'wpa_toolbar_default' ) ) ? get_option( 'wpa_toolbar_default' ) : 'body';
 	$location   = apply_filters( 'wpa_move_toolbar', $default );
-	$user_agent = ( isset( $_SERVER['HTTP_USER_AGENT'] ) ) ? $_SERVER['HTTP_USER_AGENT'] : '';
 	$is_rtl     = ( is_rtl() ) ? ' rtl' : ' ltr';
 	$is_right   = ( 'on' === get_option( 'wpa_toolbar_right' ) ) ? ' right' : ' left';
 	$responsive = ( 'on' === get_option( 'wpa_toolbar_mobile' ) ) ? 'a11y-responsive ' : 'a11y-non-responsive ';
 
-	if ( preg_match( '/Edge/i', $user_agent ) ) {
-		echo wpa_toolbar_html( 'js', 'a' );
-		echo "
-<script type='text/javascript'>
-//<![CDATA[
-(function( $ ) { 'use strict';
-	var toolbar = $( '.a11y-toolbar-widget' );
-	toolbar.removeClass( 'a11y-toolbar-widget' );
-	$( document ).find( '$location' ).prepend( toolbar );
-}(jQuery));
-//]]>
-</script>";
-	} else {
-		$contrast         = __( 'Toggle High Contrast', 'wp-accessibility' );
-		$grayscale        = __( 'Toggle Grayscale', 'wp-accessibility' );
-		$fontsize         = __( 'Toggle Font size', 'wp-accessibility' );
-		$enable_grayscale = ( 'on' === get_option( 'wpa_toolbar_gs' ) && current_user_can( 'manage_options' ) ) ? true : false;
-		$enable_fontsize  = ( 'off' === get_option( 'wpa_toolbar_fs' ) ) ? false : true;
-		$enable_contrast  = ( 'off' === get_option( 'wpa_toolbar_ct' ) ) ? false : true;
+	$contrast         = __( 'Toggle High Contrast', 'wp-accessibility' );
+	$grayscale        = __( 'Toggle Grayscale', 'wp-accessibility' );
+	$fontsize         = __( 'Toggle Font size', 'wp-accessibility' );
+	$enable_grayscale = ( 'on' === get_option( 'wpa_toolbar_gs' ) && current_user_can( 'manage_options' ) ) ? 'true' : 'false';
+	$enable_fontsize  = ( 'off' === get_option( 'wpa_toolbar_fs' ) ) ? 'false' : 'true';
+	$enable_contrast  = ( 'off' === get_option( 'wpa_toolbar_ct' ) ) ? 'false' : 'true';
 
-		echo
-		"
-<script type='text/javascript'>
-//<![CDATA[
-(function( $ ) { 'use strict';
-	var insert_a11y_toolbar = '<!-- a11y toolbar -->';
-	insert_a11y_toolbar += '<div class=\"" . $responsive . "a11y-toolbar$is_rtl$is_right\">';
-	insert_a11y_toolbar += '<ul class=\"a11y-toolbar-list\">';";
-		if ( get_option( 'wpa_toolbar' ) === 'on' && $enable_contrast ) {
-			echo "insert_a11y_toolbar += '<li class=\"a11y-toolbar-list-item\"><button type=\"button\" class=\"a11y-toggle-contrast toggle-contrast\" id=\"is_normal_contrast\" aria-pressed=\"false\"><span class=\"offscreen\">$contrast</span><span class=\"aticon aticon-adjust\" aria-hidden=\"true\"></span></button></li>';";
-		}
-		if ( get_option( 'wpa_toolbar' ) === 'on' && $enable_grayscale ) {
-			echo "insert_a11y_toolbar += '<li class=\"a11y-toolbar-list-item\"><button type=\"button\" class=\"a11y-toggle-grayscale toggle-grayscale\" id=\"is_normal_color\" aria-pressed=\"false\"><span class=\"offscreen\">$grayscale</span><span class=\"aticon aticon-tint\" aria-hidden=\"true\"></span></button></li>';";
-		}
-		if ( get_option( 'wpa_toolbar' ) === 'on' && $enable_fontsize ) {
-			echo "insert_a11y_toolbar += '<li class=\"a11y-toolbar-list-item\"><button type=\"button\" class=\"a11y-toggle-fontsize toggle-fontsize\" id=\"is_normal_fontsize\" aria-pressed=\"false\"><span class=\"offscreen\">$fontsize</span><span class=\"aticon aticon-font\" aria-hidden=\"true\"></span></button></li>';";
-		}
-		echo "
-	insert_a11y_toolbar += '</ul>';
-	insert_a11y_toolbar += '</div>';
-	insert_a11y_toolbar += '<!-- // a11y toolbar -->';
-	$( document ).find( '$location' ).prepend( insert_a11y_toolbar );
-}(jQuery));
-//]]>
-</script>";
-	}
+	return array(
+		'location'         => $location,
+		'is_rtl'           => $is_rtl,
+		'is_right'         => $is_right,
+		'responsive'       => $responsive,
+		'contrast'         => $contrast,
+		'grayscale'        => $grayscale,
+		'fontsize'         => $fontsize,
+		'enable_grayscale' => $enable_grayscale,
+		'enable_fontsize'  => $enable_fontsize,
+		'enable_contrast'  => $enable_contrast,
+	);
 }

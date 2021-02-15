@@ -4,8 +4,8 @@ Donate link: http://www.joedolson.com/donate/
 Tags: title, accessibility, accessible, navigation, wcag, a11y, section508, focus, alt text, labels, aria
 Requires at least: 3.4.2
 Requires PHP: 5.3
-Tested up to: 5.2
-Stable tag: 1.6.10
+Tested up to: 5.6
+Stable tag: 1.7.6
 Text Domain: wp-accessibility
 License: GPLv2 or later
 
@@ -15,32 +15,42 @@ WP Accessibility fixes common accessibility issues in your WordPress site.
 
 This plug-in helps with a variety of common accessibility problems in WordPress themes. While most accessibility issues can't be addressed without directly changing your theme, WP Accessibility adds a number of helpful accessibility features with a minimum amount of setup or expert knowledge.
 
+WP Accessibility is not intended to make your site compatible with any accessibility guidelines.
+
 All features can be disabled according to your theme's needs. For advanced users, all of the functions based on modifying stylesheets can be customized using your own custom styles by placing the appropriate stylesheet in your theme directory.
 
-= Accessibility Features added by WP Accessibility: =
+= Theme Accessibility Features added by WP Accessibility =
 
-* Enable skip links with WebKit support by adding JavaScript support to move keyboard focus.
+These are features that address issues caused by inaccessible themes. 
+
 * Add skip links with user-defined targets. (Customizable targets and appearance.)
-* Add language and text direction attributes to your HTML attribute
+* Add language and text direction attributes to your HTML attribute if missing.
 * Add an outline to the keyboard focus state for focusable elements. 
-* Add a toolbar toggling between high contrast, large print, and desaturated (grayscale) views of your theme.
 * Add a long description to images. Use the image's "Description" field to add long descriptions.
-* Enforcement for alt attributes on images.
+* Enforcement for alt attributes on images in the Classic editor.
+* Identify images without alt attributes in the Media Library
+* Add labels to standard WordPress form fields (search, comments)
+* Add post titles to "read more" links.
+* Remove tabindex from elements that are focusable. (Also fixes plugin-caused problems.)
 
-= Accessibility Issues fixed by WP Accessibility: =
+= WordPress Core Accessibility Issues fixed by WP Accessibility =
 
-* Remove the target attribute from links.
+These are features that address issues caused by current or past WordPress core accessibility issues. (Issues added in content, such as target or title attributes, are persistent even when WordPress is updated.) 
+
 * Force a search page error when a search is made with an empty text string. (If your theme has a search.php template.)
-* Remove tabindex from elements that are focusable.
-* Strip title attributes from images inserted into content. 
 * Remove redundant title attributes from page lists, category lists, and archive menus. 
-* Add post titles to standard "read more" links.
 * Address some accessibility issues in the WordPress admin styles
-* Add labels to standard WordPress form fields if missing
 
-= Accessibility Tools built into WP Accessibility: =
+Content specific fixes:
 
-* Show the color contrast between two provided hexadecimal color values.
+* Strip title attributes from images inserted into content. 
+* Remove the target attribute from links.
+
+= Accessibility Tools in WP Accessibility: =
+
+These are tools provided to help you identify issues you may need to fix.
+
+* Test the color contrast between two provided hexadecimal color values.
 * Enable diagnostic CSS to show CSS-detectable problems in visual editor or on front-end of site. 
 
 Learn more! <a href="http://make.wordpress.org/accessibility/wp-accessibility-plugin/">Read about the accessibility issues corrected</a> by WP Accessibility!
@@ -63,7 +73,42 @@ The plug-in is intended to help with deficiencies commonly found in themes and t
 = Future =
 
 [Suggest a change!](https://github.com/joedolson/wp-accessibility/issues/)
-* Conflict with NextGen gallery to explore
+
+= 1.7.6 =
+
+* Bug fix: Broken class array query in longdesc.
+
+= 1.7.5 =
+
+* Bug fix: register_block_style only exists since WP 5.3; check function exists first.
+
+= 1.7.4 =
+
+* Change: mark `&nbsp;` as an invalid alt value.
+* Remove .hndle class on admin headings.
+* Fix jQuery incompatibility due to deprecated .toggle() event handler.
+* Add support for long description in the block editor.
+
+= 1.7.3 =
+
+* Bug fix: script registration/enqueuing mis-ordered, breaking toolbar.
+
+= 1.7.2 =
+
+* Add style to div.aligncenter to control width
+
+= 1.7.1 =
+
+* Bump tested to value.
+
+= 1.7.0 =
+
+* Add: test for specific common types of invalid alt attribute and label as invalid.
+* Change: Remove webkit skiplink polyfill (obsolete)
+* Change: Move toolbar JS to external file.
+* Change: Use wp inline style method for toolbar size.
+* Bug fix: Incorrect variable type matching in toolbar size setting.
+* Security: Minor authenticated XSS vulnerability in custom CSS.
 
 = 1.6.10 =
 
