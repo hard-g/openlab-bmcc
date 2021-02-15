@@ -13,9 +13,9 @@ External resources linked to the theme.
   Licensed under SIL Open Font License, 1.1 http://scripts.sil.org/cms/scripts/page.php?site_id=nrsi&id=OFL
 
 Resources packed within the theme.
+* Images on screenshot is from https://pxhere.com/ link. License: Creative Commons Zero (CC0)
 * Genericons by Joen Asmussen http://genericons.com/
   Licensed under the GPL, version 2 or later http://www.gnu.org/licenses/old-licenses/gpl-2.0.html).
-* Image used as deafault header image(s) and used in the screenshot are from public domain http://unsplash.com/
 * Custom js file is our own creation and is licensed under the same license as this theme.
 * HTML5 Shiv @afarkas @jdalton @jon_neal @rem | MIT/GPL2 Licensed
 * TGM-Plugin-Activation by Thomas Griffin, Gary Jones, Juliette Reinders Folmer | GPL v2 Licensed
@@ -64,6 +64,31 @@ If you want to translate this theme to your language, Please visit:- https://tra
 /**********************************************************/
 
 == CHANGE LOG ==
+= Version 1.3.7 -2020-12-21 =
+* Tweak - Update footer credit link with `rel="nofollow"` attributes.
+
+= Version 1.3.6 -2020-08-17 =
+* Remove - TGMPA library to recommend plugins
+
+= Version 1.3.5 -2020-07-15 =
+* Enhancement - Gutenberg compatibility.
+* Tweak       - Change http protocol to https.
+* Remove - Unrequired deprecated demo config for theme demo lists.
+
+= Version 1.3.4 -2020-05-22 =
+* Add   - Required header fields: `Tested up to` and `Requires PHP` in style.css.
+* Tweak - Add and improve theme-related notices.
+
+= Version 1.3.3 -2020-05-04 =
+* Fix   - Menu not accessible on small devices.
+* Tweak - Add review notice message.
+
+= Version 1.3.2 -2020-02-20 =
+* Tweak - Update `screen-reader-text` CSS.
+* Tweak - Added `skip-link` to content area.
+* Tweak - Modify menu CSS for keyboard accessibility.
+* Fix - Input type CSS for comments
+
 = Version 1.3.1 -2019-07-12 =
 * Tweak - Modify pingback url autodiscovery for single posts, pages, or attachments.
 * Tweak - Separate customize control class via different file.

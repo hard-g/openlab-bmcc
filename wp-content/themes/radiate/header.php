@@ -13,7 +13,7 @@
 <head>
 <meta charset="<?php bloginfo( 'charset' ); ?>">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="profile" href="http://gmpg.org/xfn/11">
+<link rel="profile" href="https://gmpg.org/xfn/11">
 <?php wp_head(); ?>
 </head>
 
@@ -31,6 +31,8 @@ if ( function_exists( 'wp_body_open' ) ) {
 	endif; ?>
 </div>
 <div id="page" class="hfeed site">
+	<a class="skip-link screen-reader-text" href="#content"><?php esc_html_e( 'Skip to content', 'radiate' ); ?></a>
+
 	<?php do_action( 'before' ); ?>
 	<header id="masthead" class="site-header" role="banner">
 		<div class="header-wrap clearfix">
@@ -54,9 +56,16 @@ if ( function_exists( 'wp_body_open' ) ) {
 
 			<nav id="site-navigation" class="main-navigation" role="navigation">
 				<h4 class="menu-toggle"></h4>
-				<a class="skip-link screen-reader-text" href="#content"><?php _e( 'Skip to content', 'radiate' ); ?></a>
 
-				<?php wp_nav_menu( array( 'theme_location' => 'primary', 'container_class' => 'menu-primary-container' ) ); ?>
+				<?php
+				wp_nav_menu(
+					array(
+						'theme_location'  => 'primary',
+						'menu_class'      => 'clearfix ',
+						'container_class' => 'menu-primary-container'
+					)
+				); 
+				?>
 			</nav><!-- #site-navigation -->
 		</div><!-- .inner-wrap header-wrap -->
 	</header><!-- #masthead -->

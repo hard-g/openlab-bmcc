@@ -43,22 +43,39 @@ if ( ! function_exists( 'radiate_setup' ) ) :
 		 */
 		add_theme_support( 'post-thumbnails' );
 
+		// Gutenberg wide layout support.
+		add_theme_support( 'align-wide' );
+
+		// Gutenberg block layout support.
+		add_theme_support( 'wp-block-styles' );
+
+		// Gutenberg editor support.
+		add_theme_support( 'responsive-embeds' );
+
 		// Supporting title tag via add_theme_support (since WordPress 4.1)
 		add_theme_support( 'title-tag' );
 
 		// This theme uses wp_nav_menu() in one location.
-		register_nav_menus( array(
-			'primary' => __( 'Primary Menu', 'radiate' ),
-		) );
+		register_nav_menus(
+			array(
+				'primary' => __( 'Primary Menu', 'radiate' ),
+			)
+		);
 
 		// Enable support for Post Formats.
 		add_theme_support( 'post-formats', array( 'aside', 'image', 'video', 'quote', 'link' ) );
 
 		// Setup the WordPress core custom background feature.
-		add_theme_support( 'custom-background', apply_filters( 'radiate_custom_background_args', array(
-			'default-color' => 'EAEAEA',
-			'default-image' => '',
-		) ) );
+		add_theme_support(
+			'custom-background',
+			apply_filters(
+				'radiate_custom_background_args',
+				array(
+					'default-color' => 'EAEAEA',
+					'default-image' => '',
+				)
+			)
+		);
 
 		// Adding excerpt option box for pages as well
 		add_post_type_support( 'page', 'excerpt' );
@@ -70,13 +87,25 @@ if ( ! function_exists( 'radiate_setup' ) ) :
 		 * Switch default core markup for search form, comment form, and comments
 		 * to output valid HTML5.
 		 */
-		add_theme_support( 'html5', array(
-			'search-form',
-			'comment-form',
-			'comment-list',
-			'gallery',
-			'caption',
-		) );
+		add_theme_support(
+			'html5',
+			array(
+				'search-form',
+				'comment-form',
+				'comment-list',
+				'gallery',
+				'caption',
+			)
+		);
+
+		// Gutenberg wide layout support.
+		add_theme_support( 'align-wide' );
+
+		// Gutenberg block styles support.
+		add_theme_support( 'wp-block-styles' );
+
+		// Gutenberg responsive embeds support.
+		add_theme_support( 'responsive-embeds' );
 
 		// Enable support for WooCommerce
 		add_theme_support( 'woocommerce' );
@@ -91,14 +120,16 @@ add_action( 'after_setup_theme', 'radiate_setup' );
  * Register widgetized area and update sidebar with default widgets.
  */
 function radiate_widgets_init() {
-	register_sidebar( array(
-		'name'          => __( 'Sidebar', 'radiate' ),
-		'id'            => 'sidebar-1',
-		'before_widget' => '<aside id="%1$s" class="widget %2$s">',
-		'after_widget'  => '</aside>',
-		'before_title'  => '<h3 class="widget-title">',
-		'after_title'   => '</h3>',
-	) );
+	register_sidebar(
+		array(
+			'name'          => __( 'Sidebar', 'radiate' ),
+			'id'            => 'sidebar-1',
+			'before_widget' => '<aside id="%1$s" class="widget %2$s">',
+			'after_widget'  => '</aside>',
+			'before_title'  => '<h3 class="widget-title">',
+			'after_title'   => '</h3>',
+		)
+	);
 }
 
 add_action( 'widgets_init', 'radiate_widgets_init' );
@@ -106,8 +137,9 @@ add_action( 'widgets_init', 'radiate_widgets_init' );
 /**
  * Assign the Radiate version to a variable.
  */
-$theme           = wp_get_theme( 'radiate' );
-$radiate_version = $theme['Version'];
+$radiate_theme = wp_get_theme( 'radiate' );
+
+define( 'RADIATE_THEME_VERSION', $radiate_theme->get( 'Version' ) );
 
 /**
  * Enqueue scripts and styles.
@@ -142,6 +174,17 @@ function radiate_scripts() {
 add_action( 'wp_enqueue_scripts', 'radiate_scripts' );
 
 /**
+ * Enqueue Google fonts and editor styles.
+ */
+function radiate_block_editor_styles() {
+	wp_enqueue_style( 'radiate-editor-googlefonts', '//fonts.googleapis.com/css2?family=Roboto|Merriweather:400,300' );
+	wp_enqueue_style( 'radiate-block-editor-styles', get_template_directory_uri() . '/style-editor-block.css' );
+}
+
+add_action( 'enqueue_block_editor_assets', 'radiate_block_editor_styles', 1, 1 );
+
+
+/**
  * Implement the Custom Header feature.
  */
 require get_template_directory() . '/inc/custom-header.php';
@@ -167,21 +210,13 @@ require get_template_directory() . '/inc/customizer.php';
 require get_template_directory() . '/inc/jetpack.php';
 
 /**
- * Load Demo Importer Configs.
- */
-if ( class_exists( 'TG_Demo_Importer' ) ) {
-	require get_template_directory() . '/inc/demo-config.php';
-}
-
-/**
  * Calling in the admin area for the Welcome Page as well as for the new theme notice too.
  */
 if ( is_admin() ) {
 	require get_template_directory() . '/inc/admin/class-radiate-admin.php';
+	require get_template_directory() . '/inc/admin/class-radiate-dashboard.php';
+	require get_template_directory() . '/inc/admin/class-radiate-notice.php';
+	require get_template_directory() . '/inc/admin/class-radiate-welcome-notice.php';
+	require get_template_directory() . '/inc/admin/class-radiate-upgrade-notice.php';
+	require get_template_directory() . '/inc/admin/class-radiate-theme-review-notice.php';
 }
-
-/**
- * Load TGMPA Configs.
- */
-require get_template_directory() . '/inc/tgm-plugin-activation/class-tgm-plugin-activation.php';
-require get_template_directory() . '/inc/tgm-plugin-activation/tgmpa-radiate.php';
