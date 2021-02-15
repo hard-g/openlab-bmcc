@@ -144,9 +144,11 @@ class EM_Admin_Notice {
 				if( $this->where == 'plugin' ) $return = true;
 				elseif( empty($_REQUEST['page']) && in_array($this->where, array(EM_POST_TYPE_EVENT, EM_POST_TYPE_LOCATION, 'event-recurring')) ) $return = true;
 				elseif( $this->where == 'settings' && !empty($_REQUEST['page']) && $_REQUEST['page'] == 'events-manager-options' ) $return = true;
-				elseif( !empty($_REQUEST['page']) && $this->where == $_REQUEST['page'] ) $return = true;
+				elseif( !empty($_REQUEST['page']) && ($this->where == $_REQUEST['page'] || (is_array($this->where) && in_array($_REQUEST['page'], $this->where))) ) $return = true;
 			}elseif( is_network_admin() && !empty($_REQUEST['page']) && preg_match('/^events\-manager\-/', $_REQUEST['page']) ){
 				$return = $this->where == 'plugin' || $this->where == 'settings' || $this->where == 'network_admin';
+			}elseif( !empty($_REQUEST['page']) && ($this->where == $_REQUEST['page'] || (is_array($this->where) && in_array($_REQUEST['page'], $this->where))) ){
+				$return = true;
 			}
 		}
 		//does this even have a message we can display?
@@ -167,7 +169,7 @@ class EM_Admin_Notice {
 		if( empty($this->message) ) return false;
 		$action = $this->network ? 'em_dismiss_network_admin_notice':'em_dismiss_admin_notice';
 		?>
-		<div class="em-admin-notice notice notice-<?php echo esc_attr($this->what); ?> <?php if($this->dismissible) echo 'is-dismissible'?>" data-dismiss-action="<?php echo $action; ?>" data-dismiss-key="<?php echo esc_attr($this->name); ?>">
+		<div class="em-admin-notice notice notice-<?php echo esc_attr($this->what); ?> <?php if($this->dismissible) echo 'is-dismissible'?>" id="notice-<?php echo esc_attr($this->name); ?>" data-dismiss-action="<?php echo $action; ?>" data-dismiss-key="<?php echo esc_attr($this->name); ?>">
 			<p><?php echo $this->message; ?></p>
 		</div>
 		<?php

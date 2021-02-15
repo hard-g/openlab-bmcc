@@ -1,4 +1,5 @@
 <?php
+use EM_Event_Locations\Event_Locations;
 //TODO EM_Events is currently static, better we make this non-static so we can loop sets of events, and standardize with other objects.
 /**
  * Use this class to query and manipulate sets of events. If dealing with more than one event, you probably want to use this class in some way.
@@ -20,13 +21,15 @@ class EM_Events extends EM_Object {
 	 */
 	public static $num_rows_found;
 	
+	protected static $context = 'event';
+	
 	/**
 	 * Returns an array of EM_Events that match the given specs in the argument, or returns a list of future evetnts in future 
 	 * (see EM_Events::get_default_search() ) for explanation of possible search array values. You can also supply a numeric array
 	 * containing the ids of the events you'd like to obtain 
 	 * 
 	 * @param array $args
-	 * @return EM_Event array()
+	 * @return EM_Event[]
 	 */
 	public static function get( $args = array(), $count=false ) {
 		global $wpdb;	 
@@ -515,7 +518,6 @@ $limit $offset";
 	 * @see wp-content/plugins/events-manager/classes/EM_Object#build_sql_conditions()
 	 */
 	public static function build_sql_conditions( $args = array() ){
-	    self::$context = EM_POST_TYPE_EVENT;
 		global $wpdb;
 		//continue with conditions
 		$conditions = parent::build_sql_conditions($args);
@@ -578,6 +580,34 @@ $limit $offset";
 				$conditions['post_id'] = "(".EM_EVENTS_TABLE.".post_id={$args['post_id']})";
 			}
 		}
+		// event locations
+		if( !empty($args['event_location_type']) ){
+			$event_location_types = explode(',', $args['event_location_type']);
+			$event_locations_search = array();
+			// generate array of clean and enabled event location types
+			foreach( $event_location_types as $event_location_type ){
+				$event_location_type = trim($event_location_type);
+				if( Event_Locations::is_enabled($event_location_type) ){
+					$event_locations_search[] = $event_location_type;
+				}
+			}
+			// add condition if at least one valid/clean type supplied
+			if( !empty($event_locations_search) ){
+				if( count($event_locations_search) === 1 ){
+					$event_location = current($event_locations_search);
+					$conditions['event_location'] = "event_location_type='$event_location'";
+				}else{
+					$conditions['event_location'] = "event_location_type IN ('". implode("','", $event_locations_search) ."')";
+				}
+			}
+		}
+		if( isset($args['has_event_location']) && $args['has_event_location'] !== false ){
+			if( $args['has_event_location'] ){
+				$conditions['has_event_location'] = "event_location_type IS NOT NULL";
+			}else{
+				$conditions['has_event_location'] = "event_location_type IS NULL";
+			}
+		}
 		return apply_filters( 'em_events_build_sql_conditions', $conditions, $args );
 	}
 	
@@ -636,7 +666,6 @@ $limit $offset";
 	 * @uses EM_Object#get_default_search()
 	 */
 	public static function get_default_search( $array_or_defaults = array(), $array = array() ){
-	    self::$context = EM_POST_TYPE_EVENT;
 		$defaults = array(
 			'recurring' => false, //we don't initially look for recurring events only events and recurrences of recurring events
 			'orderby' => get_option('dbem_events_default_orderby'),
@@ -661,7 +690,9 @@ $limit $offset";
 			//event-specific search attributes
 			'has_location' => false, //search events with a location
 			'no_location' => false, //search events without a location
-			'location_status' => false //search events with locations of a specific publish status
+			'location_status' => false, //search events with locations of a specific publish status
+			'event_location_type' => false,
+			'has_event_location' => false,
 		);
 		//sort out whether defaults were supplied or just the array of search values
 		if( empty($array) ){

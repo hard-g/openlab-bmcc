@@ -9,7 +9,7 @@
  * @return string
  */
 function em_content($page_content) {
-	global $post, $wpdb, $wp_query, $EM_Event, $EM_Location, $EM_Category;
+	global $post, $EM_Event, $EM_Location, $EM_Notices;
 	if( empty($post) || empty($post->ID) ) return $page_content; //fix for any other plugins calling the_content outside the loop
 	$events_page_id = get_option ( 'dbem_events_page' );
 	$locations_page_id = get_option( 'dbem_locations_page' );
@@ -22,7 +22,7 @@ function em_content($page_content) {
 	//general defaults
 	$args = array(				
 		'owner' => false,
-		'pagination' => 1
+		'pagination' => 1,
 	);
 	$args['ajax'] = isset($args['ajax']) ? $args['ajax']:(!defined('EM_AJAX') || EM_AJAX );
 	if( !post_password_required() && in_array($post->ID, array($events_page_id, $locations_page_id, $categories_page_id, $edit_bookings_page_id, $edit_events_page_id, $edit_locations_page_id, $my_bookings_page_id, $tags_page_id)) ){
@@ -34,6 +34,7 @@ function em_content($page_content) {
 				if ( !empty($_REQUEST['calendar_day']) ) {
 					//Events for a specific day
 					$args = EM_Events::get_post_search( array_merge($args, $_REQUEST) );
+					$args['limit'] = !empty($args['limit']) ? $args['limit'] : get_option('dbem_events_default_limit');
 					em_locate_template('templates/calendar-day.php',true, array('args'=>$args));
 				}elseif ( is_object($EM_Event)) {
 					em_locate_template('templates/event-single.php',true, array('args'=>$args));	
@@ -244,7 +245,26 @@ function em_content_wp_title($title, $sep = '', $seplocation = ''){
 	return $title;
 }
 add_filter ( 'wp_title', 'em_content_wp_title',100,3 ); //override other plugin SEO due to way EM works.
-add_filter( 'wpseo_title', 'em_content_wp_title', 100, 3 ); //WP SEO friendly
+
+/**
+ * Yoast SEO friendly short circuit, fixes issues in Yoast 14 update by changing the $sep function into the actual separator.
+ * @param $title
+ * @param string|mixed $sep
+ * @param string $seplocation
+ * @return string
+ */
+function em_content_wpseo_title($title, $sep = '', $seplocation = ''){
+	if( class_exists('WPSEO_Utils') && method_exists('WPSEO_Utils', 'get_title_separator') && version_compare(WPSEO_VERSION, '15.2', '<') ){
+		$sep = WPSEO_Utils::get_title_separator();
+	}elseif( !is_string( $sep ) ){
+		$sep = '';
+	}
+	if( !is_string($seplocation) ){
+		$seplocation = '';
+	}
+	return em_content_wp_title( $title, $sep, $seplocation = '' );
+}
+add_filter( 'wpseo_title', 'em_content_wpseo_title', 100, 2 ); //WP SEO friendly
 
 /**
  * Makes sure we're in "THE Loop", which is determinied by a flag set when the_post() (start) is first called, and when have_posts() (end) returns false.

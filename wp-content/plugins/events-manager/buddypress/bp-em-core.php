@@ -65,7 +65,6 @@ class BP_EM_Component extends BP_Component {
 		//check multisite or normal mode for correct permission checking
 		if(is_multisite() && $blog_id != BP_ROOT_BLOG){
 			//FIXME MS mode doesn't seem to recognize cross subsite caps, using the proper functions, for now we use switch_blog.
-			$current_blog = $blog_id;
 			switch_to_blog(BP_ROOT_BLOG);
 			$can_manage_events = current_user_can_for_blog(BP_ROOT_BLOG, 'edit_events');
 			$can_manage_locations = current_user_can_for_blog(BP_ROOT_BLOG, 'edit_locations');
@@ -77,8 +76,11 @@ class BP_EM_Component extends BP_Component {
 			$can_manage_bookings = current_user_can('manage_bookings');
 		}
 		/* Add 'Events' to the main user profile navigation */
+		$event_count = EM_Events::count( array( 'scope'=>'future',  'owner'=> bp_displayed_user_id() ));
+		if( empty($event_count) ) $event_count = 0;
+		$event_count_span = $event_count > 0 ? ' <span class="count">'.esc_html($event_count).'</span>':'';
 		$main_nav = array(
-			'name' => __( 'Events', 'events-manager'),
+			'name' => __( 'Events', 'events-manager'). $event_count_span,
 			'slug' => em_bp_get_slug(),
 			'position' => 80,
 			'screen_function' => 'bp_em_events',
@@ -97,15 +99,17 @@ class BP_EM_Component extends BP_Component {
 			'position' => 10
 		);
 		
-		$sub_nav[] = array(
-			'name' => __( 'Events I\'m Attending', 'events-manager'),
-			'slug' => 'attending',
-			'parent_slug' => em_bp_get_slug(),
-			'parent_url' => $em_link,
-			'screen_function' => 'bp_em_attending',
-			'position' => 20,
-			'user_has_access' => bp_is_my_profile() // Only the logged in user can access this on his/her profile
-		);
+		if( get_option('dbem_rsvp_enabled') ) { // Only if bookings enabled
+			$sub_nav[] = array(
+				'name' => __( 'Events I\'m Attending', 'events-manager'),
+				'slug' => 'attending',
+				'parent_slug' => em_bp_get_slug(),
+				'parent_url' => $em_link,
+				'screen_function' => 'bp_em_attending',
+				'position' => 20,
+				'user_has_access' => bp_is_my_profile() // Only the logged in user can access this on his/her profile
+			);
+		}
 	
 		if( $can_manage_events ){
 			$sub_nav[] = array(
@@ -155,6 +159,9 @@ class BP_EM_Component extends BP_Component {
 				'user_has_access' => bp_is_my_profile() // Only the logged in user can access this on his/her profile
 			);
 		}
+		
+		$main_nav = apply_filters('em_bp_menu_main_nav', $main_nav);
+		$sub_nav = apply_filters('em_bp_menu_sub_nav', $sub_nav);
 		
 		parent::setup_nav( $main_nav, $sub_nav );
 		add_action( 'bp_init', array(&$this, 'setup_group_nav') );

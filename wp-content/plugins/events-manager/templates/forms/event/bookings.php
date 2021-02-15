@@ -42,8 +42,11 @@ $reschedule_warnings = !empty($EM_Event->event_id) && $EM_Event->is_recurring() 
 	    	</div>
 			<?php 
 		}
+		$container_classes = array();
+		if( $reschedule_warnings && empty($_REQUEST['recreate_tickets']) ) $container_classes[] = 'reschedule-hidden';
+		if( get_option('dbem_bookings_tickets_ordering') ) $container_classes[] = 'em-tickets-sortable';
 		?>
-		<div id="em-tickets-form" class="em-tickets-form<?php if( $reschedule_warnings && empty($_REQUEST['recreate_tickets']) ) echo ' reschedule-hidden' ?>">
+		<div id="em-tickets-form" class="em-tickets-form <?php echo implode(' ', $container_classes); ?>">
 		<?php
 		//output ticket options
 		if( get_option('dbem_bookings_tickets_single') && count($EM_Tickets->tickets) == 1 ){
@@ -62,12 +65,11 @@ $reschedule_warnings = !empty($EM_Event->event_id) && $EM_Event->is_recurring() 
 						<th><?php esc_html_e('Start/End','events-manager'); ?></th>
 						<th><?php esc_html_e('Avail. Spaces','events-manager'); ?></th>
 						<th><?php esc_html_e('Booked Spaces','events-manager'); ?></th>
-						<th>&nbsp;</th>
 					</tr>
 				</thead>    
 				<tfoot>
 					<tr valign="top">
-						<td colspan="8">
+						<td colspan="7">
 							<a href="#" id="em-tickets-add"><?php esc_html_e('Add new ticket','events-manager'); ?></a>
 						</td>
 					</tr>
@@ -79,15 +81,18 @@ $reschedule_warnings = !empty($EM_Event->event_id) && $EM_Event->is_recurring() 
 					$col_count = 0;
 					foreach( $EM_Tickets->tickets as $EM_Ticket){
 						/* @var $EM_Ticket EM_Ticket */
+						$class_name = $col_count == 0 ? 'em-ticket-template':'em-ticket';
 						?>
-						<tbody id="em-ticket-<?php echo $col_count ?>" <?php if( $col_count == 0 ) echo 'style="display:none;"' ?>>
+						<tbody id="em-ticket-<?php echo $col_count ?>" class="<?php echo $class_name; ?>">
 							<tr class="em-tickets-row">
-								<td class="ticket-status"><span class="<?php if($EM_Ticket->ticket_id && $EM_Ticket->is_available(true, true)){ echo 'ticket_on'; }elseif($EM_Ticket->ticket_id > 0){ echo 'ticket_off'; }else{ echo 'ticket_new'; } ?>"></span></td>													
+								<td class="ticket-status">
+									<span class="dashicons dashicons-menu <?php if($EM_Ticket->ticket_id && $EM_Ticket->is_available(true, true)){ echo 'ticket-on'; }elseif($EM_Ticket->ticket_id > 0){ echo 'ticket-off'; }else{ echo 'ticket-new'; } ?>"></span>
+								</td>
 								<td class="ticket-name">
 									<span class="ticket_name"><?php if($EM_Ticket->ticket_members) echo '* ';?><?php echo wp_kses_data($EM_Ticket->ticket_name); ?></span>
 									<div class="ticket_description"><?php echo wp_kses($EM_Ticket->ticket_description,$allowedposttags); ?></div>
 									<div class="ticket-actions">
-										<a href="#" class="ticket-actions-edit"><?php esc_html_e('Edit','events-manager'); ?></a> 
+										<a href="#" class="ticket-actions-edit"><?php esc_html_e('Edit','events-manager'); ?></a>
 										<?php if( $EM_Ticket->get_bookings_count() == 0 ): ?>
 										| <a href="<?php bloginfo('wpurl'); ?>/wp-load.php" class="ticket-actions-delete"><?php esc_html_e('Delete','events-manager'); ?></a>
 										<?php else: ?>
@@ -96,12 +101,12 @@ $reschedule_warnings = !empty($EM_Event->event_id) && $EM_Event->is_recurring() 
 									</div>
 								</td>
 								<td class="ticket-price">
-									<span class="ticket_price"><?php echo ($EM_Ticket->ticket_price) ? esc_html($EM_Ticket->get_price_precise()) : esc_html__('Free','events-manager'); ?></span>
+									<span class="ticket_price"><?php echo ($EM_Ticket->ticket_price) ? esc_html($EM_Ticket->get_price_precise(true)) : esc_html__('Free','events-manager'); ?></span>
 								</td>
 								<td class="ticket-limit">
 									<span class="ticket_min">
 										<?php  echo ( !empty($EM_Ticket->ticket_min) ) ? esc_html($EM_Ticket->ticket_min):'-'; ?>
-									</span> / 
+									</span> /
 									<span class="ticket_max"><?php echo ( !empty($EM_Ticket->ticket_max) ) ? esc_html($EM_Ticket->ticket_max):'-'; ?></span>
 								</td>
 								<td class="ticket-time">
@@ -185,7 +190,7 @@ $reschedule_warnings = !empty($EM_Event->event_id) && $EM_Event->is_recurring() 
 			</select>
 			<?php _e('at','events-manager'); ?>
 		</span>
-		<input type="text" name="event_rsvp_time" class="em-time-input" maxlength="8" size="8" value="<?php echo $EM_Event->rsvp_end()->format(em_get_hour_format()); ?>" />
+		<input type="text" name="event_rsvp_time" class="em-time-input" maxlength="8" size="8" value="<?php if (!empty($EM_Event->event_rsvp_time)) echo $EM_Event->rsvp_end()->format(em_get_hour_format()); ?>" />
 		<br />
 		<em><?php esc_html_e('This is the definite date after which bookings will be closed for this event, regardless of individual ticket settings above. Default value will be the event start date.','events-manager'); ?></em>
 	</p>

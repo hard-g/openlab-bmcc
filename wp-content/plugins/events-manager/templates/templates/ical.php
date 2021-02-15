@@ -92,8 +92,8 @@ while ( count($EM_Events) > 0 ){
 				$geo = 'GEO:'.$EM_Event->get_location()->location_latitude.";".$EM_Event->get_location()->location_longitude;
 			}
 			if( !defined('EM_ICAL_APPLE_STRUCT') || !EM_ICAL_APPLE_STRUCT ){
-				$apple_location = $EM_Event->output('#_LOCATIONFULLLINE, #_LOCATIONCOUNTRY', 'ical');
-				$apple_location_title = $EM_Event->output('#_LOCATIONNAME', 'ical');
+				$apple_location = str_replace(';', '', html_entity_decode(str_replace('\;', ';', $EM_Event->output('#_LOCATIONFULLLINE, #_LOCATIONCOUNTRY', 'ical'))));
+				$apple_location_title = str_replace('\;', '', html_entity_decode(str_replace('\;', ';', $EM_Event->output('#_LOCATIONNAME', 'ical'))));
 				$apple_geo = !empty($geo) ? $EM_Event->get_location()->location_latitude.",".$EM_Event->get_location()->location_longitude:'0,0';
 				$apple_structured_location = "X-APPLE-STRUCTURED-LOCATION;VALUE=URI;X-ADDRESS={$apple_location};X-APPLE-RADIUS=100;X-TITLE={$apple_location_title}:geo:{$apple_geo}";
 				$apple_structured_location = str_replace('"', '\"', $apple_structured_location); //google chucks a wobbly with these on this line
@@ -144,6 +144,15 @@ if( $location ){
 	if( !empty($apple_structured_location) ){
 		$output .= "\r\n" . $apple_structured_location;
 	}
+}
+// add organizer if specifically requested via $args in locate_template
+if( !empty($include_organizer) ){
+	/*
+	 * Currently unused via settings, can be activated by adding this line of code somewhere e.g. your theme functions.php file
+	 * add_filter('em_locate_template_args_templates/ical.php', function($args){ $args['include_organizer'] = true; return $args; });
+	 */
+	$EM_Person = new EM_Person($EM_Event->get_owner());
+	$output .= "\r\n" . 'ORGANIZER;CN="'. $EM_Person->get_name() .'":MAILTO:'. $EM_Person->user_email;
 }
 //end the event
 $output .= "

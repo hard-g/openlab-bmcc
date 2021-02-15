@@ -77,7 +77,7 @@ if( !class_exists('EM_Permalinks') ){
 					$url = get_term_link($wp_query->get('category_slug'), EM_TAXONOMY_CATEGORY);
 				}
 				if(!empty($url)){
-					wp_redirect($url,301);
+					wp_safe_redirect($url,301);
 					exit();
 				}
 			}
@@ -93,7 +93,8 @@ if( !class_exists('EM_Permalinks') ){
 			if( is_object($events_page) ){
 				$events_slug = urldecode(preg_replace('/\/$/', '', str_replace( trailingslashit(home_url()), '', get_permalink($events_page_id)) ));
 				$events_slug = ( !empty($events_slug) ) ? trailingslashit($events_slug) : $events_slug;
-				$em_rules[$events_slug.'(\d{4}-\d{2}-\d{2})$'] = 'index.php?pagename='.$events_slug.'&calendar_day=$matches[1]'; //event calendar date search
+				$events_pagename = trim($events_slug,'/');
+				$em_rules[$events_slug.'(\d{4}-\d{2}-\d{2})$'] = 'index.php?pagename='.$events_pagename.'&calendar_day=$matches[1]'; //event calendar date search
 				if( $events_page_id != get_option('page_on_front') && EM_POST_TYPE_EVENT_SLUG != $events_slug ){ //ignore this rule if events page is the home page
 					$em_rules[$events_slug.'rss/?$'] = 'index.php?post_type='.EM_POST_TYPE_EVENT.'&feed=feed'; //rss page
 					$em_rules[$events_slug.'feed/?$'] = 'index.php?post_type='.EM_POST_TYPE_EVENT.'&feed=feed'; //compatible rss page
@@ -125,17 +126,18 @@ if( !class_exists('EM_Permalinks') ){
 				//global links hard-coded
 				if( EM_MS_GLOBAL && !get_site_option('dbem_ms_global_events_links', true) ){
 					//MS Mode has slug also for global links
-					$em_rules[$events_slug.get_site_option('dbem_ms_events_slug',EM_EVENT_SLUG).'/(.+)$'] = 'index.php?pagename='.$events_slug.'&em_redirect=1&event_slug=$matches[1]'; //single event from subsite
+					$em_rules[$events_slug.get_site_option('dbem_ms_events_slug',EM_EVENT_SLUG).'/(.+)$'] = 'index.php?pagename='.$events_pagename.'&em_redirect=1&event_slug=$matches[1]'; //single event from subsite
 				}
 				//add redirection for backwards compatability
-				$em_rules[$events_slug.EM_EVENT_SLUG.'/(.+)$'] = 'index.php?pagename='.$events_slug.'&em_redirect=1&event_slug=$matches[1]'; //single event
-				$em_rules[$events_slug.EM_LOCATION_SLUG.'/(.+)$'] = 'index.php?pagename='.$events_slug.'&em_redirect=1&location_slug=$matches[1]'; //single location page
-				$em_rules[$events_slug.EM_CATEGORY_SLUG.'/(.+)$'] = 'index.php?pagename='.$events_slug.'&em_redirect=1&category_slug=$matches[1]'; //single category page slug
+				$em_rules[$events_slug.EM_EVENT_SLUG.'/(.+)$'] = 'index.php?pagename='.$events_pagename.'&em_redirect=1&event_slug=$matches[1]'; //single event
+				$em_rules[$events_slug.EM_LOCATION_SLUG.'/(.+)$'] = 'index.php?pagename='.$events_pagename.'&em_redirect=1&location_slug=$matches[1]'; //single location page
+				$em_rules[$events_slug.EM_CATEGORY_SLUG.'/(.+)$'] = 'index.php?pagename='.$events_pagename.'&em_redirect=1&category_slug=$matches[1]'; //single category page slug
 				//add a rule that ensures that the events page is found and used over other pages
-				$em_rules[trim($events_slug,'/').'/?$'] = 'index.php?pagename='.trim($events_slug,'/') ;
+				$em_rules[trim($events_slug,'/').'/?$'] = 'index.php?pagename='.$events_pagename ;
 			}else{
 				$events_slug = EM_POST_TYPE_EVENT_SLUG;
 				$em_rules[$events_slug.'/(\d{4}-\d{2}-\d{2})$'] = 'index.php?post_type='.EM_POST_TYPE_EVENT.'&calendar_day=$matches[1]'; //event calendar date search
+				$em_rules[$events_slug.'/(\d{4}-\d{2}-\d{2})/page/?([0-9]{1,})/?$'] = 'index.php?post_type='.EM_POST_TYPE_EVENT.'&calendar_day=$matches[1]&paged=$matches[2]'; //event calendar date search paged
 				if( get_option('dbem_rsvp_enabled') ){
 					if( !get_option( 'dbem_my_bookings_page') || !is_object(get_post(get_option( 'dbem_my_bookings_page'))) ){ //only added if bookings page isn't assigned
 						$em_rules[$events_slug.'/my\-bookings$'] = 'index.php?post_type='.EM_POST_TYPE_EVENT.'&bookings_page=1'; //page for users to manage bookings
@@ -195,8 +197,7 @@ if( !class_exists('EM_Permalinks') ){
 				$locations_page = get_post($locations_page_id);
 				if( is_object($locations_page) ){
 					$locations_slug = preg_replace('/\/$/', '', str_replace( trailingslashit(home_url()), '', get_permalink($locations_page_id) ));
-					$locations_slug_slashed = ( !empty($locations_slug) ) ? trailingslashit($locations_slug) : $locations_slug;
-					$em_rules[$locations_slug.'/'.get_site_option('dbem_ms_locations_slug',EM_LOCATION_SLUG).'/(.+)$'] = 'index.php?pagename='.$locations_slug_slashed.'&location_slug=$matches[1]'; //single event booking form with slug
+					$em_rules[$locations_slug.'/'.get_site_option('dbem_ms_locations_slug',EM_LOCATION_SLUG).'/(.+)$'] = 'index.php?pagename='.trim($locations_slug,'/').'&location_slug=$matches[1]'; //single event booking form with slug
 				}					
 			}
 			//add ical CPT endpoints
@@ -255,14 +256,18 @@ if( !class_exists('EM_Permalinks') ){
 		
 		/**
 		 * Not the "WP way" but for now this'll do!
+		 * This function tricks WP into thinking an EM static home page is just a page so that query_vars don't prevent the home page from showing properly.
+		 * This is an old problem described here : https://core.trac.wordpress.org/ticket/25143
+		 * Since we use these query vars in other areas and need to allow home page static settings to work, this connects the two sides so they can co-exist in different environments
 		 */
 		public static function init_objects(){
 			global $wp_rewrite, $wp_query;
 			//check some homepage conditions
 			$events_page_id = get_option ( 'dbem_events_page' );
 			if( is_object($wp_query) && $wp_query->is_home && !$wp_query->is_posts_page && 'page' == get_option('show_on_front') && get_option('page_on_front') == $events_page_id ){
+				// comment long after this is written - pretty sure this prevents seach query and pagination issues on the home page when an event page is set as the home static page removing this causes issues with searches and pagination
 				$wp_query->is_page = true;
-				$wp_query->is_home = false;
+				$wp_query->is_home = false; // WP will not technically expect this to be the home page, but the front page only
 				$wp_query->query_vars['page_id'] = $events_page_id;
 			}
 			if ( is_object($wp_query) && is_object($wp_rewrite) && $wp_rewrite->using_permalinks() ) {

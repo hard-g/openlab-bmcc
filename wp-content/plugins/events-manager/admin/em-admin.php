@@ -111,7 +111,7 @@ add_action('admin_head','em_admin_dashicon');
 
 function em_ms_admin_menu(){
 	add_menu_page( __('Events Manager','events-manager'), __('Events Manager','events-manager'), 'activate_plugins', 'events-manager-options', 'em_ms_admin_options_page', 'dashicons-calendar' );
-	add_submenu_page('events-manager-options', __('Update Blogs','events-manager'),__('Update Blogs','events-manager'), 'activate_plugins', "events-manager-update", 'em_ms_upgrade');	
+	add_submenu_page('events-manager-options', __('Update Blogs','events-manager'),__('Update Blogs','events-manager'), 'activate_plugins', "events-manager-update", 'em_ms_upgrade');
 }
 add_action('network_admin_menu','em_ms_admin_menu');
 
@@ -144,7 +144,7 @@ function em_admin_warnings() {
 			update_option('dbem_hello_to_user',0);
 		}elseif ( get_option ( 'dbem_hello_to_user' ) ) {
 			//FIXME update welcome msg with good links
-			$advice = sprintf( __("<p>Events Manager is ready to go! It is highly recommended you read the <a href='%s'>Getting Started</a> guide on our site, as well as checking out the <a href='%s'>Settings Page</a>. <a href='%s' title='Don't show this advice again'>Dismiss</a></p>", 'events-manager'), 'http://wp-events-plugin.com/documentation/getting-started-guide/?utm_source=em&utm_medium=plugin&utm_content=installationlink&utm_campaign=plugin_links', EM_ADMIN_URL .'&amp;page=events-manager-options',  $_SERVER['REQUEST_URI'].$dismiss_link_joiner.'disable_hello_to_user=true');
+			$advice = sprintf( __("<p>Events Manager is ready to go! It is highly recommended you read the <a href='%s'>Getting Started</a> guide on our site, as well as checking out the <a href='%s'>Settings Page</a>. <a href='%s' title='Don't show this advice again'>Dismiss</a></p>", 'events-manager'), 'http://wp-events-plugin.com/documentation/getting-started-guide/?utm_source=em&utm_medium=plugin&utm_content=installationlink&utm_campaign=plugin_links', EM_ADMIN_URL .'&amp;page=events-manager-options', esc_url($_SERVER['REQUEST_URI'].$dismiss_link_joiner.'disable_hello_to_user=true'));
 			?>
 			<div id="message" class="updated">
 				<?php echo $advice; ?>
@@ -159,18 +159,10 @@ function em_admin_warnings() {
 			if ( !get_page($events_page_id) && !get_option('dbem_dismiss_events_page') ){
 				?>
 				<div id="em_page_error" class="updated">
-					<p><?php echo sprintf ( __( 'Uh Oh! For some reason WordPress could not create an events page for you (or you just deleted it). Not to worry though, all you have to do is create an empty page, name it whatever you want, and select it as your events page in your <a href="%s">settings page</a>. Sorry for the extra step! If you know what you are doing, you may have done this on purpose, if so <a href="%s">ignore this message</a>', 'events-manager'), EM_ADMIN_URL .'&amp;page=events-manager-options', $_SERVER['REQUEST_URI'].$dismiss_link_joiner.'em_dismiss_events_page=1' ); ?></p>
+					<p><?php echo sprintf ( __( 'Uh Oh! For some reason WordPress could not create an events page for you (or you just deleted it). Not to worry though, all you have to do is create an empty page, name it whatever you want, and select it as your events page in your <a href="%s">settings page</a>. Sorry for the extra step! If you know what you are doing, you may have done this on purpose, if so <a href="%s">ignore this message</a>', 'events-manager'), EM_ADMIN_URL .'&amp;page=events-manager-options', esc_url($_SERVER['REQUEST_URI'].$dismiss_link_joiner.'em_dismiss_events_page=1') ); ?></p>
 				</div>
-				<?php		
+				<?php
 			}
-		}
-		
-		if( defined('EMP_VERSION') && EMP_VERSION < EM_PRO_MIN_VERSION && !defined('EMP_DISABLE_WARNINGS')){ 
-			?>
-			<div id="em_page_error" class="updated">
-				<p><?php _e('There is a newer version of Events Manager Pro which is recommended for this current version of Events Manager as new features have been added. Please go to the plugin website and download the latest update.','events-manager'); ?></p>
-			</div>
-			<?php
 		}
 	
 		if( is_multisite() && !empty($_REQUEST['page']) && $_REQUEST['page']=='events-manager-options' && em_wp_is_super_admin() && get_option('dbem_ms_update_nag') ){
@@ -179,7 +171,7 @@ function em_admin_warnings() {
 			}else{
 				?>
 				<div id="em_page_error" class="updated">
-					<p><?php echo sprintf(__('MultiSite options have moved <a href="%s">here</a>. <a href="%s">Dismiss message</a>','events-manager'),admin_url().'network/admin.php?page=events-manager-options', $_SERVER['REQUEST_URI'].'&amp;disable_dbem_ms_update_nag=1'); ?></p>
+					<p><?php echo sprintf(__('MultiSite options have moved <a href="%s">here</a>. <a href="%s">Dismiss message</a>','events-manager'),admin_url().'network/admin.php?page=events-manager-options', esc_url($_SERVER['REQUEST_URI'].'&amp;disable_dbem_ms_update_nag=1')); ?></p>
 				</div>
 				<?php
 			}
@@ -265,30 +257,40 @@ function em_updates_check( $transient ) {
     //only bother if we're checking for dev versions
     if( get_option('em_check_dev_version') || get_option('dbem_pro_dev_updates') ){     
 	    //check WP repo for trunk version
-	    $request = wp_remote_get('http://plugins.svn.wordpress.org/events-manager/trunk/events-manager.php');
-	    
-	    if( !is_wp_error($request) ){
-		    preg_match('/Version: ([0-9a-z\.]+)/', $request['body'], $matches);
-		    
-		    if( !empty($matches[1]) ){
-		    	//we have a version number!
-			    if( version_compare($transient->checked[EM_SLUG], $matches[1]) < 0) {
-			    	$response = new stdClass();
-			    	$response->slug = EM_SLUG;
-					$response->new_version = $matches[1] ;
-			        $response->url = 'http://wordpress.org/extend/plugins/events-manager/';
-				    $response->package = 'http://downloads.wordpress.org/plugin/events-manager.zip';
-			       	$transient->response[EM_SLUG] = $response;
+	    $plugin_slugs = apply_filters('em_org_dev_version_slugs', array('events-manager'=> EM_SLUG));
+	    foreach( $plugin_slugs as $org_slug => $wp_slug ) {
+		    $request = wp_remote_get('https://plugins.svn.wordpress.org/'.$org_slug.'/trunk/'.$org_slug.'.php');
+		
+		    if (!is_wp_error($request)) {
+			    preg_match('/Version: ([0-9a-z\.]+)/', $request['body'], $matches);
+			
+			    if (!empty($matches[1])) {
+				    //we have a version number!
+				    if (version_compare($transient->checked[$wp_slug], $matches[1]) < 0) {
+					    $response = new stdClass();
+					    $response->slug = $wp_slug;
+					    $response->new_version = $matches[1];
+					    $response->url = 'http://wordpress.org/extend/plugins/'.$org_slug.'/';
+					    $response->package = 'http://downloads.wordpress.org/plugin/'.$org_slug.'.zip';
+					    $icon_test = wp_remote_get('https://ps.w.org/'.$org_slug.'/assets/icon-128x128.png');
+					    if( !is_wp_error($icon_test) && $icon_test['response']['code'] == 200 ){
+						    $response->icons = array(
+						        '1x' => 'https://ps.w.org/'.$org_slug.'/assets/icon-128x128.png',
+						        '2x' => 'https://ps.w.org/'.$org_slug.'/assets/icon-256x256.png'
+						    );
+						}
+					    $transient->response[$wp_slug] = $response;
+				    }
 			    }
 		    }
-		}
+	    }
 		
 		delete_option('em_check_dev_version');
     }
     
     return $transient;
 }
-add_filter('pre_set_site_transient_update_plugins', 'em_updates_check'); // Hook into the plugin update check and mod for dev version
+add_filter('pre_set_site_transient_update_plugins', 'em_updates_check', 100); // Hook into the plugin update check and mod for dev version
 
 function em_user_action_links( $actions, $user ){
 	if ( !is_network_admin() && current_user_can( 'manage_others_bookings' ) ){
@@ -303,4 +305,20 @@ function em_user_action_links( $actions, $user ){
 	return $actions;
 }
 add_filter('user_row_actions','em_user_action_links',10,2);
+
+function em_pro_update_notice(){
+	// Check EM Pro update min
+	if( defined('EMP_VERSION') && EMP_VERSION < EM_PRO_MIN_VERSION && !defined('EMP_DISABLE_WARNINGS') ) {
+		$data = get_site_option('dbem_data');
+		$possible_notices = is_array($data) && !empty($data['admin_notices']) ? $data['admin_notices'] : array();
+		//we may have something to show, so we make sure that there's something to show right now
+		if( !isset($possible_notices['em-pro-updates']) ) {
+			?>
+			<div id="em_page_error" class="notice notice-warning">
+				<p><?php _e('There is a newer version of Events Manager Pro which is recommended for this current version of Events Manager as new features have been added. Please go to the plugin website and download the latest update.','events-manager'); ?></p>
+			</div>
+			<?php
+		}
+	}
+}
 ?>

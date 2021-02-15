@@ -4,13 +4,18 @@
  * @author marcus
  *
  */
-class EM_Tickets_Bookings extends EM_Object implements Iterator{
+class EM_Tickets_Bookings extends EM_Object implements Iterator, Countable {
 	
 	/**
 	 * Array of EM_Ticket_Booking objects for a specific event
-	 * @var array
+	 * @var array[EM_Ticket_Booking]
 	 */
 	var $tickets_bookings = array();
+	/**
+	 * When adding existing booked tickets via add() with 0 spaces, they get slotted here for deletion during save() so they circumvent validation.
+	 * @var array[EM_Ticket_Booking]
+	 */
+	var $tickets_bookings_deleted = array();
 	/**
 	 * This object belongs to this booking object
 	 * @var EM_Booking
@@ -57,14 +62,22 @@ class EM_Tickets_Bookings extends EM_Object implements Iterator{
 	 * @return boolean
 	 */
 	function save(){
-		global $wpdb;
 		do_action('em_tickets_bookings_save_pre',$this);
-		foreach( $this->tickets_bookings as $EM_Ticket_Booking ){ /* @var $EM_Ticket_Booking EM_Ticket_Booking */
+		//save/update tickets
+		foreach( $this->tickets_bookings as $EM_Ticket_Booking ){
 			$result = $EM_Ticket_Booking->save();
 			if(!$result){
 				$this->errors = array_merge($this->errors, $EM_Ticket_Booking->get_errors());
 			}
 		}
+		//delete old tickets if set to 0 in an update
+		foreach($this->tickets_bookings_deleted as $EM_Ticket_Booking ){
+			$result = $EM_Ticket_Booking->delete();
+			if(!$result){
+				$this->errors = array_merge($this->errors, $EM_Ticket_Booking->get_errors());
+			}
+		}
+		//return result
 		if( count($this->errors) > 0 ){
 			$this->feedback_message = __('There was a problem saving the booking.', 'events-manager');
 			$this->errors[] = __('There was a problem saving the booking.', 'events-manager');
@@ -85,9 +98,15 @@ class EM_Tickets_Bookings extends EM_Object implements Iterator{
 			$ticket_booking_key = $this->has_ticket($EM_Ticket_Booking->ticket_id);
 			$this->price = 0; //so price calculations are reset
 			if( $ticket_booking_key !== false && is_object($this->tickets_bookings[$EM_Ticket_Booking->ticket_id]) ){
-				//previously booked ticket, so let's just reset spaces/prices and replace it
-				$this->tickets_bookings[$EM_Ticket_Booking->ticket_id]->ticket_booking_spaces = $EM_Ticket_Booking->get_spaces();
-				$this->tickets_bookings[$EM_Ticket_Booking->ticket_id]->ticket_booking_price = $EM_Ticket_Booking->get_price();
+				if( $EM_Ticket_Booking->get_spaces() > 0 ){
+					//previously booked ticket, so let's just reset spaces/prices and replace it
+					$this->tickets_bookings[$EM_Ticket_Booking->ticket_id]->ticket_booking_spaces = $EM_Ticket_Booking->get_spaces();
+					$this->tickets_bookings[$EM_Ticket_Booking->ticket_id]->ticket_booking_price = $EM_Ticket_Booking->get_price();
+				}else{
+					//remove ticket from bookings and set for deletion if this is saved
+					unset($this->tickets_bookings[$EM_Ticket_Booking->ticket_id]);
+					$this->tickets_bookings_deleted[$EM_Ticket_Booking->ticket_id] = $EM_Ticket_Booking;
+				}
 				return apply_filters('em_tickets_bookings_add', true, $this, $EM_Ticket_Booking);
 			}elseif( $EM_Ticket_Booking->get_spaces() > 0 ){
 				//new ticket in booking
@@ -285,11 +304,15 @@ class EM_Tickets_Bookings extends EM_Object implements Iterator{
     public function next(){
         $var = next($this->tickets_bookings);
         return $var;
-    }  
+    }
     public function valid(){
         $key = key($this->tickets_bookings);
         $var = ($key !== NULL && $key !== FALSE);
         return $var;
-    }	
+    }
+    //Countable Implementation
+    public function count(){
+		return count($this->tickets_bookings);
+    }
 }
 ?>
