@@ -1,9 +1,9 @@
-﻿=== PDF Embedder ===
+=== PDF Embedder ===
 Contributors: levertechadmin
 Tags: doc, pdf, pdf viewer, office, google, document, embed, intranet
 Requires at least: 3.5
-Tested up to: 5.2.2
-Stable tag: 4.4
+Tested up to: 5.5.1
+Stable tag: 4.6.1
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -202,6 +202,22 @@ the Plugins section of your Wordpress admin
 1. Follow the instructions from step 4 above
 
 == Changelog ==
+
+= 4.6.1 =
+
+PDF Zoom increase upto 800%
+Added compatibility for Wordpress 5.5.1
+
+= 4.6 =
+
+Fix language compatibility issue in viewer
+Fixes js and css files cache issue
+Added compatibility for Wordpress 5.3.2
+
+= 4.5 =
+
+Added compatibility for Wordpress 5.3
+Fixes multiple PDF rendering issues in viewer
 
 = 4.4 =
 
