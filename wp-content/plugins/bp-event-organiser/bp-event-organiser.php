@@ -3,7 +3,7 @@
 --------------------------------------------------------------------------------
 Plugin Name: BuddyPress Event Organiser
 Description: Add BuddyPress support for the Event Organiser plugin.
-Version: 1.1.0
+Version: 1.2.0
 Author: CUNY Academic Commons
 --------------------------------------------------------------------------------
 */
@@ -14,7 +14,7 @@ Author: CUNY Academic Commons
 define( 'BUDDYPRESS_EVENT_ORGANISER_DEBUG', false );
 
 // set our version here
-define( 'BUDDYPRESS_EVENT_ORGANISER_VERSION', '1.1.0' );
+define( 'BUDDYPRESS_EVENT_ORGANISER_VERSION', '1.2.0' );
 
 // store reference to this file
 if ( !defined( 'BUDDYPRESS_EVENT_ORGANISER_FILE' ) ) {
@@ -228,7 +228,9 @@ class BuddyPress_Event_Organiser {
 	public function enqueue_styles() {
 		wp_enqueue_style(
 			'bp_event_organiser_css',
-			BUDDYPRESS_EVENT_ORGANISER_URL . 'assets/css/bp-event-organiser.css'
+			BUDDYPRESS_EVENT_ORGANISER_URL . 'assets/css/bp-event-organiser.css',
+			array(),
+			'20191002'
 		);
 	}
 

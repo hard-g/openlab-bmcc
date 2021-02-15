@@ -54,6 +54,8 @@ function bpeo_enqueue_assets() {
 
 	wp_localize_script( 'bpeo-group-select', 'BpEventOrganiserSettings', array(
 		'group_privacy_message' => __( 'You have added a group to this event.  Since groups have their own privacy settings, we have removed the ability to set the status for this event.', 'bp-event-organiser' ),
+
+		/* translators: %1$s - public group, %2%s - public */
 		'group_public_message' => sprintf( __( 'You have added a %1$s to this event. Since the added group is %2$s, be aware that your event will also be publicized on the sitewide event calendar.', 'bp-event-organiser' ),
 			'<strong>' . __( 'public group', 'bp-event-organiser' ) . '</strong>',
 			'<strong>' . __( 'public', 'bp-event-organiser' ) . '</strong>'
@@ -180,7 +182,16 @@ function bpeo_the_filter_title() {
 		} elseif ( ! empty( $tag ) ) {
 			return sprintf( __( "Filtered by tag '%s'", 'bp-event-organiser' ), $tag );
 		} else {
-			return '';
+			/**
+			 * Allow developers to set a filter title when blank.
+			 *
+			 * @since 1.1.0
+			 *
+			 * @param string $title.
+			 */
+			$title = apply_filters( 'bpeo_get_the_filter_title', '' );
+
+			return esc_html( $title );
 		}
 	}
 
@@ -280,6 +291,51 @@ function bpeo_the_ical_link( $post_id ) {
 	}
 
 /**
+ * Function to check if the current page is for an ICS URL.
+ *
+ * @since 1.2.0
+ */
+function bpeo_is_ics() {
+	if ( bp_is_group() ) {
+		if ( ! bp_is_current_action( bpeo_get_events_slug() ) ) {
+			return false;
+		}
+
+		// public iCal
+		if ( bp_is_action_variable( 'ical' ) && 'public' === bp_get_group_status( groups_get_current_group() ) ) {
+			return true;
+
+		// private iCal
+		} elseif ( 'public' !== bp_get_group_status( groups_get_current_group() ) &&
+			bp_is_action_variable( 'ical', 1 ) &&
+			32 === strlen( bp_action_variable( 0 ) ) &&
+			bp_is_action_variable( bpeo_get_the_group_private_ical_hash() )
+		) {
+				return true;
+		}
+
+	} elseif ( bp_is_user() ) {
+		if ( ! bp_is_current_component( bpeo_get_events_slug() ) ) {
+			return false;
+		}
+
+		// public iCal
+		if ( bp_is_current_action( 'ical' ) ) {
+			return true;
+
+		// private iCal
+		} elseif ( bp_is_action_variable( 'ical' ) &&
+			32 === strlen( bp_current_action() ) &&
+			bp_is_current_action( bpeo_get_the_user_private_ical_hash() )
+		) {
+				return true;
+		}
+	}
+
+	return false;
+}
+
+/**
  * Output the single event action links.
  *
  * @param WP_Post|int $post The WP Post object or the post ID.
@@ -366,10 +422,12 @@ function bpeo_the_post_status_message( $post = 0 ) {
 
 		switch ( $post->post_status ) {
 			case 'draft' :
+				/* translators: %1$s - Singular name label for event post type */
 				$message = sprintf( __( 'This %1$s is a draft.  Please remember to publish this %1$s once you are ready.', 'bp-event-organiser' ), strtolower( $post_type->labels->singular_name ) );
 				break;
 
 			case 'future' :
+				/* translators: %1$s - Singular name label for event post type, %2$s - Scheduled event date. */
 				$message = sprintf( __( 'This %1$s is scheduled to be published at <strong>%2$s</strong>.', 'bp-event-organiser' ),
 	strtolower( $post_type->labels->singular_name ),
 	/* translators: Date format for future event messages, see http://php.net/date */
@@ -379,6 +437,7 @@ function bpeo_the_post_status_message( $post = 0 ) {
 
 			case 'private' :
 				if ( ! bp_is_group() ) {
+					/* translators: %1$s - Singular name label for event post type */
 					$message = sprintf( __( 'This %1$s is marked as private.  Only site moderators and yourself can view this %1$s.', 'bp-event-organiser' ), strtolower( $post_type->labels->singular_name ) );
 				}
 				break;
@@ -437,8 +496,11 @@ function bpeo_remove_default_canonical_event_content( $retval ) {
 		return $retval;
 	}
 
-	if( is_singular('event') && false === eventorganiser_is_event_template( '', 'event' ) ) {
-		remove_filter( 'the_content', '_eventorganiser_single_event_content' );
+	if( is_singular( 'event' ) && false === eventorganiser_is_event_template( '', 'event' ) ) {
+		add_action( 'get_header', function() {
+			remove_filter( 'the_content', '_eventorganiser_single_event_content' );
+		}, 0 );
+
 		add_filter( 'the_content', 'bpeo_canonical_event_content', 999 );
 	}
 
@@ -593,6 +655,7 @@ function bpeo_add_ical_link_to_eventmeta() {
 	}
 ?>
 	<li><?php
+		/* translators: Do not remove references to %s as it is for the iCalendar link */
 		printf(
 		__( "%sDownload iCalendar file%s to save this event to your preferred calendar application", 'bp-event-organiser' ),
 		'<a class="bpeo-ical-link" href="' . bpeo_get_the_ical_link( get_the_ID() ) . '"><span class="icon"></span>',
@@ -726,7 +789,6 @@ function bpeo_get_item_calendar_color( $item_id, $item_type ) {
 			break;
 
 		case 'author' :
-		default :
 			$color = bp_get_user_meta( $item_id, 'bpeo_calendar_color', true );
 			break;
 	}
@@ -767,7 +829,6 @@ function bpeo_get_item_calendar_color( $item_id, $item_type ) {
 				break;
 
 			case 'author' :
-			default :
 				bp_update_user_meta( $item_id, 'bpeo_calendar_color', $color );
 				break;
 		}
@@ -832,3 +893,66 @@ function bpeo_filter_ajax_query_attachments( $retval ) {
 	return $retval;
 }
 add_filter( 'ajax_query_attachments_args', 'bpeo_filter_ajax_query_attachments' );
+
+
+/** Import ICS ***************************************************************/
+
+/**
+ * Can an imported event be assigned to a different user?
+ *
+ * @since 1.1.0
+ *
+ * @return bool
+ */
+function bpeo_is_import_assign_organiser_enabled() {
+	/**
+	 * Filter to toggle if a different user can be assigned to an imported event.
+	 *
+	 * @since 1.1.0
+	 *
+	 * @param bool $retval Default: false
+	 */
+	$retval = apply_filters( 'bpeo_enable_import_assign_organiser', false );
+
+	return $retval;
+}
+
+/**
+ * See if categories can be imported from an ICS file.
+ *
+ * @since 1.1.0
+ *
+ * @return bool
+ */
+function bpeo_is_import_categories_enabled() {
+	/**
+	 * Filter to toggle if categories can be imported from an ICS file.
+	 *
+	 * @since 1.1.0
+	 *
+	 * @param bool $retval Default: true
+	 */
+	$retval = apply_filters( 'bpeo_enable_import_categories', true );
+
+	return $retval;
+}
+
+/**
+ * See if venues can be imported from an ICS file.
+ *
+ * @since 1.1.0
+ *
+ * @return bool
+ */
+function bpeo_is_import_venues_enabled() {
+	/**
+	 * Filter to toggle if venues can be imported from an ICS file.
+	 *
+	 * @since 1.1.0
+	 *
+	 * @param bool $retval Default: true
+	 */
+	$retval = apply_filters( 'bpeo_enable_import_venues', true );
+
+	return $retval;
+}
