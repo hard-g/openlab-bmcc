@@ -1,3 +1,40 @@
+= 2.7.1 =
+* changed: clarify text for queue reset button
+* changed: Delete Originals function in bulk/selective resizer will clean metadata if original image is already gone
+
+= 2.7.0 =
+* changed: bulk resizer will resize all images with no limits, use list mode for selective resizing
+* added: see current dimensions and resize individual images in Media Library list mode
+* added: imsanity_disable_convert filter to bypass BMP/PNG to JPG conversion options conditionally
+* added: imsanity_skip_image filter to bypass resizing programmatically
+* added: ability to remove pre-scaled original image backup (in bulk or selectively)
+* changed: PNG images will not be converted if transparency is found
+* fixed: BMP files not converted when server uses image/x-ms-bmp as mime identifier
+* removed: Deep Scan option is the default behavior now, no need for configuration
+
+= 2.6.1 =
+* fixed: wrong parameter passed to imsanity_attachment_path()
+
+= 2.6.0 =
+* added: wp-cli command 'wp help imsanity resize'
+* fixed: adding an image to a post in pre-draft status uses wrong settings/dimensions
+
+= 2.5.0 =
+* added: imsanity_allowed_mimes filter to override the default list of image formats allowed
+* added: imsanity_orientation filter to modify auto-rotation behavior, return 1 to bypass
+* added: imsanity_get_max_width_height filter to customize max width/height
+* added: define network settings as defaults for new sites in multi-site mode
+* fixed: WP threshold of 2560 overrides Imsanity when using larger dimensions
+* fixed: settings link on plugins page broken in some cases
+* fixed: crop filter not applied if max width or height is equal to existing dimension
+* fixed: invalid capabilities used for settings page - props @cfoellmann
+
+= 2.4.3 =
+* changed: default size from 2048 to 1920
+* fixed: WP Import plugin breaks during Media imports
+* fixed: setting a value to 0 causes errors on multi-site installs
+* fixed: conversion settings not displaying correctly on multi-site
+
 = 2.4.2 =
 * changed: noresize in filename also works in batch processing
 * fixed: error message does not contain filename when file is missing
