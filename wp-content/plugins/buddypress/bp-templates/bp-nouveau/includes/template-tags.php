@@ -3,7 +3,7 @@
  * Common template tags
  *
  * @since 3.0.0
- * @version 4.0.0
+ * @version 6.0.0
  */
 
 // Exit if accessed directly.
@@ -446,6 +446,33 @@ function bp_nouveau_pagination( $position ) {
 			$bottom_hook = '';
 			$page_arg    = $GLOBALS['requests_template']->pag_arg;
 			break;
+
+		default:
+			/**
+			 * Use this filter to define your custom pagination parameters.
+			 *
+			 * @since 6.0.0
+			 *
+			 * @param array $value {
+			 *     An associative array of pagination parameters.
+			 *     @type string   $pag_count Information about the pagination count.
+			 *                               eg: "Viewing 1 - 10 of 20 items".
+			 *     @type string   $pag_links The Pagination links.
+			 *     @type string   $page_arg  The argument to use to pass the page number.
+			 * }
+			 * @param string $pagination_type Information about the pagination type.
+			 */
+			$pagination_params = apply_filters( 'bp_nouveau_pagination_params',
+				array(
+					'pag_count' => '',
+					'pag_links' => '',
+					'page_arg'  => '',
+				),
+				$pagination_type
+			);
+
+			list( $pag_count, $pag_links, $page_arg ) = array_values( $pagination_params );
+			break;
 	}
 
 	$count_class = sprintf( '%1$s-%2$s-count-%3$s', $pagination_type, $screen, $position );
@@ -654,6 +681,25 @@ function bp_dir_is_vert_layout() {
 	$component  = sanitize_key( bp_current_component() );
 
 	return (bool) $bp_nouveau->{$component}->directory_vertical_layout;
+}
+
+/**
+ * Template tag to wrap the Legacy actions that was used
+ * after the components directory page.
+ *
+ * @since 6.0.0
+ */
+function bp_nouveau_after_directory_page() {
+	$component = bp_current_component();
+
+	/**
+	 * Fires at the bottom of the activity, members, groups and blogs directory template file.
+	 *
+	 * @since 1.5.0 Added to the members, groups directory template file.
+	 * @since 2.3.0 Added to the blogs directory template file.
+	 * @since 6.0.0 Added to the activity directory template file.
+	 */
+	do_action( "bp_after_directory_{$component}_page" );
 }
 
 /**
@@ -1489,6 +1535,11 @@ function bp_nouveau_container_classes() {
 			}
 		}
 
+		$global_alignment = bp_nouveau_get_temporary_setting( 'global_alignment', bp_nouveau_get_appearance_settings( 'global_alignment' ) );
+		if ( $global_alignment && 'alignnone' !== $global_alignment && current_theme_supports( 'align-wide' ) ) {
+			$classes[] = $global_alignment;
+		}
+
 		$class = array_map( 'sanitize_html_class', $classes );
 
 		/**
@@ -1988,10 +2039,15 @@ function bp_nouveau_current_object() {
 		}
 
 	} else {
+		$data_filter = bp_current_component();
+		if ( 'friends' === $data_filter && bp_is_user_friend_requests() ) {
+			$data_filter = 'friend_requests';
+		}
+
 		$component['members_select']   = 'members-order-select';
 		$component['members_order_by'] = 'members-order-by';
 		$component['object']           = bp_current_component();
-		$component['data_filter']      = bp_current_component();
+		$component['data_filter']      = $data_filter;
 	}
 
 	return $component;
@@ -2304,147 +2360,172 @@ function bp_nouveau_signup_form( $section = 'account_details' ) {
 	}
 
 	foreach ( $fields as $name => $attributes ) {
-		list( $label, $required, $value, $attribute_type, $type, $class ) = array_values( $attributes );
-
-		// Text fields are using strings, radios are using their inputs
-		$label_output = '<label for="%1$s">%2$s</label>';
-		$id           = $name;
-		$classes      = '';
-
-		if ( $required ) {
-			/* translators: Do not translate placeholders. 2 = form field name, 3 = "(required)". */
-			$label_output = __( '<label for="%1$s">%2$s %3$s</label>', 'buddypress' );
-		}
-
-		// Output the label for regular fields
-		if ( 'radio' !== $type ) {
-			if ( $required ) {
-				printf( $label_output, esc_attr( $name ), esc_html( $label ), __( '(required)', 'buddypress' ) );
-			} else {
-				printf( $label_output, esc_attr( $name ), esc_html( $label ) );
-			}
-
-			if ( ! empty( $value ) && is_callable( $value ) ) {
-				$value = call_user_func( $value );
-			}
-
-		// Handle the specific case of Site's privacy differently
-		} elseif ( 'signup_blog_privacy_private' !== $name ) {
+		if ( 'signup_password' === $name ) {
 			?>
-				<span class="label">
-					<?php esc_html_e( 'I would like my site to appear in search engines, and in public listings around this network.', 'buddypress' ); ?>
-				</span>
+			<label for="pass1"><?php esc_html_e( 'Choose a Password (required)', 'buddypress' ); ?></label>
+			<div class="user-pass1-wrap">
+				<div class="wp-pwd">
+					<div class="password-input-wrapper">
+						<input type="password" data-reveal="1" name="signup_password" id="pass1" class="password-entry" size="24" value="" <?php bp_form_field_attributes( 'password', array( 'data-pw' => wp_generate_password( 12 ), 'aria-describedby' => 'pass-strength-result' ) ); ?> />
+						<button type="button" class="button wp-hide-pw">
+							<span class="dashicons dashicons-hidden" aria-hidden="true"></span>
+						</button>
+					</div>
+					<div id="pass-strength-result" aria-live="polite"><?php esc_html_e( 'Strength indicator', 'buddypress' ); ?></div>
+				</div>
+				<div class="pw-weak">
+					<label>
+						<input type="checkbox" name="pw_weak" class="pw-checkbox" />
+						<?php esc_html_e( 'Confirm use of weak password', 'buddypress' ); ?>
+					</label>
+				</div>
+			</div>
 			<?php
-		}
+		} elseif ( 'signup_password_confirm' === $name ) {
+			?>
+			<p class="user-pass2-wrap">
+				<label for="pass2"><?php esc_html_e( 'Confirm new password', 'buddypress' ); ?></label><br />
+				<input type="password" name="signup_password_confirm" id="pass2" class="password-entry-confirm" size="24" value="" <?php bp_form_field_attributes( 'password' ); ?> />
+			</p>
 
-		// Set the additional attributes
-		if ( $attribute_type ) {
-			$existing_attributes = array();
+			<p class="description indicator-hint"><?php echo wp_get_password_hint(); ?></p>
+			<?php
+		} else {
+			list( $label, $required, $value, $attribute_type, $type, $class ) = array_values( $attributes );
 
-			if ( ! empty( $required ) ) {
-				$existing_attributes = array( 'aria-required' => 'true' );
+			// Text fields are using strings, radios are using their inputs
+			$label_output = '<label for="%1$s">%2$s</label>';
+			$id           = $name;
+			$classes      = '';
+
+			if ( $required ) {
+				/* translators: Do not translate placeholders. 2 = form field name, 3 = "(required)". */
+				$label_output = __( '<label for="%1$s">%2$s %3$s</label>', 'buddypress' );
+			}
+
+			// Output the label for regular fields
+			if ( 'radio' !== $type ) {
+				if ( $required ) {
+					printf( $label_output, esc_attr( $name ), esc_html( $label ), __( '(required)', 'buddypress' ) );
+				} else {
+					printf( $label_output, esc_attr( $name ), esc_html( $label ) );
+				}
+
+				if ( ! empty( $value ) && is_callable( $value ) ) {
+					$value = call_user_func( $value );
+				}
+
+			// Handle the specific case of Site's privacy differently
+			} elseif ( 'signup_blog_privacy_private' !== $name ) {
+				?>
+					<span class="label">
+						<?php esc_html_e( 'I would like my site to appear in search engines, and in public listings around this network.', 'buddypress' ); ?>
+					</span>
+				<?php
+			}
+
+			// Set the additional attributes
+			if ( $attribute_type ) {
+				$existing_attributes = array();
+
+				if ( ! empty( $required ) ) {
+					$existing_attributes = array( 'aria-required' => 'true' );
+
+					/**
+					 * The blog section is hidden, so let's avoid a browser warning
+					 * and deal with the Blog section in Javascript.
+					 */
+					if ( $section !== 'blog_details' ) {
+						$existing_attributes['required'] = 'required';
+					}
+				}
+
+				$attribute_type = ' ' . bp_get_form_field_attributes( $attribute_type, $existing_attributes );
+			}
+
+			// Specific case for Site's privacy
+			if ( 'signup_blog_privacy_public' === $name || 'signup_blog_privacy_private' === $name ) {
+				$name      = 'signup_blog_privacy';
+				$submitted = bp_get_signup_blog_privacy_value();
+
+				if ( ! $submitted ) {
+					$submitted = 'public';
+				}
+
+				$attribute_type = ' ' . checked( $value, $submitted, false );
+			}
+
+			// Do not run function to display errors for the private radio.
+			if ( 'private' !== $value ) {
 
 				/**
-				 * The blog section is hidden, so let's avoid a browser warning
-				 * and deal with the Blog section in Javascript.
+				 * Fetch & display any BP member registration field errors.
+				 *
+				 * Passes BP signup errors to Nouveau's template function to
+				 * render suitable markup for error string.
 				 */
-				if ( $section !== 'blog_details' ) {
-					$existing_attributes['required'] = 'required';
+				if ( isset( buddypress()->signup->errors[ $name ] ) ) {
+					nouveau_error_template( buddypress()->signup->errors[ $name ] );
+					$invalid = 'invalid';
 				}
 			}
 
-			$attribute_type = ' ' . bp_get_form_field_attributes( $attribute_type, $existing_attributes );
-		}
-
-		// Specific case for Site's privacy
-		if ( 'signup_blog_privacy_public' === $name || 'signup_blog_privacy_private' === $name ) {
-			$name      = 'signup_blog_privacy';
-			$submitted = bp_get_signup_blog_privacy_value();
-
-			if ( ! $submitted ) {
-				$submitted = 'public';
+			if ( isset( $invalid ) && isset( buddypress()->signup->errors[ $name ] ) ) {
+				if ( ! empty( $class ) ) {
+					$class = $class . ' ' . $invalid;
+				} else {
+					$class = $invalid;
+				}
 			}
 
-			$attribute_type = ' ' . checked( $value, $submitted, false );
-		}
-
-		// Do not run function to display errors for the private radio.
-		if ( 'private' !== $value ) {
-
-			/**
-			 * Fetch & display any BP member registration field errors.
-			 *
-			 * Passes BP signup errors to Nouveau's template function to
-			 * render suitable markup for error string.
-			 */
-			if ( isset( buddypress()->signup->errors[ $name ] ) ) {
-				nouveau_error_template( buddypress()->signup->errors[ $name ] );
-				$invalid = 'invalid';
+			if ( $class ) {
+				$class = sprintf(
+					' class="%s"',
+					esc_attr( join( ' ', array_map( 'sanitize_html_class', explode( ' ', $class ) ) ) )
+				);
 			}
-		}
 
-		if ( isset( $invalid ) && isset( buddypress()->signup->errors[ $name ] ) ) {
-			if ( ! empty( $class ) ) {
-				$class = $class . ' ' . $invalid;
-			} else {
-				$class = $invalid;
-			}
-		}
-
-		if ( $class ) {
-			$class = sprintf(
-				' class="%s"',
-				esc_attr( join( ' ', array_map( 'sanitize_html_class', explode( ' ', $class ) ) ) )
+			// Set the input.
+			$field_output = sprintf(
+				'<input type="%1$s" name="%2$s" id="%3$s" %4$s value="%5$s" %6$s />',
+				esc_attr( $type ),
+				esc_attr( $name ),
+				esc_attr( $id ),
+				$class,  // Constructed safely above.
+				esc_attr( $value ),
+				$attribute_type // Constructed safely above.
 			);
-		}
 
-		// Set the input.
-		$field_output = sprintf(
-			'<input type="%1$s" name="%2$s" id="%3$s" %4$s value="%5$s" %6$s />',
-			esc_attr( $type ),
-			esc_attr( $name ),
-			esc_attr( $id ),
-			$class,  // Constructed safely above.
-			esc_attr( $value ),
-			$attribute_type // Constructed safely above.
-		);
+			// Not a radio, let's output the field
+			if ( 'radio' !== $type ) {
+				if ( 'signup_blog_url' !== $name ) {
+					print( $field_output );  // Constructed safely above.
 
-		// Not a radio, let's output the field
-		if ( 'radio' !== $type ) {
-			if ( 'signup_blog_url' !== $name ) {
-				print( $field_output );  // Constructed safely above.
+				// If it's the signup blog url, it's specific to Multisite config.
+				} elseif ( is_subdomain_install() ) {
+					// Constructed safely above.
+					printf(
+						'%1$s %2$s . %3$s',
+						is_ssl() ? 'https://' : 'http://',
+						$field_output,
+						bp_signup_get_subdomain_base()
+					);
 
-			// If it's the signup blog url, it's specific to Multisite config.
-			} elseif ( is_subdomain_install() ) {
-				// Constructed safely above.
-				printf(
-					'%1$s %2$s . %3$s',
-					is_ssl() ? 'https://' : 'http://',
-					$field_output,
-					bp_signup_get_subdomain_base()
-				);
+				// Subfolders!
+				} else {
+					printf(
+						'%1$s %2$s',
+						home_url( '/' ),
+						$field_output  // Constructed safely above.
+					);
+				}
 
-			// Subfolders!
+			// It's a radio, let's output the field inside the label
 			} else {
-				printf(
-					'%1$s %2$s',
-					home_url( '/' ),
-					$field_output  // Constructed safely above.
-				);
+				// $label_output and $field_output are constructed safely above.
+				printf( $label_output, esc_attr( $name ), $field_output . ' ' . esc_html( $label ) );
 			}
-
-		// It's a radio, let's output the field inside the label
-		} else {
-			// $label_output and $field_output are constructed safely above.
-			printf( $label_output, esc_attr( $name ), $field_output . ' ' . esc_html( $label ) );
 		}
-
-		// Password strength is restricted to the signup_password field
-		if ( 'signup_password' === $name ) :
-		?>
-			<div id="pass-strength-result"></div>
-		<?php
-		endif;
 	}
 
 	/**

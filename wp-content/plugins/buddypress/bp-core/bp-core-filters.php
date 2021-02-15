@@ -434,7 +434,7 @@ function bp_core_filter_blog_welcome_email( $welcome_email, $blog_id, $user_id, 
 	if ( ! bp_has_custom_signup_page() )
 		return $welcome_email;
 
-	// [User Set] Replaces $password in welcome email; Represents value set by user
+	// [User Set] Replaces $password in welcome email; Represents value set by user.
 	return str_replace( $password, __( '[User Set]', 'buddypress' ), $welcome_email );
 }
 add_filter( 'update_welcome_email', 'bp_core_filter_blog_welcome_email', 10, 4 );
@@ -469,7 +469,22 @@ function bp_core_activation_signup_blog_notification( $domain, $path, $title, $u
 			'user.email'        => $user_email,
 		),
 	);
-	bp_send_email( 'core-user-registration-with-blog', array( array( $user_email => $user ) ), $args );
+
+	$signups = BP_Signup::get(
+		array(
+			'user_login' => $user,
+		)
+	);
+
+	$salutation = $user;
+	if ( $signups && bp_is_active( 'xprofile' ) ) {
+		$signup = $signups['signups'][0];
+		if ( isset( $signup->meta[ 'field_' . bp_xprofile_fullname_field_id() ] ) ) {
+			$salutation = $signup->meta[ 'field_' . bp_xprofile_fullname_field_id() ];
+		}
+	}
+
+	bp_send_email( 'core-user-registration-with-blog', array( array( $user_email => $salutation ) ), $args );
 
 	// Return false to stop the original WPMU function from continuing.
 	return false;
@@ -523,6 +538,13 @@ function bp_core_activation_signup_user_notification( $user, $user_email, $key, 
 		$user_id = $user_object->ID;
 	}
 
+	$salutation = $user;
+	if ( bp_is_active( 'xprofile' ) && isset( $meta[ 'field_' . bp_xprofile_fullname_field_id() ] ) ) {
+		$salutation = $meta[ 'field_' . bp_xprofile_fullname_field_id() ];
+	} elseif ( $user_id ) {
+		$salutation = bp_core_get_user_displayname( $user_id );
+	}
+
 	$args = array(
 		'tokens' => array(
 			'activate.url' => esc_url( trailingslashit( bp_get_activation_page() ) . "{$key}/" ),
@@ -531,7 +553,7 @@ function bp_core_activation_signup_user_notification( $user, $user_email, $key, 
 			'user.id'      => $user_id,
 		),
 	);
-	bp_send_email( 'core-user-registration', array( array( $user_email => $user ) ), $args );
+	bp_send_email( 'core-user-registration', array( array( $user_email => $salutation ) ), $args );
 
 	// Return false to stop the original WPMU function from continuing.
 	return false;
@@ -578,6 +600,7 @@ function bp_modify_page_title( $title = '', $sep = '&raquo;', $seplocation = 'ri
 		$bp_title_parts['site'] = $blogname;
 
 		if ( ( $paged >= 2 || $page >= 2 ) && ! is_404() && ! bp_is_single_activity() ) {
+			/* translators: %s: the page number. */
 			$bp_title_parts['page'] = sprintf( __( 'Page %s', 'buddypress' ), max( $paged, $page ) );
 		}
 	}
@@ -789,7 +812,7 @@ add_filter( 'customize_nav_menu_available_items', 'bp_customizer_nav_menus_get_i
  *
  * @since 2.3.3
  *
- * @param array $item_types An associative array structured for the customizer.
+ * @param  array $item_types An associative array structured for the customizer.
  * @return array $item_types An associative array structured for the customizer.
  */
 function bp_customizer_nav_menus_set_item_types( $item_types = array() ) {
@@ -1146,3 +1169,18 @@ function bp_core_render_email_template( $template ) {
 	return '';
 }
 add_action( 'bp_template_include', 'bp_core_render_email_template', 12 );
+
+/**
+ * Adds BuddyPress components' slugs to the WordPress Multisite subdirectory reserved names.
+ *
+ * @since 6.0.0
+ *
+ * @param array $names The WordPress Multisite subdirectory reserved names.
+ * @return array       The WordPress & BuddyPress Multisite subdirectory reserved names.
+ */
+function bp_core_components_subdirectory_reserved_names( $names = array() ) {
+	$bp_pages = (array) buddypress()->pages;
+
+	return array_merge( $names, wp_list_pluck( $bp_pages, 'slug' ) );
+}
+add_filter( 'subdirectory_reserved_names', 'bp_core_components_subdirectory_reserved_names' );

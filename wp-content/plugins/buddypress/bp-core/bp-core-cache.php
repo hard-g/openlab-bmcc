@@ -6,7 +6,7 @@
  * actions throughout BuddyPress.
  *
  * @package BuddyPress
- * @supackage Cache
+ * @subpackage Cache
  * @since 1.5.0
  */
 
@@ -80,14 +80,14 @@ function bp_core_clear_directory_pages_cache_page_edit( $post_id = 0 ) {
 		return;
 	}
 
-	// Bail if not on the root blog
+	// Bail if not on the root blog.
 	if ( ! bp_is_root_blog() ) {
 		return;
 	}
 
 	$page_ids = bp_core_get_directory_page_ids( 'all' );
 
-	// Bail if post ID is not a directory page
+	// Bail if post ID is not a directory page.
 	if ( ! in_array( $post_id, $page_ids ) ) {
 		return;
 	}
@@ -379,3 +379,14 @@ function bp_core_get_incrementor( $group ) {
 function bp_core_reset_incrementor( $group ) {
 	return wp_cache_delete( 'incrementor', $group );
 }
+
+/**
+ * Resets all incremented bp_invitations caches.
+ *
+ * @since 5.0.0
+ */
+function bp_invitations_reset_cache_incrementor() {
+	bp_core_reset_incrementor( 'bp_invitations' );
+}
+add_action( 'bp_invitation_after_save', 'bp_invitations_reset_cache_incrementor' );
+add_action( 'bp_invitation_after_delete', 'bp_invitations_reset_cache_incrementor' );

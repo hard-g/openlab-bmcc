@@ -3,7 +3,7 @@
  * Groups functions
  *
  * @since 3.0.0
- * @version 3.1.0
+ * @version 6.3.0
  */
 
 // Exit if accessed directly.
@@ -68,11 +68,18 @@ function bp_nouveau_groups_enqueue_scripts() {
 		' );
 	}
 
-	if ( ! bp_is_group_invites() && ! ( bp_is_group_create() && bp_is_group_creation_step( 'group-invites' ) ) ) {
-		return;
+	if ( bp_is_group_invites() || ( bp_is_group_create() && bp_is_group_creation_step( 'group-invites' ) ) ) {
+		wp_enqueue_script( 'bp-nouveau-group-invites' );
 	}
 
-	wp_enqueue_script( 'bp-nouveau-group-invites' );
+	if ( bp_rest_api_is_available() && bp_is_group_admin_page() && bp_is_group_admin_screen( 'manage-members' ) ) {
+		wp_enqueue_script( 'bp-group-manage-members' );
+		wp_localize_script(
+			'bp-group-manage-members',
+			'bpGroupManageMembersSettings',
+			bp_groups_get_group_manage_members_script_data( bp_get_current_group_id() )
+		);
+	}
 }
 
 /**
@@ -151,6 +158,8 @@ function bp_nouveau_groups_localize_scripts( $params = array() ) {
 		'invites_form'       => __( 'Use the "Send" button to send your invite or the "Cancel" button to abort.', 'buddypress' ),
 		'invites_form_reset' => __( 'Group invitations cleared. Please use one of the available tabs to select members to invite.', 'buddypress' ),
 		'invites_sending'    => __( 'Sending group invitations. Please wait.', 'buddypress' ),
+
+		/* translators: %s: member name */
 		'removeUserInvite'   => __( 'Cancel invitation %s', 'buddypress' ),
 		'group_id'           => ! bp_get_current_group_id() ? bp_get_new_group_id() : bp_get_current_group_id(),
 		'is_group_create'    => bp_is_group_create(),
@@ -258,6 +267,11 @@ function bp_nouveau_get_group_potential_invites( $args = array() ) {
 		return false;
 	}
 
+	// Check the current user's access to the group.
+	if ( ! bp_groups_user_can_send_invites( $r['group_id'] ) ) {
+		return false;
+	}
+
 	/*
 	 * If it's not a friend request and users can restrict invites to friends,
 	 * make sure they are not displayed in results.
@@ -349,9 +363,16 @@ function bp_nouveau_group_setup_nav() {
 }
 
 /**
+ * Includes a message into the sent invitation email.
+ *
  * @since 3.0.0
+ * @deprecated 6.3.0
+ *
+ * @param string $message The message to send with the invite
  */
 function bp_nouveau_groups_invites_custom_message( $message = '' ) {
+	_deprecated_function( __FUNCTION__, '6.3.0' );
+
 	if ( empty( $message ) ) {
 		return $message;
 	}
@@ -926,7 +947,7 @@ function bp_nouveau_group_locate_template_part( $template = '' ) {
 	// Use a global to avoid requesting the hierarchy for each template
 	if ( ! isset( $bp_nouveau->groups->current_group_hierarchy ) ) {
 		$bp_nouveau->groups->current_group_hierarchy = array(
-			'groups/single/%s-id-' . sanitize_file_name( $current_group->id ) . '.php',
+			'groups/single/%s-id-' . (int) $current_group->id                     . '.php',
 			'groups/single/%s-slug-' . sanitize_file_name( $current_group->slug ) . '.php',
 		);
 

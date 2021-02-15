@@ -268,10 +268,30 @@ class BP_Activity_Activity {
 				return false;
 			} else {
 				if ( empty( $this->component ) ) {
-					$this->errors->add( 'bp_activity_missing_component' );
+					$this->errors->add( 'bp_activity_missing_component', __( 'You need to define a component parameter to insert activity.', 'buddypress' ) );
 				} else {
-					$this->errors->add( 'bp_activity_missing_type' );
+					$this->errors->add( 'bp_activity_missing_type', __( 'You need to define a type parameter to insert activity.', 'buddypress' ) );
 				}
+
+				return $this->errors;
+			}
+		}
+
+		/**
+		 * Use this filter to make the content of your activity required.
+		 *
+		 * @since 6.0.0
+		 *
+		 * @param bool   $value True if the content of the activity type is required.
+		 *                      False otherwise.
+		 * @param string $type  The type of the activity we are about to insert.
+		 */
+		$type_requires_content = (bool) apply_filters( 'bp_activity_type_requires_content', $this->type === 'activity_update', $this->type );
+		if ( $type_requires_content && ! $this->content ) {
+			if ( 'bool' === $this->error_type ) {
+				return false;
+			} else {
+				$this->errors->add( 'bp_activity_missing_content', __( 'Please enter some content to post.', 'buddypress' ) );
 
 				return $this->errors;
 			}
@@ -360,9 +380,20 @@ class BP_Activity_Activity {
 	public static function get( $args = array() ) {
 		global $wpdb;
 
+		$function_args = func_get_args();
+
 		// Backward compatibility with old method of passing arguments.
-		if ( !is_array( $args ) || func_num_args() > 1 ) {
-			_deprecated_argument( __METHOD__, '1.6', sprintf( __( 'Arguments passed to %1$s should be in an associative array. See the inline documentation at %2$s for more details.', 'buddypress' ), __METHOD__, __FILE__ ) );
+		if ( !is_array( $args ) || count( $function_args ) > 1 ) {
+			_deprecated_argument(
+				__METHOD__,
+				'1.6',
+				sprintf(
+					/* translators: 1: the name of the method. 2: the name of the file. */
+					__( 'Arguments passed to %1$s should be in an associative array. See the inline documentation at %2$s for more details.', 'buddypress' ),
+					__METHOD__,
+					__FILE__
+				)
+			);
 
 			$old_args_keys = array(
 				0 => 'max',
@@ -378,7 +409,7 @@ class BP_Activity_Activity {
 				10 => 'spam'
 			);
 
-			$args = bp_core_parse_args_array( $old_args_keys, func_get_args() );
+			$args = bp_core_parse_args_array( $old_args_keys, $function_args );
 		}
 
 		$bp = buddypress();
@@ -1467,6 +1498,8 @@ class BP_Activity_Activity {
 	public static function get_activity_comments( $activity_id, $left, $right, $spam = 'ham_only', $top_level_parent_id = 0 ) {
 		global $wpdb;
 
+		$function_args = func_get_args();
+
 		if ( empty( $top_level_parent_id ) ) {
 			$top_level_parent_id = $activity_id;
 		}
@@ -1514,7 +1547,7 @@ class BP_Activity_Activity {
 			 * @param BP_Activity_Activity $value     Magic method referring to currently called method.
 			 * @param array                $func_args Array of the method's argument list.
 			 */
-			if ( apply_filters( 'bp_use_legacy_activity_query', false, __METHOD__, func_get_args() ) ) {
+			if ( apply_filters( 'bp_use_legacy_activity_query', false, __METHOD__, $function_args ) ) {
 
 				/**
 				 * Filters the MySQL prepared statement for the legacy activity query.
@@ -1539,6 +1572,7 @@ class BP_Activity_Activity {
 				$descendant_ids = $wpdb->get_col( $sql );
 				$descendants    = self::get_activity_data( $descendant_ids );
 				$descendants    = self::append_user_fullnames( $descendants );
+				$descendants    = self::generate_action_strings( $descendants );
 			}
 
 			$ref = array();

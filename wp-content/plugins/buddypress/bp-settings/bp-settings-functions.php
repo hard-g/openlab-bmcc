@@ -248,7 +248,9 @@ function bp_settings_get_personal_data_request( $user_id = 0 ) {
 	) );
 
 	if ( ! empty( $query->post ) ) {
-		return wp_get_user_request_data( $query->post->ID );
+		// WP 5.4 changed the user request function name to wp_get_user_request()
+		$user_request = function_exists( 'wp_get_user_request' ) ? 'wp_get_user_request' : 'wp_get_user_request_data';
+		return $user_request( $query->post->ID );
 	} else {
 		return false;
 	}
@@ -316,26 +318,46 @@ function bp_settings_personal_data_export_exists( WP_User_Request $request ) {
  * Piggybacks off of the 'wp_privacy_personal_data_exporters' filter and the
  * 'exporter_friendly_name' key, which is meant for the admin area.
  *
- * @todo We should look for a custom key like 'exporter_frontend_name' if available.
- *
  * @since 4.0.0
+ * @since 5.0.0 Looks for a potential exporter's BP/custom friendly name.
  */
 function bp_settings_data_exporter_items() {
 	/** This filter is documented in /wp-admin/includes/ajax-actions.php */
-	$exporters = apply_filters( 'wp_privacy_personal_data_exporters', array() );
+	$exporters             = apply_filters( 'wp_privacy_personal_data_exporters', array() );
+	$custom_friendly_names = apply_filters( 'bp_settings_data_custom_friendly_names', array(
+		'wordpress-comments' => _x( 'Comments', 'WP Comments data exporter friendly name', 'buddypress' ),
+		'wordpress-media'    => _x( 'Media', 'WP Media data exporter friendly name', 'buddypress' ),
+		'wordpress-user'     => _x( 'Personal information', 'WP Media data exporter friendly name', 'buddypress' ),
+	) );
 
 ?>
 	<ul>
 	<?php foreach ( $exporters as $exporter => $data ) :
+		// Use the exporter friendly name by default.
+		$friendly_name = $data['exporter_friendly_name'];
+
 		/**
-		 * Filters the data exporter name for display on the "Settings > Data" page.
+		 * Use the exporter friendly name if directly available
+		 * into the exporters array.
+		 */
+		if ( isset( $data['exporter_bp_friendly_name'] ) ) {
+			$friendly_name = $data['exporter_bp_friendly_name'];
+
+		// Look for a potential match into the custom friendly names.
+		} elseif ( isset( $custom_friendly_names[ $exporter ] ) ) {
+			$friendly_name = $custom_friendly_names[ $exporter ];
+		}
+
+		/**
+		 * Filters the data exporter friendly name for display on the "Settings > Data" page.
 		 *
 		 * @since 4.0.0
+		 * @since 5.0.0 replaces the `$name` parameter with the `$friendly_name` one.
 		 *
-		 * @param string $name     Data exporter friendly name.
-		 * @param string $exporter Internal exporter name.
+		 * @param string $friendly_name Data exporter friendly name.
+		 * @param string $exporter      Internal exporter name.
 		 */
-		$item = apply_filters( 'bp_settings_data_exporter_name', esc_html( $data['exporter_friendly_name'] ), $exporter );
+		$item = apply_filters( 'bp_settings_data_exporter_name', esc_html( $friendly_name ), $exporter );
 	?>
 
 		<li><?php echo $item; ?></li>

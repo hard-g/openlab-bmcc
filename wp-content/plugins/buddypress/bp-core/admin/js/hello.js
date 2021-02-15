@@ -1,116 +1,125 @@
+/* global bpHelloStrings */
 /**
  * Loads for BuddyPress Hello in wp-admin for query string `hello=buddypress`.
  *
  * @since 3.0.0
  */
-(function() {
+(function( $, bp ) {
+	// Bail if not set
+	if ( typeof bpHelloStrings === 'undefined' ) {
+		return;
+	}
+
 	/**
 	 * Open the BuddyPress Hello modal.
 	 */
-	var bp_hello_open_modal = function() {
-		var backdrop = document.getElementById( 'bp-hello-backdrop' ),
-			modal = document.getElementById( 'bp-hello-container' );
-
-		document.body.classList.add( 'bp-disable-scroll' );
-
-		// Show modal and overlay.
-		backdrop.style.display = '';
-		modal.style.display    = '';
-
-		// Focus the "X" so bp_hello_handle_keyboard_events() works.
-		var focus_target = modal.querySelectorAll( 'a[href], button' );
-		focus_target     = Array.prototype.slice.call( focus_target );
-		focus_target[0].focus();
-
-		// Events.
-		modal.addEventListener( 'keydown', bp_hello_handle_keyboard_events );
-		backdrop.addEventListener( 'click', bp_hello_close_modal );
-	};
-
-	/**
-	 * Close modal if "X" or background is touched.
-	 *
-	 * @param {Event} event - A click event.
-	 */
-	document.addEventListener( 'click', function( event ) {
-		var backdrop = document.getElementById( 'bp-hello-backdrop' );
-		if ( ! backdrop || ! document.getElementById( 'bp-hello-container' ) ) {
-			return;
+	var bpHelloOpenModal = function() {
+		if ( 'function' !== typeof window.tb_show ) {
+			return false;
 		}
 
-		var backdrop_click    = backdrop.contains( event.target ),
-			modal_close_click = event.target.classList.contains( 'close-modal' );
+		window.tb_show( 'BuddyPress', '#TB_inline?inlineId=bp-hello-container' );
 
-		if ( ! modal_close_click && ! backdrop_click ) {
-			return;
-		}
+		$( '#TB_window' ).attr( {
+							'role': 'dialog',
+							'aria-label': bpHelloStrings.modalLabel
+						} )
+						.addClass( 'plugin-details-modal' )
+						.removeClass( 'thickbox-loading' );
 
-		bp_hello_close_modal();
-	}, false );
+		$( '#TB_ajaxContent' ).prop( 'style', 'height: 100%; width: auto; padding: 0; border: none;' );
 
-	/**
-	 * Close the Hello modal.
-	 */
-	var bp_hello_close_modal = function() {
-		var backdrop = document.getElementById( 'bp-hello-backdrop' ),
-			modal = document.getElementById( 'bp-hello-container' );
+		var tabbables = $( ':tabbable', '#TB_ajaxContent' ), lastTabbable = tabbables.last();
 
-		document.body.classList.remove( 'bp-disable-scroll' );
+		// Move the focus to the Modal's close button once the last Hello link was tabbed out.
+		$( '#TB_window' ).on( 'keydown', function( event ) {
+			if ( 9 === event.keyCode && ! event.shiftKey && $( lastTabbable ).prop( 'classList' ).value === $( event.target ).prop( 'classList' ).value ) {
+				event.preventDefault();
 
-		// Remove modal and overlay.
-		modal.parentNode.removeChild( modal );
-		backdrop.parentNode.removeChild( backdrop );
-	};
-
-	/**
-	 * Restrict keyboard focus to elements within the BuddyPress Hello modal.
-	 *
-	 * @param {Event} event - A keyboard focus event.
-	 */
-	var bp_hello_handle_keyboard_events = function( event ) {
-		var modal = document.getElementById( 'bp-hello-container' ),
-			focus_targets = Array.prototype.slice.call(
-				modal.querySelectorAll( 'a[href], button' )
-			),
-			first_tab_stop = focus_targets[0],
-			last_tab_stop  = focus_targets[ focus_targets.length - 1 ];
-
-		// Check for TAB key press.
-		if ( event.keyCode !== 9 ) {
-			return;
-		}
-
-		// When SHIFT+TAB on first tab stop, go to last tab stop in modal.
-		if ( event.shiftKey && document.activeElement === first_tab_stop ) {
-			event.preventDefault();
-			last_tab_stop.focus();
-
-		// When TAB reaches last tab stop, go to first tab stop in modal.
-		} else if ( document.activeElement === last_tab_stop ) {
-			event.preventDefault();
-			first_tab_stop.focus();
-		}
-	};
-
-	/**
-	 * Close modal if escape key is presssed.
-	 *
-	 * @param {Event} event - A keyboard focus event.
-	 */
-	document.addEventListener( 'keyup', function( event ) {
-		if ( event.keyCode === 27 ) {
-			if ( ! document.getElementById( 'bp-hello-backdrop' ) || ! document.getElementById( 'bp-hello-container' ) ) {
-				return;
+				$( '#TB_closeWindowButton' ).focus();
 			}
 
-			bp_hello_close_modal();
+			if ( 9 === event.keyCode && event.shiftKey && 'TB_closeWindowButton' === $( event.target ).prop( 'id' ) ) {
+				event.preventDefault();
+
+				$( lastTabbable ).focus();
+			}
+		} );
+	};
+
+	/**
+	 * Prints an error message.
+	 *
+	 * @param {string} message The error message to display.
+	 */
+	var printErrorMessage = function( message ) {
+		if ( ! message ) {
+			message = bpHelloStrings.pageNotFound;
 		}
-	}, false );
+
+		$( '#dynamic-content' ).html(
+			$('<div></div>' ).prop( 'id', 'message' )
+					.addClass( 'notice notice-error error' )
+					.html(
+						$( '<p></p>' ).html( message )
+					)
+		);
+	};
+
+	// Listen to Tab Menu clicks to display the different screens.
+	$( '#plugin-information-tabs').on( 'click', 'a', function( event ) {
+		event.preventDefault();
+
+		var anchor = $( event.currentTarget ), target = $( '#dynamic-content' );
+
+		if ( anchor.hasClass( 'dynamic' ) ) {
+			$( '#top-features' ).hide();
+			target.html( '' );
+			target.addClass( 'show' );
+
+			$( '#TB_window' ).addClass( 'thickbox-loading' );
+
+			bp.apiRequest( {
+				url: anchor.data( 'endpoint' ),
+				type: 'GET',
+				beforeSend: function( xhr, settings ) {
+					settings.url = settings.url.replace( '&_wpnonce=none', '' );
+				},
+				data: {
+					context: 'view',
+					slug: anchor.data( 'slug' ),
+					_wpnonce: 'none'
+				}
+			} ).done( function( data ) {
+				var page = _.first( data );
+
+				if ( page && page.content ) {
+					target.html( page.content.rendered );
+				} else {
+					printErrorMessage();
+				}
+
+			} ).fail( function( error ) {
+				if ( ! error || ! error.message ) {
+					return false;
+				}
+
+				printErrorMessage( error.message );
+
+			} ).always( function() {
+				$( '#TB_window' ).removeClass( 'thickbox-loading' );
+			} );
+
+		} else {
+			$( '#top-features' ).show();
+			target.html( '' );
+			target.removeClass( 'show' );
+		}
+	} );
 
 	// Init modal after the screen's loaded.
-	if ( document.attachEvent ? document.readyState === 'complete' : document.readyState !== 'loading' ) {
-		bp_hello_open_modal();
-	} else {
-		document.addEventListener( 'DOMContentLoaded', bp_hello_open_modal );
-	}
-}());
+	$( document ).ready( function() {
+		bpHelloOpenModal();
+	} );
+
+}( jQuery, window.bp || {} ) );

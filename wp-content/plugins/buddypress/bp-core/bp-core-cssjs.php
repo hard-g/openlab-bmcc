@@ -27,7 +27,23 @@ function bp_core_register_common_scripts() {
 	 * eg. French (France) locale for WP is fr_FR. Here, we try to find fr-fr.js
 	 *     (this file doesn't exist).
 	 */
-	$locale = sanitize_file_name( strtolower( get_locale() ) );
+	$wp_locale = sanitize_file_name( strtolower( get_locale() ) );
+
+	// WP uses ISO 639-2 or -3 codes for some locales, which we must translate back to ISO 639-1.
+	$iso_locales = array(
+		'bel' => 'be',
+		'bre' => 'br',
+		'kir' => 'ky',
+		'mri' => 'mi',
+		'ssw' => 'ss',
+	);
+
+	if ( isset( $iso_locales[ $wp_locale ] ) ) {
+		$locale = $iso_locales[ $wp_locale ];
+	} else {
+		$locale = $wp_locale;
+	}
+
 	$locale = str_replace( '_', '-', $locale );
 	if ( file_exists( buddypress()->core->path . "bp-core/js/vendor/moment-js/locale/{$locale}{$min}.js" ) ) {
 		$moment_locale_url = $url . "vendor/moment-js/locale/{$locale}{$min}.js";
@@ -140,7 +156,7 @@ function bp_core_register_common_styles() {
 	foreach ( $styles as $id => $style ) {
 		wp_register_style( $id, $style['file'], $style['dependencies'], bp_get_version() );
 
-		wp_style_add_data( $id, 'rtl', true );
+		wp_style_add_data( $id, 'rtl', 'replace' );
 		if ( $min ) {
 			wp_style_add_data( $id, 'suffix', $min );
 		}
@@ -426,7 +442,7 @@ function bp_add_cover_image_inline_css( $return = false ) {
 		}
 
 		$cover_image_object = array(
-			'component' => 'xprofile',
+			'component' => 'members',
 			'object' => $bp->displayed_user
 		);
 	} elseif ( bp_is_group() ) {
@@ -463,7 +479,7 @@ function bp_add_cover_image_inline_css( $return = false ) {
 
 		$object_dir = $cover_image_object['component'];
 
-		if ( 'xprofile' === $object_dir ) {
+		if ( 'members' === $object_dir ) {
 			$object_dir = 'members';
 		}
 

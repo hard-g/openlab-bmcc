@@ -93,6 +93,7 @@ function messages_new_message( $args = '' ) {
 
 		// Set a default reply subject if none was sent.
 		if ( empty( $message->subject ) ) {
+			/* translators: %s: message subject */
 			$message->subject = sprintf( __( 'Re: %s', 'buddypress' ), $thread->messages[0]->subject );
 		}
 
@@ -669,6 +670,13 @@ function bp_messages_personal_data_exporter( $email_address, $page ) {
 		'page'    => $page,
 	) );
 
+	if ( empty( $user_threads ) ) {
+		return array(
+			'data' => $data_to_export,
+			'done' => true,
+		);
+	}
+
 	foreach ( $user_threads['threads'] as $thread ) {
 		$recipient_links = array();
 		foreach ( $thread->recipients as $recipient ) {
@@ -684,7 +692,7 @@ function bp_messages_personal_data_exporter( $email_address, $page ) {
 
 		foreach ( $thread->messages as $message_index => $message ) {
 			// Only include messages written by the user.
-			if ( $recipient->user_id !== $message->sender_id ) {
+			if ( $user->ID !== $message->sender_id ) {
 				continue;
 			}
 

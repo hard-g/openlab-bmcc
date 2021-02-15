@@ -625,6 +625,7 @@ function bp_nouveau_get_temporary_setting( $option = '', $retval = false ) {
 function bp_nouveau_get_appearance_settings( $option = '' ) {
 	$default_args = array(
 		'avatar_style'       => 0,
+		'global_alignment'   => 'alignwide',
 		'user_front_page'    => 1,
 		'user_front_bio'     => 0,
 		'user_nav_display'   => 0, // O is default (horizontally). 1 is vertically.
@@ -1038,6 +1039,7 @@ function bp_nouveau_get_user_feedback( $feedback_id = '' ) {
 		),
 		'member-wp-profile-none' => array(
 			'type'    => 'info',
+			/* translators: %s: member name */
 			'message' => __( '%s did not save any profile information yet.', 'buddypress' ),
 		),
 		'member-delete-account' => array(
@@ -1161,22 +1163,8 @@ function bp_nouveau_get_signup_fields( $section = '' ) {
 				'type'           => 'email',
 				'class'          => '',
 			),
-			'signup_password' => array(
-				'label'          => __( 'Choose a Password', 'buddypress' ),
-				'required'       => true,
-				'value'          => '',
-				'attribute_type' => 'password',
-				'type'           => 'password',
-				'class'          => 'password-entry',
-			),
-			'signup_password_confirm' => array(
-				'label'          => __( 'Confirm Password', 'buddypress' ),
-				'required'       => true,
-				'value'          => '',
-				'attribute_type' => 'password',
-				'type'           => 'password',
-				'class'          => 'password-entry-confirm',
-			),
+			'signup_password' => array(),
+			'signup_password_confirm' => array(),
 		),
 		'blog_details' => array(
 			'signup_blog_url' => array(
@@ -1256,7 +1244,7 @@ function bp_nouveau_get_submit_button( $action = '' ) {
 			'nonce'      => 'bp_new_signup',
 			'attributes' => array(
 				'name'  => 'signup_submit',
-				'id'    => 'signup_submit',
+				'id'    => 'submit',
 				'value' => __( 'Complete Sign Up', 'buddypress' ),
 			),
 		),

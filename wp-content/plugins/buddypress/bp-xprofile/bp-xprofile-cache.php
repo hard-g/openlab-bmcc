@@ -180,7 +180,7 @@ function bp_xprofile_update_meta_cache( $object_ids = array() ) {
  *
  * @since 2.1.0
  *
- * @param object $group_obj Groub object to clear.
+ * @param object $group_obj Group object to clear.
  */
 function xprofile_clear_profile_groups_object_cache( $group_obj ) {
 	wp_cache_delete( 'all',          'bp_xprofile_groups' );
@@ -286,6 +286,19 @@ function bp_xprofile_reset_fields_by_name_cache_incrementor() {
 	bp_core_reset_incrementor( 'bp_xprofile_fields_by_name' );
 }
 add_action( 'xprofile_field_before_save', 'bp_xprofile_reset_fields_by_name_cache_incrementor' );
+
+/**
+ * Resets all incremented bp_xprofile_groups caches.
+ *
+ * @since 5.0.0
+ */
+function bp_xprofile_reset_groups_cache_incrementor() {
+	bp_core_reset_incrementor( 'bp_xprofile_groups' );
+}
+add_action( 'xprofile_group_after_delete', 'bp_xprofile_reset_groups_cache_incrementor' );
+add_action( 'xprofile_group_after_save', 'bp_xprofile_reset_groups_cache_incrementor' );
+add_action( 'xprofile_field_after_delete', 'bp_xprofile_reset_groups_cache_incrementor' );
+add_action( 'xprofile_field_after_save', 'bp_xprofile_reset_groups_cache_incrementor' );
 
 // List actions to clear super cached pages on, if super cache is installed.
 add_action( 'xprofile_updated_profile', 'bp_core_clear_cache' );

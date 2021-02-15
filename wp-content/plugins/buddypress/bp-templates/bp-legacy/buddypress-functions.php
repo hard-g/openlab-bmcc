@@ -310,6 +310,8 @@ class BP_Legacy extends BP_Theme_Compat {
 			'remove_fav'	      => __( 'Remove Favorite', 'buddypress' ),
 			'show_all'            => __( 'Show all', 'buddypress' ),
 			'show_all_comments'   => __( 'Show all comments for this thread', 'buddypress' ),
+
+			/* translators: %s: number of activity comments */
 			'show_x_comments'     => __( 'Show all comments (%d)', 'buddypress' ),
 			'unsaved_changes'     => __( 'Your profile has unsaved changes. If you leave the page, the changes will be lost.', 'buddypress' ),
 			'view'                => __( 'View', 'buddypress' ),
@@ -988,7 +990,7 @@ function bp_legacy_theme_post_update() {
 
 	} else {
 
-		/** This filter is documented in bp-activity/bp-activity-actions.php */
+		/** This filter is documented in bp-activity/actions/post.php */
 		$activity_id = apply_filters( 'bp_activity_custom_update', false, $object, $item_id, $_POST['content'] );
 	}
 
@@ -1056,8 +1058,14 @@ function bp_legacy_theme_new_activity_comment() {
 		exit( '-1<div id="message" class="error bp-ajax-message"><p>' . esc_html( $feedback ) . '</p></div>' );
 	}
 
+	$activity_id   = (int) $_POST['form_id'];
+	$activity_item = new BP_Activity_Activity( $activity_id );
+	if ( ! bp_activity_user_can_read( $activity_item ) ) {
+		exit( '-1<div id="message" class="error bp-ajax-message"><p>' . esc_html( $feedback ) . '</p></div>' );
+	}
+
 	$comment_id = bp_activity_new_comment( array(
-		'activity_id' => $_POST['form_id'],
+		'activity_id' => $activity_id,
 		'content'     => $_POST['content'],
 		'parent_id'   => $_POST['comment_id'],
 		'error_type'  => 'wp_error'
@@ -1242,6 +1250,12 @@ function bp_legacy_theme_mark_activity_favorite() {
 		return;
 	}
 
+	$activity_id   = (int) $_POST['id'];
+	$activity_item = new BP_Activity_Activity( $activity_id );
+	if ( ! bp_activity_user_can_read( $activity_item, bp_loggedin_user_id() ) ) {
+		return;
+	}
+
 	if ( bp_activity_add_user_favorite( $_POST['id'] ) )
 		_e( 'Remove Favorite', 'buddypress' );
 	else
@@ -1380,6 +1394,7 @@ function bp_legacy_theme_ajax_invite_user() {
 			  </div>';
 
 		if ( 'is_pending' == $user_status ) {
+			/* translators: %s: user link */
 			echo '<p class="description">' . sprintf( __( '%s has previously requested to join this group. Sending an invitation will automatically add the member to the group.', 'buddypress' ), $user->user_link ) . '</p>';
 		}
 
@@ -1567,7 +1582,7 @@ function bp_legacy_theme_ajax_joinleave_group() {
 		case 'request_membership' :
 			check_ajax_referer( 'groups_request_membership' );
 
-			if ( ! groups_send_membership_request( bp_loggedin_user_id(), $group->id ) ) {
+			if ( ! groups_send_membership_request( [ 'user_id' => bp_loggedin_user_id(), 'group_id' => $group->id ] ) ) {
 				_e( 'Error requesting membership', 'buddypress' );
 			} else {
 				echo '<a id="group-' . esc_attr( $group->id ) . '" class="group-button disabled pending membership-requested" rel="membership-requested" href="' . bp_get_group_permalink( $group ) . '">' . __( 'Request Sent', 'buddypress' ) . '</a>';

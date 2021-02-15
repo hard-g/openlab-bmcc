@@ -202,7 +202,7 @@ function bp_groups_admin_load() {
 	) );
 	wp_enqueue_style( 'bp_groups_admin_css', $bp->plugin_url . "bp-groups/admin/css/admin{$min}.css", array(), bp_get_version() );
 
-	wp_style_add_data( 'bp_groups_admin_css', 'rtl', true );
+	wp_style_add_data( 'bp_groups_admin_css', 'rtl', 'replace' );
 	if ( $min ) {
 		wp_style_add_data( 'bp_groups_admin_css', 'suffix', $min );
 	}
@@ -537,20 +537,24 @@ function bp_groups_admin_edit() {
 		}
 
 		if ( ! empty( $error_new ) ) {
+			/* translators: %s: comma separated list of usernames */
 			$messages[] = sprintf( __( 'The following users could not be added to the group: %s', 'buddypress' ), '<em>' . esc_html( implode( ', ', $error_new ) ) . '</em>' );
 		}
 
 		if ( ! empty( $success_new ) ) {
+			/* translators: %s: comma separated list of usernames */
 			$messages[] = sprintf( __( 'The following users were successfully added to the group: %s', 'buddypress' ), '<em>' . esc_html( implode( ', ', $success_new ) ) . '</em>' );
 		}
 
 		if ( ! empty( $error_modified ) ) {
 			$error_modified = bp_groups_admin_get_usernames_from_ids( $error_modified );
+			/* translators: %s: comma separated list of usernames */
 			$messages[] = sprintf( __( 'An error occurred when trying to modify the following members: %s', 'buddypress' ), '<em>' . esc_html( implode( ', ', $error_modified ) ) . '</em>' );
 		}
 
 		if ( ! empty( $success_modified ) ) {
 			$success_modified = bp_groups_admin_get_usernames_from_ids( $success_modified );
+			/* translators: %s: comma separated list of usernames */
 			$messages[] = sprintf( __( 'The following members were successfully modified: %s', 'buddypress' ), '<em>' . esc_html( implode( ', ', $success_modified ) ) . '</em>' );
 		}
 	}
@@ -558,7 +562,7 @@ function bp_groups_admin_edit() {
 	$is_error = ! empty( $no_admins ) || ! empty( $errors ) || ! empty( $error_new ) || ! empty( $error_modified );
 
 	// Get the group from the database.
-	$group      = groups_get_group( (int) $_GET['gid'] );
+	$group = groups_get_group( (int) $_GET['gid'] );
 
 	$group_name = isset( $group->name ) ? bp_get_group_name( $group ) : '';
 
@@ -745,6 +749,7 @@ function bp_groups_admin_index() {
 		$deleted  = ! empty( $_REQUEST['deleted'] ) ? (int) $_REQUEST['deleted'] : 0;
 
 		if ( $deleted > 0 ) {
+			/* translators: %s: number of deleted groups */
 			$messages[] = sprintf( _n( '%s group has been permanently deleted.', '%s groups have been permanently deleted.', $deleted, 'buddypress' ), number_format_i18n( $deleted ) );
 		}
 	}
@@ -891,6 +896,24 @@ function bp_groups_admin_edit_metabox_add_new_members( $item ) {
  * @param BP_Groups_Group $item The BP_Groups_Group object for the current group.
  */
 function bp_groups_admin_edit_metabox_members( $item ) {
+	// Use the BP REST API if it supported.
+	if ( bp_rest_api_is_available() && bp_groups_has_manage_group_members_templates() ) {
+		wp_enqueue_script( 'bp-group-manage-members' );
+		wp_localize_script(
+			'bp-group-manage-members',
+			'bpGroupManageMembersSettings',
+			bp_groups_get_group_manage_members_script_data( $item->id )
+		);
+
+		bp_get_template_part( 'common/js-templates/group-members/index' );
+
+		/**
+		 * Echo out the JavaScript variable.
+		 * This seems to be required by the autocompleter, leaving this here for now...
+		 */
+		echo '<script type="text/javascript">var group_id = "' . esc_js( $item->id ) . '";</script>';
+		return;
+	}
 
 	// Pull up a list of group members, so we can separate out the types
 	// We'll also keep track of group members here to place them into a
@@ -1211,6 +1234,7 @@ function bp_groups_admin_create_pagination_links( BP_Group_Member_Query $query, 
 		$viewing_text = __( 'Viewing 1 member', 'buddypress' );
 	} else {
 		$viewing_text = sprintf(
+			/* translators: 1: group member from number. 2: group member to number. 3: total group members. */
 			_nx( 'Viewing %1$s - %2$s of %3$s member', 'Viewing %1$s - %2$s of %3$s members', $query->total_users, 'Group members pagination in group admin', 'buddypress' ),
 			bp_core_number_format( $current_page_start ),
 			bp_core_number_format( $current_page_end ),
