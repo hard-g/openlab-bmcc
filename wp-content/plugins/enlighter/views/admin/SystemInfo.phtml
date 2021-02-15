@@ -1,24 +1,22 @@
 <?php if (!defined('ENLIGHTER_INIT')) die('DIRECT ACCESS PROHIBITED'); ?>
 
-<div class="postbox">
-    <h3 class="hndle"><?php _e('System Info', 'enlighter'); ?></h3>
+<div class="postbox enlighter-postbox">
+<h3 class="hndle"><?php _e('System Info', 'enlighter'); ?></h3>
     <div class="inside">
         <!-- Metabox-Content -->
         
         <ul>
             <li><strong>Server</strong></li>
             <?php
-            echo '<li>', __('PHP Version:', 'enlighter'), ' <span class="EnlighterTRUE">', phpversion(), '</span></li>';
-
+            echo '<li>', __('PHP Version:', 'enlighter'), ' <span class="enlighter-text-true">', phpversion(), '</span></li>';
             // json encoding available ?
             if (function_exists('json_encode')) {
-                echo '<li>', __('PHP JSON Extension', 'enlighter'), ': <span class="EnlighterTRUE">', __('available', 'enlighter'), '</span></li>';
+                echo '<li>', __('PHP JSON Extension', 'enlighter'), ': <span class="enlighter-text-true">', __('available', 'enlighter'), '</span></li>';
             } else {
-                echo '<li>', __('PHP JSON Extension', 'enlighter'), ': <span class="EnlighterFALSE">', __('not installed', 'enlighter'), '</span></li>';
+                echo '<li>', __('PHP JSON Extension', 'enlighter'), ': <span class="enlighter-text-false">', __('not installed', 'enlighter'), '</span></li>';
             }
-
             // server os
-            echo '<li>', __('Server Software:', 'enlighter'), ' <span class="EnlighterTRUE">', PHP_OS, '</span></li>';
+            echo '<li>', __('Server Software:', 'enlighter'), ' <span class="enlighter-text-true">', PHP_OS, '</span></li>';
             ?>
         </ul>
 
@@ -27,18 +25,23 @@
         <ul>
             <li><strong>Components</strong></li>
             <?php
-
-            // enlighter version
-            echo '<li>', __('Enlighter Plugin Version:', 'enlighter'), ' <span class="EnlighterTRUE">', ENLIGHTER_VERSION, '</span></li>';
+            // enlighter edition
+            echo '<li>', __('Enlighter Plugin:', 'enlighter'), ' <span class="enlighter-text-true">', ENLIGHTER_VERSION, ' CE</span></li>';
 
             // enlighterjs version
-            echo '<li>', __('EnlighterJS Version:', 'enlighter'), ' <span class="EnlighterTRUE">', self::getEnlighterJSVersion(), '</span></li>';
+            echo '<li>', __('EnlighterJS Version:', 'enlighter'), ' <span class="enlighter-text-true">', \Enlighter\Versions::getEnlighterJSVersion(), '</span></li>';
 
             // enlighterjs.tinymce version
-            echo '<li>', __('TinyMCE Extension:', 'enlighter'), ' <span class="EnlighterTRUE">', self::getEnlighterJSTinyMCEVersion(), '</span></li>';
+            echo '<li>', __('TinyMCE Extension:', 'enlighter'), ' <span class="enlighter-text-true">', \Enlighter\Versions::getTinyMCEPluginVersion(), '</span></li>';
 
-             // enlighterjs.gutenberg version
-             echo '<li>', __('Gutenberg Extension:', 'enlighter'), ' <span class="EnlighterTRUE">', self::getEnlighterJSGutenbergVersion(), '</span></li>';
+            // enlighterjs.gutenberg version
+            echo '<li>', __('Gutenberg Extension:', 'enlighter'), ' <span class="enlighter-text-true">', \Enlighter\Versions::getGutenbergPluginVersion(), '</span></li>';
+
+            // enlighterjs.theme-customizer version
+            echo '<li>', __('Theme Customizer:', 'enlighter'), ' <span class="enlighter-text-true">', \Enlighter\Versions::getThemeCustomizerPluginVersion(), '</span></li>';
+
+             // framework version
+            echo '<li>', __('WP-Skeleton Version:', 'enlighter'), ' <span class="enlighter-text-true">', ENLIGHTER_WPSKLTN_VERSION, '</span></li>';
             ?>
 
         </ul>
@@ -50,21 +53,19 @@
             <?php
             // plugin cache path writeable ?
             if ($this->_cacheManager->isCacheAccessible()) {
-                echo '<li>', __('Cache writeable', 'enlighter'), ': <span class="EnlighterTRUE">', __('true', 'enlighter'), '</span></li>';
+                echo '<li>', __('Cache writeable', 'enlighter'), ': <span class="enlighter-text-true">', __('true', 'enlighter'), '</span></li>';
             } else {
-                echo '<li>', __('Cache writeable', 'enlighter'), ': <span class="EnlighterFALSE">', __('false', 'enlighter'), '</span></li>';
+                echo '<li>', __('Cache writeable', 'enlighter'), ': <span class="enlighter-text-false">', __('false', 'enlighter'), '</span></li>';
             }
-
             // shortcode processor type
-            $shortcodeProcessorType = $this->_settingsUtility->getOption('shortcodeMode');
+            $shortcodeProcessorType = 'NAN';
             if ($shortcodeProcessorType == 'disabled') {
-                echo '<li>', __('Shortcode Processor', 'enlighter'), ': <span class="EnlighterFALSE">', __('disabled', 'enlighter'), '</span></li>';
+                echo '<li>', __('Shortcode Processor', 'enlighter'), ': <span class="enlighter-text-false">', __('disabled', 'enlighter'), '</span></li>';
             } else if ($shortcodeProcessorType == 'legacy') {
-                echo '<li>', __('Shortcode Processor', 'enlighter'), ': <span class="EnlighterTRUE">', __('WordPress internal', 'enlighter'), '</span></li>';
+                echo '<li>', __('Shortcode Processor', 'enlighter'), ': <span class="enlighter-text-true">', __('WordPress internal', 'enlighter'), '</span></li>';
             } else {
-                echo '<li>', __('Shortcode Processor', 'enlighter'), ': <span class="EnlighterTRUE">', __('Enlighter low-level', 'enlighter'), '</span></li>';
+                echo '<li>', __('Shortcode Processor', 'enlighter'), ': <span class="enlighter-text-true">', __('Enlighter low-level', 'enlighter'), '</span></li>';
             }
-
             ?>
         </ul>
 
