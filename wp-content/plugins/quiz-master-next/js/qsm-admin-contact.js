@@ -6,13 +6,14 @@ var QSMContact;
 (function ($) {
   QSMContact = {
     load : function() {
-        if(qsmContactObject.contactForm.length > 0){
+        if($.isArray(qsmContactObject.contactForm) && qsmContactObject.contactForm.length > 0){
             $.each( qsmContactObject.contactForm, function( i, val ) {
               QSMContact.addField( val );
             });
         }
     },
     addField : function( fieldArray ) {
+      var new_label =  fieldArray.label.replace(/"/g, "'");      
       var contactField = $( '<div class="contact-form-field new">' +
 		  '<div class="contact-form-group">' +
 		  	'<label class="contact-form-label">Field Type</label>' +
@@ -25,7 +26,7 @@ var QSMContact;
           '</div>' +
           '<div class="contact-form-group">' +
             '<label class="contact-form-label">Label</label>' +
-            '<input type="text" class="contact-form-control label-control" value="' + fieldArray.label + '">' +
+            '<input type="text" class="contact-form-control label-control" value="' + new_label + '">' +
           '</div>' +
           '<div class="contact-form-group">' +
             '<label class="contact-form-label">Used For</label>' +
@@ -129,7 +130,8 @@ var QSMContact;
       var data = {
     		action: 'qsm_save_contact',
     		contact_form: contactForm,
-        quiz_id : qsmContactObject.quizID
+                quiz_id : qsmContactObject.quizID,
+                nonce : qsmContactObject.saveNonce,
     	};
 
     	jQuery.post( ajaxurl, data, function( response ) {
@@ -166,8 +168,16 @@ var QSMContact;
   };
   $(function() {
     QSMContact.load();
+    if( $('.contact-form > .contact-form-field').length === 0 ){
+        $('.save-contact').hide();
+    }
     $( '.add-contact-field' ).on( 'click', function() {
       QSMContact.newField();
+        if( $('.contact-form > .contact-form-field').length === 0 ){
+            $('.save-contact').hide();
+        }else{
+            $('.save-contact').show();
+        }
     });
     $( '.save-contact' ).on( 'click', function() {
       QSMContact.save();

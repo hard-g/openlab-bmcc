@@ -29,7 +29,7 @@ function qsm_options_contact_tab_content() {
   $contact_form = QSM_Contact_Manager::load_fields();
 
   wp_enqueue_script( 'qsm_contact_admin_script', plugins_url( '../../js/qsm-admin-contact.js' , __FILE__ ), array( 'jquery-ui-sortable' ), $mlwQuizMasterNext->version );
-  wp_localize_script( 'qsm_contact_admin_script', 'qsmContactObject', array( 'contactForm' => $contact_form, 'quizID' => $quiz_id ) );
+  wp_localize_script( 'qsm_contact_admin_script', 'qsmContactObject', array( 'contactForm' => $contact_form, 'quizID' => $quiz_id, 'saveNonce' => wp_create_nonce('ajax-nonce-contact-save') ) );
   wp_enqueue_style( 'qsm_contact_admin_style', plugins_url( '../../css/qsm-admin-contact.css' , __FILE__ ), array(), $mlwQuizMasterNext->version );
 
   /**
@@ -48,8 +48,8 @@ function qsm_options_contact_tab_content() {
    */
 
   ?>
-  <h2><?php _e( 'Contact', 'quiz-master-next' ); ?></h2>
-  <p>Need assistance with this tab? <a href="https://docs.quizandsurveymaster.com/article/20-collecting-users-information-using-contact-fields" target="_blank">Check out the documentation</a> for this tab!</p>
+  <h2 style="display: none;"><?php _e( 'Contact', 'quiz-master-next' ); ?></h2>
+  <p style="text-align: right;"><a href="https://quizandsurveymaster.com/docs/v7/contact-tab/" target="_blank"><?php _e( 'View Documentation', 'quiz-master-next' ); ?></a></p>
   <div class="contact-message"></div>
   <a class="save-contact button-primary"><?php _e( 'Save Contact Fields', 'quiz-master-next' ); ?></a>
   <div class="contact-form"></div>
@@ -58,7 +58,7 @@ function qsm_options_contact_tab_content() {
 }
 
 add_action( 'wp_ajax_qsm_save_contact', 'qsm_contact_form_admin_ajax' );
-add_action( 'wp_ajax_nopriv_qsm_save_contact', 'qsm_contact_form_admin_ajax' );
+//add_action( 'wp_ajax_nopriv_qsm_save_contact', 'qsm_contact_form_admin_ajax' );
 
 /**
  * Saves the contact form from the quiz settings tab
@@ -67,6 +67,10 @@ add_action( 'wp_ajax_nopriv_qsm_save_contact', 'qsm_contact_form_admin_ajax' );
  * @return void
  */
 function qsm_contact_form_admin_ajax() {
+        $nonce = $_POST['nonce'];
+        if ( ! wp_verify_nonce( $nonce, 'ajax-nonce-contact-save' ) )
+            die ( 'Busted!');
+    
 	global $wpdb;
 	global $mlwQuizMasterNext;
 	// Sends posted form data to Contact Manager to sanitize and save.

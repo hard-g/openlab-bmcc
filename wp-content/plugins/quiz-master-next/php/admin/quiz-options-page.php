@@ -18,12 +18,21 @@ if ( ! defined( 'ABSPATH' ) ) {
 function qsm_generate_quiz_options() {
 
 	// Checks if current user can.
-	if ( ! current_user_can( 'moderate_comments' ) ) {
+	if ( ! current_user_can( 'edit_posts' ) ) {
 		return;
 	}
-
-	global $wpdb;
+        global $wpdb;
 	global $mlwQuizMasterNext;
+        
+        //Check user capability
+        $user = wp_get_current_user();
+        if ( in_array( 'author', (array) $user->roles ) ) {
+            $quiz_id = isset( $_GET['quiz_id'] ) ? intval( $_GET['quiz_id'] ) : 0;
+            $quiz_author_id = $wpdb->get_var( $wpdb->prepare( "SELECT quiz_author_id FROM {$wpdb->prefix}mlw_quizzes WHERE quiz_id=%d AND quiz_author_id=%d LIMIT 1", $quiz_id, $user->ID ) );
+            if(!$quiz_author_id){
+                wp_die('You are not allow to edit this quiz, You need higher permission!');
+            }
+        }
 
 	$quiz_name = '';
 
@@ -42,63 +51,99 @@ function qsm_generate_quiz_options() {
 	wp_enqueue_script( 'jquery-ui-core' );
 	wp_enqueue_script( 'jquery-ui-dialog' );
 	wp_enqueue_script( 'jquery-ui-button' );
-	wp_enqueue_script( 'jquery-ui-datepicker' );
+	wp_enqueue_script( 'qmn_datetime_js', plugins_url( '../../js/jquery.datetimepicker.full.min.js', __FILE__ ) );
+        wp_enqueue_style( 'qsm_datetime_style', plugins_url( '../../css/jquery.datetimepicker.css', __FILE__ ) );
 	wp_enqueue_script( 'jquery-ui-tabs' );
 	wp_enqueue_script( 'jquery-effects-blind' );
 	wp_enqueue_script( 'jquery-effects-explode' );
+	wp_enqueue_script( 'wp-tinymce' );
 
 	wp_enqueue_script( 'qmn_admin_js', plugins_url( '../../js/admin.js', __FILE__ ), array( 'backbone', 'underscore', 'wp-util' ), $mlwQuizMasterNext->version, true );
         wp_enqueue_script( 'micromodal_script', plugins_url( '../../js/micromodal.min.js', __FILE__ ) );
 	wp_enqueue_style( 'qsm_admin_style', plugins_url( '../../css/qsm-admin.css', __FILE__ ), array(), $mlwQuizMasterNext->version );
 	wp_enqueue_style( 'qmn_jquery_redmond_theme', plugins_url( '../../css/jquery-ui.css', __FILE__ ) );
 	wp_enqueue_script( 'math_jax', '//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_CHTML' );
-        
+        wp_localize_script('qmn_admin_js', 'qsmTextTabObject', array( 'quiz_id' => $quiz_id ));
         // Edit Quiz Name.
 	if ( isset( $_POST['qsm_edit_name_quiz_nonce'] ) && wp_verify_nonce( $_POST['qsm_edit_name_quiz_nonce'], 'qsm_edit_name_quiz' ) ) {
-            $quiz_id   = intval( $_POST['edit_quiz_id'] );
-            $quiz_name = htmlspecialchars( stripslashes( $_POST['edit_quiz_name'] ), ENT_QUOTES );
+            //$quiz_id   = intval( $_POST['edit_quiz_id'] );
+            $quiz_name = sanitize_text_field( htmlspecialchars( stripslashes( $_POST['edit_quiz_name'] ), ENT_QUOTES ) );
             $mlwQuizMasterNext->quizCreator->edit_quiz_name( $quiz_id, $quiz_name );
 	}
+        //Update post status
+        if ( isset( $_POST['qsm_update_quiz_status_nonce'] ) && wp_verify_nonce( $_POST['qsm_update_quiz_status_nonce'], 'qsm_update_quiz_status' ) ) {            
+            $quiz_post_id = sanitize_text_field( $_POST['quiz_post_id'] );
+            $arg_post_arr = array(
+                'ID'           => $quiz_post_id,
+                'post_status'   => 'publish',
+            );        
+            $update_status = wp_update_post( $arg_post_arr );
+            if ( false !== $update_status ) {
+                $mlwQuizMasterNext->alertManager->newAlert( __( 'Quiz status has been updated successfully to publish.', 'quiz-master-next' ), 'success' );
+                $mlwQuizMasterNext->audit_manager->new_audit( "Quiz/Survey Status Has Been Updated: $quiz_post_id" );
+            } else {                    
+                $mlwQuizMasterNext->alertManager->newAlert( __( 'An error occurred while trying to update the status of your quiz or survey. Please try again.', 'quiz-master-next' ), 'error' );
+                $mlwQuizMasterNext->log_manager->add( 'Error when updating quiz status', "", 0, 'error' );
+            }
+	}
 	?>
+        <?php
+        // Get quiz post based on quiz id
+        $args = array(
+            'posts_per_page' => 1,
+            'post_type' => 'qsm_quiz',
+            'meta_query' => array(
+                array(
+                    'key' => 'quiz_id',
+                    'value' => $quiz_id,
+                    'compare' => '=',
+                ),
+            ),
+        );
+        $the_query = new WP_Query($args);
+
+        // The Loop
+        $post_status = $post_id = $post_permalink = $edit_link = '';
+        if ($the_query->have_posts()) {
+            while ($the_query->have_posts()) {                
+                $the_query->the_post();
+                $post_permalink = get_the_permalink(get_the_ID());
+                $post_status = get_post_status( get_the_ID() );
+                $edit_link = get_edit_post_link(get_the_ID());
+                $post_id = get_the_ID();
+            }
+            /* Restore original Post Data */
+            wp_reset_postdata();
+        }
+        ?>    
 	<div class="wrap">            
 		<div class='mlw_quiz_options'>
-                    <h1 style="display: inline-block;"><?php echo $quiz_name; ?></h1>
-                    <a style="display: inline-block;margin-top: 10px;margin-bottom: 15px;margin-left: 10px;" hre="#" class="edit-quiz-name button button-primary">Edit Name</a>
-                    <?php
-                    // Get quiz post based on quiz id
-                    $args = array(
-                        'posts_per_page' => 1,
-                        'post_type' => 'quiz',
-                        'meta_query' => array(
-                            array(
-                                'key' => 'quiz_id',
-                                'value' => $quiz_id,
-                                'compare' => '=',
-                            ),
-                        ),
-                    );
-                    $the_query = new WP_Query($args);
-
-                    // The Loop
-                    $post_permalink = '';
-                    if ($the_query->have_posts()) {            
-                        while ($the_query->have_posts()) {                
-                            $the_query->the_post();
-                            $post_permalink = get_the_permalink(get_the_ID());
+                    <h1 style="margin-bottom: 10px;">
+                        <?php echo $quiz_name; ?>
+                        <?php
+                        if( $post_status == 'draft' ){ ?>
+                            <form method="POST" action="" style="display: inline-block; margin-left: 10px;">
+                                <?php wp_nonce_field( 'qsm_update_quiz_status','qsm_update_quiz_status_nonce' ); ?>
+                                <input type="hidden" name="quiz_post_id" value="<?php echo $post_id; ?>" />
+                                <input type="submit" class="button button-default" value="<?php _e('Publish Quiz', 'quiz-master-next'); ?>" />
+                            </form>
+                        <?php                         
                         }
-                        /* Restore original Post Data */
-                        wp_reset_postdata();
-                    }
-                    ?>
-                    <a style="text-decoration: none; position: relative; top: 9px; left: 5px;" target="_blank" href="<?php echo $post_permalink; ?>">
-                        <span style="font-size: 30px;" class="dashicons dashicons-external"></span>
-                    </a>
+                        ?>                        
+                        <a class="qsm-view-preview-btn" target="_blank" href="<?php echo $post_permalink; ?>">
+                            <span class="dashicons dashicons-external"></span>
+                        </a>
+                        <a class="button button-default qsm-btn-quiz-edit" href="<?php echo $edit_link; ?>">
+                            <span class="dashicons dashicons-admin-settings"></span> <?php _e('Post Settings', 'quiz-master-next'); ?>
+                        </a>
+                        <a href="#" class="edit-quiz-name button button-primary">Edit Name</a>
+                    </h1>                                        
 			<?php
 			// Puts all output from tab into ob_get_contents below.
 			ob_start();
 
 			// If the quiz is set and not empty.
-			if ( ! empty( $quiz_id ) ) {
+			if ( $quiz_id ) {
 				?>
 				<nav class="nav-tab-wrapper">
 					<?php
@@ -125,7 +170,7 @@ function qsm_generate_quiz_options() {
 					?>
 				</div>
 				<?php
-			} else {
+			} else {                            
 				?>
 				<div class="ui-state-highlight ui-corner-all" style="margin-top: 20px; padding: 0 .7em;">
 					<p><span class="ui-icon ui-icon-info" style="float: left; margin-right: .3em;"></span>
@@ -159,7 +204,7 @@ function qsm_generate_quiz_options() {
                                     <form action='' method='post' id="edit-name-form">
                                             <label><?php _e( 'Name', 'quiz-master-next' ); ?></label>
                                             <input type="text" id="edit_quiz_name" name="edit_quiz_name" value="<?php echo $quiz_name; ?>" />
-                                            <input type="hidden" id="edit_quiz_id" name="edit_quiz_id" value="<?php echo isset($_GET['quiz_id']) ? $_GET['quiz_id'] : ''; ?>" />
+                                            <input type="hidden" id="edit_quiz_id" name="edit_quiz_id" value="<?php echo isset($_GET['quiz_id']) && is_int($_GET['quiz_id']) ? (int) $_GET['quiz_id'] : '0'; ?>" />
                                             <?php wp_nonce_field( 'qsm_edit_name_quiz', 'qsm_edit_name_quiz_nonce' ); ?>
                                     </form>
                             </main>

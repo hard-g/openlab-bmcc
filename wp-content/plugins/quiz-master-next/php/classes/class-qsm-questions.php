@@ -37,7 +37,7 @@ class QSM_Questions {
 			}
 			$question['settings'] = $settings;
 
-			return $question;
+			return apply_filters('qsm_load_question',$question, $question_id);
 		}
 		return array();
 	}
@@ -111,7 +111,7 @@ class QSM_Questions {
 				$questions[ $key ]['page'] = isset( $question['page'] ) ? $question['page'] : 0;
 			}
 		}
-		return $questions;
+		return apply_filters('qsm_load_questions_by_pages',$questions,$quiz_id);
 	}
 
 	/**
@@ -152,7 +152,7 @@ class QSM_Questions {
 
 			$question_array[ $question['question_id'] ] = $question;
 		}
-		return $question_array;
+		return apply_filters('qsm_load_questions',$question_array,$quiz_id);
 	}
 
 	/**
@@ -261,9 +261,9 @@ class QSM_Questions {
 
 		$values = array(
 			'quiz_id'              => intval( $data['quiz_id'] ),
-			'question_name'        => trim( preg_replace( '/\s+/', ' ', htmlspecialchars( nl2br( wp_kses_post( $data['name'] ) ), ENT_QUOTES ) ) ),
+			'question_name'        => trim( preg_replace( '/\s+/', ' ', htmlspecialchars( wp_kses_post( $data['name'] ), ENT_QUOTES ) ) ),
 			'answer_array'         => serialize( $answers ),
-			'question_answer_info' => htmlspecialchars( $data['answer_info'], ENT_QUOTES ),
+			'question_answer_info' => $data['answer_info'],
 			'comments'             => htmlspecialchars( $data['comments'], ENT_QUOTES ),
 			'hints'                => htmlspecialchars( $data['hint'], ENT_QUOTES ),
 			'question_order'       => intval( $data['order'] ),

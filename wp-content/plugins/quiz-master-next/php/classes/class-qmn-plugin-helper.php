@@ -107,9 +107,11 @@ class QMNPluginHelper {
 	 * @param bool $include_deleted If set to true, returned array will include all deleted quizzes
 	 * @param string $order_by The column the quizzes should be ordered by
 	 * @param string $order whether the $order_by should be ordered as ascending or decending. Can be "ASC" or "DESC"
+	 * @param arr $user_role role of current user
+	 * @param int $user_id Get the quiz based on user id
 	 * @return array All of the quizzes as a numerical array of objects
 	 */
-	public function get_quizzes( $include_deleted = false, $order_by = 'quiz_id', $order = 'DESC' ) {
+	public function get_quizzes( $include_deleted = false, $order_by = 'quiz_id', $order = 'DESC', $user_role = array(), $user_id = '', $limit = '', $offset = '', $where = '' ) {
 		global $wpdb;
 
 		// Set order direction
@@ -131,6 +133,10 @@ class QMNPluginHelper {
 			case 'quiz_taken':
 				$order_field = 'quiz_taken';
 				break;
+                            
+			case 'title':
+				$order_field = 'quiz_name';
+				break;
 			
 			default:
 				$order_field = 'quiz_id';
@@ -139,12 +145,32 @@ class QMNPluginHelper {
 
 		// Should we include deleted?
 		$delete = "WHERE deleted='0'";
+                if( $where != '' ){
+                    $delete = $delete . ' AND ' . $where;
+                }
 		if ( $include_deleted ) {
 			$delete = '';
 		}
-
+                $user_str = '';
+                if ( in_array( 'author', (array) $user_role ) ) {
+                    if( $user_id && $delete == '' ){
+                        $user_str = "WHERE quiz_author_id = '$user_id'";
+                    }else if( $user_id && $delete !== '' ){
+                        $user_str = " AND quiz_author_id = '$user_id'";
+                    }   
+                }
+                if( $where != '' && $user_str != '' ){
+                    $user_str = $user_str . ' AND ' . $where;
+                }
+                $where_str = '';
+                if( $user_str == '' && $delete === '' && $where != '' ){
+                    $where_str = "WHERE $where";
+                }
+                if($limit != ''){
+                    $limit = ' limit ' . $offset . ', ' . $limit;
+                }
 		// Get quizzes and return them
-		$quizzes = $wpdb->get_results( "SELECT * FROM {$wpdb->prefix}mlw_quizzes $delete ORDER BY $order_field $order_direction" );
+		$quizzes = $wpdb->get_results( "SELECT * FROM {$wpdb->prefix}mlw_quizzes $delete $user_str $where_str ORDER BY $order_field $order_direction $limit" );
 		return $quizzes;
 	}
 
@@ -170,7 +196,7 @@ class QMNPluginHelper {
    */
   public function get_section_setting( $section, $setting, $default = false ) {
 		global $mlwQuizMasterNext;
-		return $mlwQuizMasterNext->quiz_settings->get_section_setting( $section, $setting, $default );
+		return apply_filters('qsm_section_setting_text', $mlwQuizMasterNext->quiz_settings->get_section_setting( $section, $setting, $default ));
 	}
 
 	/**
@@ -201,15 +227,19 @@ class QMNPluginHelper {
 	}
 
 	/**
-   * Outputs the section of input fields
-   *
-   * @since 5.0.0
-   * @param string $section The section that the settings were registered with
-   */
-  public function generate_settings_section( $section = 'quiz_options' ) {
-		global $mlwQuizMasterNext;
-		QSM_Fields::generate_section( $mlwQuizMasterNext->quiz_settings->load_setting_fields( $section ), $section );
-  }
+        * Outputs the section of input fields
+        *
+        * @since 5.0.0
+        * @since 7.0 Added new parameter settings_fields for default setting
+        * @param string $section The section that the settings were registered with
+        */
+       public function generate_settings_section( $section = 'quiz_options', $settings_fields = array() ) {
+             global $mlwQuizMasterNext;
+             if( empty( $settings_fields ) ){
+                 $settings_fields = $mlwQuizMasterNext->quiz_settings->load_setting_fields( $section );
+             }             
+             QSM_Fields::generate_section( $settings_fields, $section );
+       }
 
 	/**
 	 * Registers Quiz Templates
@@ -367,9 +397,9 @@ class QMNPluginHelper {
 		}
 		if ( 2 == $quiz_options->randomness_order || 3 == $quiz_options->randomness_order ) {
 			shuffle( $answers );
-		}
+		}                
 		foreach($this->question_types as $type)
-		{
+		{                    
 			if ($type["slug"] == strtolower(str_replace( " ", "-", $slug)))
 			{
 				if ($type["graded"])
@@ -380,6 +410,9 @@ class QMNPluginHelper {
 						$display .= "<span class='mlw_qmn_question_number'>$qmn_total_questions. </span>";
 					}
 				}
+                                if($quiz_options->show_category_on_front && $question->category != ''){
+                                    $display .= '<div class="quiz-cat">[ ' . $question->category  .' ]</div>';
+                                }                                
 				$display .= call_user_func($type['display'], intval($question_id), $question->question_name, $answers);
 			}
 		}

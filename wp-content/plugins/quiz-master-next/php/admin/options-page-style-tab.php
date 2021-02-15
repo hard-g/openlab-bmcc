@@ -32,11 +32,11 @@ function qsm_options_styling_tab_content() {
 	wp_enqueue_style( 'qsm_admin_style', plugins_url( '../../css/qsm-admin.css', __FILE__ ), array(), $mlwQuizMasterNext->version );
 
 	$quiz_id = intval( $_GET['quiz_id'] );
-	if ( isset( $_POST['save_style_options'] ) && 'confirmation' == $_POST['save_style_options'] ) {
+	if ( isset( $_POST['qsm_style_tab_nonce'] ) && wp_verify_nonce( $_POST['qsm_style_tab_nonce'], 'qsm_style_tab_nonce_action' ) && isset( $_POST['save_style_options'] ) && 'confirmation' == $_POST['save_style_options'] ) {
 
 		$style_quiz_id = intval( $_POST['style_quiz_id'] );
 		$quiz_theme = sanitize_text_field( $_POST['save_quiz_theme'] );
-		$quiz_style = htmlspecialchars( stripslashes( $_POST['quiz_css'] ), ENT_QUOTES );
+		$quiz_style = sanitize_textarea_field( htmlspecialchars( stripslashes( $_POST['quiz_css'] ), ENT_QUOTES ) );
 
 		// Saves the new css.
 		$results = $wpdb->query( $wpdb->prepare( "UPDATE {$wpdb->prefix}mlw_quizzes SET quiz_stye='%s', theme_selected='%s', last_activity='" . date( 'Y-m-d H:i:s' ) . "' WHERE quiz_id=%d", $quiz_style, $quiz_theme, $style_quiz_id ) );
@@ -68,7 +68,7 @@ function qsm_options_styling_tab_content() {
 		<input type='hidden' name='save_style_options' value='confirmation' />
 		<input type='hidden' name='style_quiz_id' value='<?php echo esc_attr( $quiz_id ); ?>' />
 		<input type='hidden' name='save_quiz_theme' id='save_quiz_theme' value='<?php echo esc_attr( $mlw_quiz_options->theme_selected ); ?>' />
-		<h3><?php _e( 'Quiz Styles', 'quiz-master-next' ); ?></h3>
+                <h3 style="display: none;"><?php _e( 'Quiz Styles', 'quiz-master-next' ); ?></h3>
 		<p><?php _e( 'Choose your style:', 'quiz-master-next' ); ?></p>
 		<style>
 			div.mlw_qmn_themeBlockActive {
@@ -92,12 +92,13 @@ function qsm_options_styling_tab_content() {
 		<hr />
 		<h3><?php _e('Custom Style CSS', 'quiz-master-next'); ?></h3>
 		<p><?php _e('For help and guidance along with a list of different classes used in this plugin, please visit the following link:', 'quiz-master-next'); ?>
-		<a target="_blank" href="https://docs.quizandsurveymaster.com/article/34-css-in-qsm">CSS in QSM</a></p>
+		<a target="_blank" href="https://quizandsurveymaster.com/docs/advanced-topics/editing-design-styles-css/">CSS in QSM</a></p>
 		<table class="form-table">
 			<tr>
 				<td><textarea style="width: 100%; height: 700px;" id="quiz_css" name="quiz_css"><?php echo $mlw_quiz_options->quiz_stye; ?></textarea></td>
 			</tr>
 		</table>
+                <?php wp_nonce_field( 'qsm_style_tab_nonce_action', 'qsm_style_tab_nonce' ); ?>
 		<button id="save_styles_button" class="button-primary"><?php _e('Save Quiz Style', 'quiz-master-next'); ?></button>
 	</form>
 	<?php

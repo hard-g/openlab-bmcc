@@ -39,22 +39,23 @@ var QSMAdminResults;
 				data: data,
 				headers: { 'X-WP-Nonce': qsmResultsObject.nonce },
 			})
-			.done(function( results ) {
+			.done(function( results ) {                                
 				if ( results.status ) {
 					QSMAdmin.displayAlert( 'Results pages were saved!', 'success' );
 				} else {
 					QSMAdmin.displayAlert( 'There was an error when saving the results pages. Please try again.', 'error' );
-				}
+				}                                
 			})
 			.fail(QSMAdmin.displayjQueryError);
 		},
 		loadResults: function() {
-			QSMAdmin.displayAlert( 'Loading results pages...', 'info' );
+			//QSMAdmin.displayAlert( 'Loading results pages...', 'info' );
 			$.ajax({
 				url: wpApiSettings.root + 'quiz-survey-master/v1/quizzes/' + qsmResultsObject.quizID + '/results',
 				headers: { 'X-WP-Nonce': qsmResultsObject.nonce },
 			})
 				.done(function( pages ) {
+                                        $( '#results-pages' ).find( '.qsm-spinner-loader' ).remove();
 					pages.forEach( function( page, i, pages ) {
 						QSMAdminResults.addResultsPage( page.conditions, page.page, page.redirect );
 					});
@@ -113,8 +114,8 @@ var QSMAdminResults;
 			QSMAdminResults.newResultsPage();
 		});
 		$( '.save-pages' ).on( 'click', function( event ) {
-			event.preventDefault();
-			QSMAdminResults.saveResults();
+			event.preventDefault();                        
+			QSMAdminResults.saveResults();                        
 		});
 		$( '#results-pages' ).on( 'click', '.new-condition', function( event ) {
 			event.preventDefault();

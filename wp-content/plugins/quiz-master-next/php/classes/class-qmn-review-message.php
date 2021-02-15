@@ -73,8 +73,7 @@ class QMN_Review_Message {
 	 */
 	public function check_results_amount() {
 		global $wpdb;
-		$table_name = $wpdb->prefix."mlw_results";
-		$amount = $wpdb->get_var( "SELECT COUNT(result_id) FROM $table_name WHERE deleted=0" );
+		$amount = get_option( 'qmn_quiz_taken_cnt' );
 		return intval( $amount );
 	}
 
@@ -91,7 +90,7 @@ class QMN_Review_Message {
 		echo "<div class='updated'><br />";
 		echo sprintf( __('Greetings! I just noticed that you now have more than %d quiz results. That is
 		awesome! Could you please help me out by giving this plugin a 5-star rating on WordPress? This
-		will help us by helping other users discover this plugin. %s', 'quiz_master_next'),
+		will help us by helping other users discover this plugin. %s', 'quiz-master-next'),
 			$this->trigger,
 			'<br /><strong><em>~ QSM Team</em></strong><br /><br />'
 		);

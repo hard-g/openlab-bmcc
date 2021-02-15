@@ -21,7 +21,19 @@ function qsm_generate_quiz_tools() {
 	add_meta_box( 'qsm_restore_box', 'Restore Quiz', 'qsm_restore_function', 'quiz_wpss' );
 	add_meta_box( 'qsm_audit_box', 'Audit Trail', 'qsm_audit_box', 'quiz_wpss' );
 	?>
-	<div class="wrap">
+        <style type="text/css">
+            #qsm_restore_box .hndle,
+            #qsm_audit_box .hndle{
+                padding-left: 15px;                
+                padding-bottom: 0;
+            }
+            .qsm-tools-page .handle-order-higher,
+            .qsm-tools-page .handle-order-lower,
+            .qsm-tools-page .handle-actions{
+                display: none;
+            }
+        </style>
+	<div class="wrap qsm-tools-page">
 	<h2><?php esc_html_e('Tools', 'quiz-master-next'); ?></h2>
 
 	<div style="float:left; width:100%;" class="inner-sidebar1">
@@ -53,7 +65,7 @@ function qsm_restore_function() {
 				'deleted' => 0,
 			),
 			array(
-				'quiz_id' => intval( $_POST['restore_quiz'] ),
+				'quiz_id' => sanitize_text_field( intval( $_POST['restore_quiz'] ) ),
 			),
 			array(
 				'%d',
@@ -69,9 +81,9 @@ function qsm_restore_function() {
 		} else {
 			// Restores the quiz post type for the quiz.
 			$my_query = new WP_Query( array(
-				'post_type'  => 'quiz',
+				'post_type'  => 'qsm_quiz',
 				'meta_key'   => 'quiz_id',
-				'meta_value' => intval( $_POST['restore_quiz'] ),
+				'meta_value' => sanitize_text_field( intval( $_POST['restore_quiz'] ) ),
 			));
 			if ( $my_query->have_posts() ) {
 				while ( $my_query->have_posts() ) {
@@ -131,7 +143,7 @@ function qsm_audit_box() {
 	$audit_trails = $wpdb->get_results( $wpdb->prepare( "SELECT trail_id, action_user, action, time
 		FROM {$wpdb->prefix}mlw_qm_audit_trail ORDER BY trail_id DESC LIMIT %d, %d", $begin, $table_limit ) );
 	?>
-	<p>Total actions since QSM installed: <?php echo esc_html( $audit_total ); ?></p>
+        <p><?php esc_html_e('Total actions since QSM installed:', 'quiz-master-next'); ?> <?php echo esc_html( $audit_total ); ?></p>
 	<?php
 
 	// Determine which navigation to show.
