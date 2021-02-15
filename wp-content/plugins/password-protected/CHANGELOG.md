@@ -2,7 +2,27 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
-## [Unreleased]
+## [2.4] - 2020-09-24
+
+### Fixed
+- Add a Nocache header to the login page redirect to prevent the browser from caching the redirect page. Props [De'Yonte W.](https://github.com/rxnlabs)
+- Remove ‘password-protected’ query from redirects on successful login or logout.
+- Check "redirect_to" query var is set in hidden form field. Props [Matthias Kittsteiner](https://wordpress.org/support/users/kittmedia/).
+- Add favicon to password protected login page.
+
+## [2.3] - 2020-05-17
+
+### Added
+- Adds `password_protected_cookie_name` filter for the cookie name. Props [Jose Castaneda](https://github.com/jocastaneda).
+- Let developers override the capability needed to see the options page via a `password_protected_options_page_capability` filter. Props [Nicola Peluchetti](https://github.com/nicoladj77).
+
+### Fixed
+- Don't use a "testcookie" POST query as it is blocked by Namecheap (and possibly other hosts).
+- Fix warnings in W3 validator - script and style “type” attribute not required. Props [@dianamurcia](https://github.com/dianamurcia).
+
+### Changed
+- Translations now via [translate.wordpress.org](https://translate.wordpress.org/projects/wp-plugins/password-protected/).
+- Updated URL references. Props [Garrett Hyder](https://github.com/garretthyder).
 
 ## [2.2.5] - 2019-06-04
 
@@ -226,7 +246,9 @@ Check that `$_SERVER['REMOTE_ADDR']` is set.
 ### Added
 - First Release. If you spot any bugs or issues please [log them here](https://github.com/benhuson/password-protected/issues).
 
-[Unreleased]: https://github.com/benhuson/password-protected/compare/2.2.5...HEAD
+[Unreleased]: https://github.com/benhuson/password-protected/compare/2.4...HEAD
+[2.4]: https://github.com/benhuson/password-protected/compare/2.3...2.4
+[2.3]: https://github.com/benhuson/password-protected/compare/2.2.5...2.3
 [2.2.5]: https://github.com/benhuson/password-protected/compare/2.2.4...2.2.5
 [2.2.4]: https://github.com/benhuson/password-protected/compare/2.2.3...2.2.4
 [2.2.3]: https://github.com/benhuson/password-protected/compare/2.2.2...2.2.3
