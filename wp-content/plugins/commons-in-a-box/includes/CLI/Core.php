@@ -41,19 +41,23 @@ class Core extends \WP_CLI_Command {
 		if ( ! empty( $theme ) ) {
 			WP_CLI::line( 'The theme has an update. Run "wp cbox update theme" to update the theme.' );
 		} else {
-			$cbox_theme_name    = cbox_get_theme_prop( 'name' );
-			$current_theme_name = cbox_get_theme()->get( 'Name' );
-			if ( $cbox_theme_name && $cbox_theme_name === $current_theme_name ) {
-				WP_CLI::line( 'Current theme: ' . $current_theme_name . '. No update available.' );
-			} elseif ( $cbox_theme_name ) {
-				WP_CLI::line( 'Current theme: ' . $current_theme_name . '. The CBOX bundled theme, ' . $cbox_theme_name . ', is available, but not activated.' );
-				WP_CLI::line( 'You can activate the theme by running "wp theme activate ' .  cbox_get_theme_prop( 'directory_name' ) . '"' );
+			$cbox_theme    = cbox_get_package_prop( 'theme' );
+			$current_theme = cbox_get_theme();
+
+			if ( $cbox_theme['name'] && $cbox_theme['directory_name'] === $current_theme->get_template() ) {
+				WP_CLI::line( 'Current theme: ' . $cbox_theme['name'] . '. No update available.' );
+			} elseif ( $cbox_theme['name'] ) {
+				WP_CLI::line( 'Current theme: ' . $current_theme->get( 'Name' ) . '. The CBOX bundled theme, ' . $cbox_theme['name'] . ', is available, but not activated.' );
+				WP_CLI::line( 'You can activate the theme by running "wp theme activate ' .  $cbox_theme['directory_name'] . '"' );
 			}
 		}
 
 		// Active plugin status.
 		$plugins = \CBox_Admin_Plugins::get_upgrades( 'active' );
+		$show_plugin_notice = $show_active_notice = false;
 		if ( ! empty( $plugins ) ) {
+			$show_plugin_notice = true;
+
 			$items = array();
 
 			WP_CLI::line( '' );
@@ -72,9 +76,59 @@ class Core extends \WP_CLI_Command {
 			}
 
 			WP_CLI\Utils\format_items( 'table', $items, array( 'Plugin', 'Current Version', 'New Version' ) );
+		} else {
+			$show_active_notice = true;
+		}
+
+		// Required plugins check.
+		if ( ! isset( $cbox_plugins ) ) {
+			$cbox_plugins = \CBox_Plugins::get_plugins( 'required' );
+		} else {
+			$cbox_plugins = $cbox_plugins['required'];
+		}
+
+		$required = \CBox_Admin_Plugins::organize_plugins_by_state( $cbox_plugins );
+		unset( $required['deactivate'] );
+
+		if ( ! empty( $required ) ) {
+			$show_plugin_notice = true;
+
+			$items = array();
+
+			WP_CLI::line( '' );
+			WP_CLI::line( 'The following plugins are required and need to be either activated or installed:' );
+
+			if ( ! isset( $dependencies ) ) {
+				$dependencies = \CBox_Plugins::get_plugins( 'dependency' );
+			}
+
+			foreach ( $required as $state => $plugins ) {
+				switch ( $state ) {
+					case 'activate' :
+						$action = 'Requires activation';
+						break;
+
+					case 'install' :
+						$action = 'Requires installation';
+						break;
+				}
+				foreach ( $plugins as $plugin ) {
+					$loader = \Plugin_Dependencies::get_pluginloader_by_name( $plugin );
+					$items[] = array(
+						'Plugin'  => $plugin,
+						'Version' => isset( $cbox_plugins[$plugin]['version'] ) ? $cbox_plugins[$plugin]['version'] : $dependencies[$plugin]['version'],
+						'Action'  => $action
+					);
+				}
+			}
+
+			WP_CLI\Utils\format_items( 'table', $items, array( 'Plugin', 'Version', 'Action' ) );
+		}
+
+		if ( $show_plugin_notice ) {
 			WP_CLI::line( '' );
 			WP_CLI::line( 'Run "wp cbox update plugins" to update the plugins.' );
-		} else {
+		} elseif ( $show_active_notice ) {
 			WP_CLI::line( '' );
 			WP_CLI::line( 'Active CBOX plugins are all up-to-date.' );
 		}

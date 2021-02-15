@@ -2,8 +2,8 @@
 Contributors: cuny-academic-commons, boonebgorges, r-a-y
 Tags: commons, cuny, community, education, academic, buddypress
 Requires at least: 4.9.8
-Tested up to: 5.1
-Stable tag: 1.1.1
+Tested up to: 5.6
+Stable tag: 1.2.4
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -58,6 +58,89 @@ It is possible to install Commons In A Box on an existing WordPress site, and it
 4. CBOX-OL homepage
 
 == Changelog ==
+
+= 1.2.4 =
+* Updated plugins (Classic): BuddyPress 6.4.0
+* Updated plugins (OpenLab): BuddyPress 6.4.0
+* Compatibility with WordPress 5.6+.
+* Compatibility with latest versions of jQuery, as included in WordPress 5.6+.
+* OpenLab: Fixed the logic of the default 'Term' value when creating a Course.
+* OpenLab: Improvements to the behavior of nav menus on medium-width screens.
+* OpenLab: Improved behavior when populating the "Clone Existing" dropdown during group creation.
+* OpenLab: Better flushing of permalinks on newly created sites.
+* OpenLab: Fixed "Sent between" text that appears on private message threads.
+* OpenLab: Better consistency when generating group navigation for group Moderators.
+* OpenLab: Fixed bug that made it impossible to save an empty value for "Term" in a Course
+
+= 1.2.3 =
+* Updated plugins (Classic): bbPress 2.6.6, BuddyPress 6.3.0, BuddyPress Docs 2.1.5, BP Reply By Email 1.0-RC9
+* Updated plugins (OpenLab): bbPress 2.6.6, BuddyPress 6.3.0, BuddyPress Docs 2.1.5, BP Reply By Email 1.0-RC9, Event Organiser 3.10.2
+* Improved markup on Welcome page for better cross-browser appearance.
+* OpenLab: Improvements to Dashboard menu positioning when scrolling.
+* OpenLab: Improved appearance for Help page templates.
+* OpenLab: Provide some configurable labels missing in 1.2.2 release.
+* OpenLab: Fixed bug that may cause certain group types not to appear in admin UI in some cases.
+* OpenLab: Fixed missing icon on 'Clone' button.
+* OpenLab: Removed irrelevant filter dropdowns from certain content directories.
+* OpenLab: Fixed bug that caused 'type' sorting not to work in member directories.
+* OpenLab: Improved data cleanup after a site is manually deleted via the Network Admin.
+* OpenLab: Improvements to 404 template.
+* OpenLab: Improved backward compatibility for the display of group contacts.
+* Classic: Improvements to registration page markup for better plugin compatibility.
+
+= 1.2.2 =
+* OpenLab: Fixed bug that caused Search Results page not to be installed properly on upgrade from 1.1.x.
+* OpenLab: Fixed bug that caused some footer widget text to be uneditable.
+
+= 1.2.1 =
+* OpenLab: Fixed bug that may cause fatal errors during 1.2.0 plugin upgrade routine.
+
+= 1.2.0 =
+* Classic: Improved compatibility with WordPress 5.5
+* Classic: Improved confirmation before installing or activating cbox-theme.
+* Classic: Localization improvements.
+* Classic: Password strength meters for settings and registration pages.
+* OpenLab: New Badges tool for groups.
+* OpenLab: New import and export tools for Portfolios.
+* OpenLab: New search results landing page for groups, with improved sidebar filters.
+* OpenLab: Added directory filters for "Open" and "Cloneable" groups.
+* OpenLab: New group cloning features, including "shared cloning", a Credits section for groups and sites, and cloning for all group types.
+* OpenLab: Added fine-grained control over how group roles map to site roles.
+* OpenLab: Improvements to "Additional Faculty" and "Group Contact" tools.
+* OpenLab: Group-level toggles for Docs, Files, Discussions, and Files features.
+* OpenLab: Improved validation of URLs during the group creation process.
+* OpenLab: Allow users without a member type to select their own member type on their Settings panel, for better compatibility with auto-provisioned user accounts.
+* OpenLab: Fixed bug that could cause an invalid default theme to be installed on group-type template sites.
+* OpenLab: Fixed bug in the way that network toolbar loads on subdomain installations.
+* OpenLab: Accessibility improvements for Dashboard admin panels.
+* OpenLab: Added CLI tools for performing data migrations after CBOX upgrade.
+* OpenLab: Fixed text visibility bug when editing a group event.
+* OpenLab: Performance improvements related to user-defined strings.
+* OpenLab: Improved compatibility between network toolbar and latest versions of Block Editor.
+* OpenLab: Localization improvements.
+* OpenLab: Increased the number of group members shown on the group Settings panels.
+* OpenLab: Simplification of some template parts.
+* OpenLab: Improved filterability of "lost password" length in homepage login box.
+* OpenLab: Improved "current page" highlighting on main nav menu.
+* OpenLab: Fixed bug that prevented group action buttons ("Join Group", etc) from being shown to network administrators.
+* Updated plugins (Classic): bbPress 2.6.5, BP Groupblog 1.9.2, BP MPO Activity Filter 1.3.2, BuddyPress 6.1.0, BuddyPress Docs 2.1.4, BuddyPress Group Email Subscription 4.0.0, Invite Anyone 1.4.1
+* Updated plugins (OpenLab): bbPress 2.6.5, BuddyPress 6.1.0, BuddyPress Docs 2.1.4, BuddyPress Event Organiser 1.2.0, BuddyPress Group Email Subscription 4.0.0, Event Organiser 3.10.0, Invite Anyone 1.4.1, PressForward 5.2.3, WP Grade Comments 1.3.2
+
+= 1.1.2 =
+* Classic: Improved compatibility with BP Customizer settings when using the Nouveau template pack.
+* Classic: Fixed a bug with tab navigation in CBOX THeme options.
+* Classic: Fixed an issues with making searches on BuddyPress directory pages.
+* OpenLab: Hide "Group Home" link from site navs when the group is inaccessible to current user.
+* OpenLab: Fixed bug with BuddyPress Docs edit mode.
+* OpenLab: Improved appearance of single page/post content.
+* OpenLab: Fixed incorrect "Recent Docs" and "Recent Discussions" subheaders when WordPress is installed in a subdirectory.
+* OpenLab: Improved language regarding "Professor(s)" in group headers.
+* OpenLab: Fix bug that could prevent site admins from accessing Dashboard > Plugins in some cases.
+* Improvements to the behavior of network-activated CBOX plugins.
+* Fixed bug in WP-CLI tools that caused theme update to unzip to wrong location in some cases.
+* Improved compatibility with Multi-Network setups.
+* Updated plugins (Classic): BuddyPress 4.4.0, BuddyPress Docs 2.1.3, BuddyPress Group Email Subscription 3.9.4, BP Reply By Email 1.0-RC8
+* Updated plugins (OpenLab): BuddyPress 4.4.0, BuddyPress Docs 2.1.3, BuddyPress Docs In Group 1.0.2, BuddyPress Group Email Subscription 3.9.4, BP Group Documents 1.12.3, BP Reply By Email 1.0-RC8, PressForward 5.2.2, WP Grade Comments 1.3.1
 
 = 1.1.1 =
 * OpenLab: Fixed problem with image and other upload paths after site cloning.

@@ -48,7 +48,7 @@ class CBox_Plugin_Upgrader extends Plugin_Upgrader {
 		$dependency = CBox_Plugins::get_plugins( 'dependency' );
 		$current    = CBox_Plugins::get_plugins();
 
-		add_filter( 'upgrader_source_selection',  'cbox_rename_github_folder',         1,  3 );
+		add_filter( 'upgrader_source_selection',  'cbox_rename_github_folder',         1,  4 );
 		add_filter( 'upgrader_clear_destination', array( $this, 'delete_old_plugin' ), 10, 4 );
 		add_filter( 'http_request_args',          'cbox_disable_ssl_verification',     10, 2 );
 
@@ -74,14 +74,16 @@ class CBox_Plugin_Upgrader extends Plugin_Upgrader {
 			 * BuddyPress supports a different root blog ID, so if BuddyPress is activated
 			 * we need to switch to that blog to get the correct active plugins list.
 			 */
-			if ( false === $current[ $plugin ]['network'] && 1 !== cbox_get_main_site_id() ) {
+			if ( false === $current[ $plugin ]['network'] && ! cbox_is_main_site() ) {
 				switch_to_blog( cbox_get_main_site_id() );
+				$switched = true;
 			}
 
 			$is_active = is_plugin_active( $plugin_loader );
 
-			if ( false === $current[ $plugin ]['network'] && 1 !== cbox_get_main_site_id() ) {
+			if ( false === $current[ $plugin ]['network'] && ! empty( $switched ) ) {
 				restore_current_blog();
+				unset( $switched );
 			}
 
 			// Only activate Maintenance mode if a plugin is active.
@@ -118,14 +120,16 @@ class CBox_Plugin_Upgrader extends Plugin_Upgrader {
 			 * BuddyPress supports a different root blog ID, so if BuddyPress is activated
 			 * we need to switch to that blog to get the correct active plugins list.
 			 */
-			if ( false === $current[ $plugin ]['network'] && 1 !== cbox_get_main_site_id() ) {
+			if ( false === $current[ $plugin ]['network'] && ! cbox_is_main_site() ) {
 				switch_to_blog( cbox_get_main_site_id() );
+				$switched = true;
 			}
 
 			$this->skin->plugin_active = is_plugin_active( $plugin_loader );
 
-			if ( false === $current[ $plugin ]['network'] && 1 !== cbox_get_main_site_id() ) {
+			if ( false === $current[ $plugin ]['network'] && ! empty( $switched ) ) {
 				restore_current_blog();
+				unset( $switched );
 			}
 
 			$result = $this->run( array(
@@ -151,9 +155,9 @@ class CBox_Plugin_Upgrader extends Plugin_Upgrader {
 		$this->skin->footer();
 
 		// Cleanup our hooks, in case something else does a upgrade on this connection.
-		remove_filter( 'upgrader_source_selection',  'cbox_rename_github_folder',     1,  3 );
+		remove_filter( 'upgrader_source_selection',  'cbox_rename_github_folder',     1 );
 		remove_filter( 'upgrader_clear_destination', array( $this, 'delete_old_plugin' ) );
-		remove_filter( 'http_request_args',          'cbox_disable_ssl_verification', 10, 2 );
+		remove_filter( 'http_request_args',          'cbox_disable_ssl_verification', 10 );
 
 		// Force refresh of plugin update information.
 		wp_clean_plugins_cache( $parsed_args['clear_update_cache'] );
@@ -178,7 +182,7 @@ class CBox_Plugin_Upgrader extends Plugin_Upgrader {
 		$dependency = CBox_Plugins::get_plugins( 'dependency' );
 		$required = CBox_Plugins::get_plugins();
 
-		add_filter( 'upgrader_source_selection', 'cbox_rename_github_folder',     1,  3 );
+		add_filter( 'upgrader_source_selection', 'cbox_rename_github_folder',     1,  4 );
 		add_filter( 'upgrader_source_selection', array( $this, 'check_package' ) );
 		add_filter( 'http_request_args',         'cbox_disable_ssl_verification', 10, 2 );
 
@@ -232,9 +236,9 @@ class CBox_Plugin_Upgrader extends Plugin_Upgrader {
 		$this->skin->footer();
 
 		// Cleanup our hooks, in case something else does a upgrade on this connection.
-		remove_filter( 'upgrader_source_selection', 'cbox_rename_github_folder',     1,  3 );
+		remove_filter( 'upgrader_source_selection', 'cbox_rename_github_folder',     1 );
 		remove_filter( 'upgrader_source_selection', array( $this, 'check_package' ) );
-		remove_filter( 'http_request_args',         'cbox_disable_ssl_verification', 10, 2 );
+		remove_filter( 'http_request_args',         'cbox_disable_ssl_verification', 10 );
 
 		// Force refresh of plugin update information.
 		wp_clean_plugins_cache();
@@ -277,8 +281,9 @@ class CBox_Plugin_Upgrader extends Plugin_Upgrader {
 			 * BuddyPress supports a different root blog ID, so if BuddyPress is activated
 			 * we need to switch to that blog to get the correct active plugins list.
 			 */
-			if ( false === $network_activate && 1 !== cbox_get_main_site_id() ) {
+			if ( false === $network_activate && ! cbox_is_main_site() ) {
 				switch_to_blog( cbox_get_main_site_id() );
+				$switched = true;
 			}
 
 			$is_active = is_plugin_active( $plugin_loader );
@@ -288,8 +293,9 @@ class CBox_Plugin_Upgrader extends Plugin_Upgrader {
 				unset( $plugins[ $i ] );
 
 				// Remember to restore blog, if we're skipping!
-				if ( false === $network_activate && 1 !== cbox_get_main_site_id() ) {
+				if ( false === $network_activate && ! empty( $switched ) ) {
 					restore_current_blog();
+					unset( $switched );
 				}
 
 				continue;
@@ -298,8 +304,9 @@ class CBox_Plugin_Upgrader extends Plugin_Upgrader {
 			// activate the plugin
 			activate_plugin( $plugin_loader, '', $network_activate );
 
-			if ( false === $network_activate && 1 !== cbox_get_main_site_id() ) {
+			if ( false === $network_activate && ! empty( $switched ) ) {
 				restore_current_blog();
+				unset( $switched );
 			}
 		}
 
@@ -342,13 +349,13 @@ class CBox_Bulk_Plugin_Upgrader_Skin extends Bulk_Plugin_Upgrader_Skin {
 
 		// if we're bulk-installing, switch up the strings!
 		if ( ! empty( $this->options['install_strings'] ) ) {
-			$this->upgrader->strings['skin_before_update_header'] = __( 'Installing Plugin %1$s (%2$d/%3$d)', 'cbox' );
+			$this->upgrader->strings['skin_before_update_header'] = __( 'Installing Plugin %1$s (%2$d/%3$d)', 'commons-in-a-box' );
 
-			$this->upgrader->strings['skin_upgrade_start']        = __( 'The installation process is starting. This process may take a while, so please be patient.', 'cbox' );
-			$this->upgrader->strings['skin_update_failed_error']  = __( 'An error occurred while installing %1$s: <strong>%2$s</strong>.', 'cbox' );
-			$this->upgrader->strings['skin_update_failed']        = __( 'The installation of %1$s failed.', 'cbox' );
-			$this->upgrader->strings['skin_update_successful']    = __( '%1$s installed successfully.', 'cbox' ) . ' <a onclick="%2$s" href="#" class="hide-if-no-js"><span>' . __( 'Show Details', 'cbox' ) . '</span><span class="hidden">' . __( 'Hide Details', 'cbox' ) . '</span>.</a>';
-			$this->upgrader->strings['skin_upgrade_end']          = __( 'Plugins finished installing.', 'cbox' );
+			$this->upgrader->strings['skin_upgrade_start']        = __( 'The installation process is starting. This process may take a while, so please be patient.', 'commons-in-a-box' );
+			$this->upgrader->strings['skin_update_failed_error']  = __( 'An error occurred while installing %1$s: <strong>%2$s</strong>.', 'commons-in-a-box' );
+			$this->upgrader->strings['skin_update_failed']        = __( 'The installation of %1$s failed.', 'commons-in-a-box' );
+			$this->upgrader->strings['skin_update_successful']    = __( '%1$s installed successfully.', 'commons-in-a-box' ) . ' <a onclick="%2$s" href="#" class="hide-if-no-js"><span>' . __( 'Show Details', 'commons-in-a-box' ) . '</span><span class="hidden">' . __( 'Hide Details', 'commons-in-a-box' ) . '</span>.</a>';
+			$this->upgrader->strings['skin_upgrade_end']          = __( 'Plugins finished installing.', 'commons-in-a-box' );
 		}
 	}
 
@@ -375,11 +382,11 @@ class CBox_Bulk_Plugin_Upgrader_Skin extends Bulk_Plugin_Upgrader_Skin {
 
 			$skin_args['install_strings'] = true;
 
-			echo '<p>' . __( 'Plugins updated.', 'cbox' ) . '</p>';
+			echo '<p>' . __( 'Plugins updated.', 'commons-in-a-box' ) . '</p>';
 
 			usleep(500000);
 
-			echo '<h3>' . __( 'Now Installing Plugins...', 'cbox' ) . '</h3>';
+			echo '<h3>' . __( 'Now Installing Plugins...', 'commons-in-a-box' ) . '</h3>';
 
 			usleep(500000);
 
@@ -394,14 +401,14 @@ class CBox_Bulk_Plugin_Upgrader_Skin extends Bulk_Plugin_Upgrader_Skin {
 		elseif ( ! empty( $this->options['activate_plugins'] ) ) {
 			usleep(500000);
 
-			echo '<h3>' . __( 'Now Activating Plugins...', 'cbox' ) . '</h3>';
+			echo '<h3>' . __( 'Now Activating Plugins...', 'commons-in-a-box' ) . '</h3>';
 
 			usleep(500000);
 
  			$activate = CBox_Plugin_Upgrader::bulk_activate( $this->options['activate_plugins'] );
  		?>
 
-			<p><?php _e( 'Plugins activated.', 'cbox' ); ?></p>
+			<p><?php _e( 'Plugins activated.', 'commons-in-a-box' ); ?></p>
 
 			<p><?php self::after_updater( $this->options ); ?></p>
  		<?php
@@ -497,14 +504,14 @@ class CBox_Bulk_Plugin_Upgrader_Skin extends Bulk_Plugin_Upgrader_Skin {
 
 		// CBOX hasn't been installed ever.
 		if ( ! cbox_get_installed_revision_date() && empty( $redirect_link ) ) {
-			$redirect_text = __( 'Continue to the CBOX dashboard', 'cbox' );
+			$redirect_text = __( 'Continue to the CBOX dashboard', 'commons-in-a-box' );
 			$redirect_link = self_admin_url( 'admin.php?page=cbox' );
 		}
 
 		// default fallback
 		if ( '' === $redirect_link ) {
 			$redirect_link = self_admin_url( 'admin.php?page=cbox-plugins' );
-			$redirect_text = __( 'Return to the CBOX Plugins page', 'cbox' );
+			$redirect_text = __( 'Return to the CBOX Plugins page', 'commons-in-a-box' );
 
 			if ( ! empty( $_GET['type'] ) ) {
 				$redirect_link = add_query_arg( 'type', esc_attr( $_GET['type'] ), $redirect_link );
@@ -554,7 +561,19 @@ class CBox_Updater {
 	/**
 	 * Constructor.
 	 *
-	 * @param array $plugins Associative array of plugin names
+	 * @param array $plugins {
+	 *     Multi-dimensional array of plugin names keyed by the following states.
+	 *
+	 *     @type array $install  Array of plugin names to install.
+	 *     @type array $activate Array of plugin names to activate.
+	 *     @type array $upgrade  Array of plugin names to upgrade.
+	 * }
+	 * @param array $settings {
+	 *    Array of settings. Includes:
+	 *
+	 *    @type string $redirect_link Link to use in button after updater has finished.
+	 *    @type string $redirect_text Button text used for redirect link.
+	 * }
 	 */
 	function __construct( $plugins = false, $settings = array() ) {
 		$skin_args = array();
@@ -585,6 +604,95 @@ class CBox_Updater {
 			return false;
 		}
 
+		$plugins = self::parse_plugins( $plugins );
+
+		/**
+		 * Hook to do something before the CBOX updater fires.
+		 *
+		 * @since 1.1.0
+		 */
+		do_action( 'cbox_before_updater' );
+
+		// this tells WP_Upgrader to activate the plugin after any upgrade or successful install
+		add_filter( 'upgrader_post_install', array( &$this, 'activate_post_install' ), 10, 3 );
+
+		// start the whole damn thing!
+		// We always try to upgrade plugins first.  Next, we install plugins that are not available.
+		// Lastly, we activate any plugins needed.
+
+		// let's see if upgrades are available; if so, start with that
+		if ( self::$is_upgrade ) {
+			// if installs are available as well, this tells CBox_Plugin_Upgrader
+			// to install plugins after the upgrader is done
+			if ( self::$is_install ) {
+				$skin_args['install_plugins'] = $plugins['install'];
+				$skin_args['install_strings'] = true;
+			}
+
+			// if activations are available as well, this tells CBox_Plugin_Upgrader
+			// to activate plugins after the upgrader is done
+			if ( self::$is_activate ) {
+				$skin_args['activate_plugins'] = $plugins['activate'];
+			}
+
+			// tell the installer that this is the first step
+			$skin_args['step_one'] = 'upgrade';
+
+			echo '<h3>' . __( 'Upgrading Existing Plugins...', 'cbox' ) . '</h3>';
+
+			// instantiate the upgrader
+			// we add our custom arguments to the skin
+			$installer = new CBox_Plugin_Upgrader(
+				new CBox_Bulk_Plugin_Upgrader_Skin( $skin_args )
+			);
+
+			// now start the upgrade!
+			$installer->bulk_upgrade( $plugins['upgrade'] );
+
+		// if no upgrades are available, move on to installs
+		} elseif( self::$is_install ) {
+			// if activations are available as well, this tells CBox_Plugin_Upgrader
+			// to activate plugins after the upgrader is done
+			if ( self::$is_activate ) {
+				$skin_args['activate_plugins'] = $plugins['activate'];
+			}
+
+			$skin_args['install_strings'] = true;
+
+			echo '<h3>' . __( 'Installing Plugins...', 'cbox' ) . '</h3>';
+
+			// instantiate the upgrader
+			// we add our custom arguments to the skin
+			$installer = new CBox_Plugin_Upgrader(
+				new CBox_Bulk_Plugin_Upgrader_Skin( $skin_args )
+			);
+
+			// now start the install!
+			$installer->bulk_install( $plugins['install'] );
+
+		// if no upgrades or installs are available, move on to activations
+		} elseif( self::$is_activate ) {
+			echo '<h3>' . __( 'Activating Plugins...', 'cbox' ) . '</h3>';
+
+			$activate = CBox_Plugin_Upgrader::bulk_activate( $plugins['activate'] );
+		?>
+
+			<p><?php _e( 'Plugins activated.', 'cbox' ); ?></p>
+
+			<p><?php CBox_Bulk_Plugin_Upgrader_Skin::after_updater( $settings ); ?></p>
+		<?php
+		}
+	}
+
+	/**
+	 * Parse plugins list to add dependencies if required.
+	 *
+	 * @since 1.2.0
+	 *
+	 * @param  array $plugins Same as $plugins in CBox_Updater::__construct().
+	 * @return array
+	 */
+	public static function parse_plugins( $plugins = [] ) {
 		// dependency-time!
 		// flatten the associative array to make dependency checks easier
 		$plugin_list = call_user_func_array( 'array_merge', $plugins );
@@ -687,82 +795,7 @@ class CBox_Updater {
 			$plugins[$state] = array_unique( $p );
 		}
 
-		/**
-		 * Hook to do something before the CBOX updater fires.
-		 *
-		 * @since 1.1.0
-		 */
-		do_action( 'cbox_before_updater' );
-
-		// this tells WP_Upgrader to activate the plugin after any upgrade or successful install
-		add_filter( 'upgrader_post_install', array( &$this, 'activate_post_install' ), 10, 3 );
-
- 		// start the whole damn thing!
- 		// We always try to upgrade plugins first.  Next, we install plugins that are not available.
- 		// Lastly, we activate any plugins needed.
-
- 		// let's see if upgrades are available; if so, start with that
- 		if ( self::$is_upgrade ) {
-			// if installs are available as well, this tells CBox_Plugin_Upgrader
-			// to install plugins after the upgrader is done
-			if ( self::$is_install ) {
-				$skin_args['install_plugins'] = $plugins['install'];
-				$skin_args['install_strings'] = true;
-			}
-
-			// if activations are available as well, this tells CBox_Plugin_Upgrader
-			// to activate plugins after the upgrader is done
-			if ( self::$is_activate ) {
-				$skin_args['activate_plugins'] = $plugins['activate'];
-			}
-
-			// tell the installer that this is the first step
-			$skin_args['step_one'] = 'upgrade';
-
-			echo '<h3>' . __( 'Upgrading Existing Plugins...', 'cbox' ) . '</h3>';
-
- 			// instantiate the upgrader
- 			// we add our custom arguments to the skin
- 			$installer = new CBox_Plugin_Upgrader(
- 				new CBox_Bulk_Plugin_Upgrader_Skin( $skin_args )
- 			);
-
- 			// now start the upgrade!
- 			$installer->bulk_upgrade( $plugins['upgrade'] );
-
-		// if no upgrades are available, move on to installs
-		} elseif( self::$is_install ) {
-			// if activations are available as well, this tells CBox_Plugin_Upgrader
-			// to activate plugins after the upgrader is done
-			if ( self::$is_activate ) {
-				$skin_args['activate_plugins'] = $plugins['activate'];
-			}
-
-			$skin_args['install_strings'] = true;
-
-			echo '<h3>' . __( 'Installing Plugins...', 'cbox' ) . '</h3>';
-
- 			// instantiate the upgrader
- 			// we add our custom arguments to the skin
- 			$installer = new CBox_Plugin_Upgrader(
- 				new CBox_Bulk_Plugin_Upgrader_Skin( $skin_args )
- 			);
-
- 			// now start the install!
- 			$installer->bulk_install( $plugins['install'] );
-
-		// if no upgrades or installs are available, move on to activations
-		} elseif( self::$is_activate ) {
-			echo '<h3>' . __( 'Activating Plugins...', 'cbox' ) . '</h3>';
-
- 			$activate = CBox_Plugin_Upgrader::bulk_activate( $plugins['activate'] );
- 		?>
-
-			<p><?php _e( 'Plugins activated.', 'cbox' ); ?></p>
-
-			<p><?php CBox_Bulk_Plugin_Upgrader_Skin::after_updater( $settings ); ?></p>
- 		<?php
- 		}
+		return $plugins;
 	}
 
 	/**
@@ -818,7 +851,9 @@ class CBox_Updater {
 				$cbox_plugins = CBox_Plugins::get_plugins();
 			}
 
-			if ( isset( $cbox_plugins[ $plugin_name ] ) ) {
+			if ( ! is_multisite() ) {
+				$network_activate = false;
+			} elseif ( isset( $cbox_plugins[ $plugin_name ] ) ) {
 				$network_activate = $cbox_plugins[ $plugin_name ]['network'];
 			} else {
 				$dependency = CBox_Plugins::get_plugins( 'dependency' );
@@ -831,15 +866,17 @@ class CBox_Updater {
 			 * BuddyPress supports a different root blog ID, so if BuddyPress is activated
 			 * we need to switch to that blog to get the correct active plugins list.
 			 */
-			if ( false === $network_activate && 1 !== cbox_get_main_site_id() ) {
+			if ( false === $network_activate && ! cbox_is_main_site() ) {
 				switch_to_blog( cbox_get_main_site_id() );
+				$switched = true;
 			}
 
 			// activate the plugin
 			activate_plugin( $plugin, '', $network_activate );
 
-			if ( false === $network_activate && 1 !== cbox_get_main_site_id() ) {
+			if ( false === $network_activate && ! empty( $switched ) ) {
 				restore_current_blog();
+				unset( $switched );
 			}
 		}
 
