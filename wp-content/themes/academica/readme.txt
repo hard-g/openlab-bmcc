@@ -11,6 +11,9 @@ The Footer Menu is best suitable for short menues with just a few links, as it o
 
 == Changelog ==
 
+= 2.0.6 (November 26, 2020)
+* Adding "display=swap" parameter to Google Fonts
+
 = 2.0.5 (May 3, 2019)
 * Fixed a problem with the footer links
 

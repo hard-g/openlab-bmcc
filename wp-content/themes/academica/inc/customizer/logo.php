@@ -211,20 +211,6 @@ function academica_get_attachment_id_from_url( $url = '' ) {
     return $attachment_id;
 }
 
-/**
- * Write the favicons to the head to implement the options.
- *
- * @return void
- */
-function academica_display_favicons() {
-    $logo_favicon = get_theme_mod( 'logo-favicon' );
-    if ( ! empty( $logo_favicon ) ) : ?>
-        <link rel="icon" href="<?php echo esc_url( $logo_favicon ); ?>"/>
-    <?php endif;
-}
-
-add_action( 'wp_head', 'academica_display_favicons' );
-
 function academica_logo_position() {
     $position = get_theme_mod( 'logo-position' );
 

@@ -18,6 +18,10 @@
 
 <body <?php body_class(); ?>>
 
+    <?php
+    wp_body_open();
+    ?>
+
 	<?php $header_image = get_header_image(); ?>
 
 	<div id="header" class="clearfix" <?php if ( ! empty( $header_image ) ) : ?> style="background-image: url('<?php echo $header_image; ?>');" <?php endif; ?>>

@@ -67,7 +67,7 @@ function academica_enqueue_scripts() {
 
 	wp_enqueue_style( 'academica-style-mobile', get_template_directory_uri() . '/media-queries.css', array( 'academica-style' ), '1.0' );
 
-	wp_enqueue_style( 'academica-google-font-default', '//fonts.googleapis.com/css?family=Open+Sans:400,700|Roboto+Condensed:400,700&subset=latin,cyrillic-ext,greek-ext' );
+	wp_enqueue_style( 'academica-google-font-default', '//fonts.googleapis.com/css?family=Open+Sans:400,700|Roboto+Condensed:400,700&subset=latin,cyrillic-ext,greek-ext&display=swap' );
 
 	wp_enqueue_style( 'dashicons' );
 
@@ -591,7 +591,7 @@ function academica_register_required_plugins() {
         array(
             'name'      => 'Social Icons Widget by WPZOOM',
             'slug'      => 'social-icons-widget-by-wpzoom',
-            'required'  => true,
+            'required'  => false,
         ),
 
     );
@@ -618,4 +618,43 @@ function academica_register_required_plugins() {
     );
 
     tgmpa( $plugins, $config );
+}
+
+
+
+
+/*
+ * Fetch Theme Data & Options for About Page
+ */
+
+$academica_data = wp_get_theme('academica');
+$academica_version = $academica_data['Version'];
+$academica_options = get_option('academica_options');
+
+if (!function_exists('academica_admin_scripts')) {
+    function academica_admin_scripts($hook) {
+        if ('appearance_page_academica' === $hook || 'widgets.php' === $hook) {
+            wp_enqueue_style('academica-admin', get_template_directory_uri() . '/inc/admin/admin.css');
+        }
+
+        // Styles
+        wp_enqueue_style(
+            'academica-admin-review-notice',
+            get_template_directory_uri() . '/inc/admin/admin-review-notice.css'
+        );
+
+    }
+}
+add_action('admin_enqueue_scripts', 'academica_admin_scripts');
+
+
+if (is_admin()) {
+    require_once('inc/admin/admin.php');
+
+    if (current_user_can( 'manage_options' ) ) {
+        require_once(get_template_directory() . '/inc/admin/academica-notices.php');
+        require_once(get_template_directory() . '/inc/admin/notice-review.php');
+
+    }
+
 }

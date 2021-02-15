@@ -3,6 +3,9 @@ https://www.wpzoom.com/themes/academica
 
 CHANGELOG
 ---------
+v 2.0.6 (November 26, 2020)
+    - Adding "display=swap" parameter to Google Fonts
+
 v 2.0.5 (May 3, 2019)
     - Fixed a problem with the footer links
 

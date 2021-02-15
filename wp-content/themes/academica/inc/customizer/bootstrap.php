@@ -67,24 +67,6 @@ function academica_customizer_add_sections_and_options( $wp_customize ) {
         'settings' => 'logo-position',
     ) );
 
-    $wp_customize->add_setting( 'logo-favicon', array(
-        'default'           => '',
-        'sanitize_callback' => 'esc_url_raw',
-    ) );
-
-    $wp_customize->add_control( new WP_Customize_Image_Control(
-        $wp_customize,
-        'logo-favicon',
-        array(
-            'label'       => __( 'Favicon', 'academica' ),
-            'description' => __( 'File must be <strong>.png</strong> or <strong>.ico</strong> format. Optimal dimensions: <strong>32px x 32px</strong>.', 'academica' ),
-            'context'     => 'academica_logo-favicon',
-            'extensions'  => array( 'png', 'ico' ),
-            'section'     => 'academica_logo',
-            'settings'    => 'logo-favicon',
-        )
-    ) );
-
     $wp_customize->add_setting( 'header-background-color', array(
         'default' => '#0a5794',
         'sanitize_callback' => 'sanitize_hex_color',
