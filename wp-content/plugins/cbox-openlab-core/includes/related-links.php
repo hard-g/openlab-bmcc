@@ -9,7 +9,7 @@
  *
  * @param int $group_id
  * @param string $mode 'display' to show saved fields, 'edit' to append an
- *	  empty field for building markup
+ *    empty field for building markup
  * @return array
  */
 function openlab_get_group_related_links( $group_id, $mode = 'display' ) {
@@ -33,6 +33,12 @@ function openlab_get_group_related_links( $group_id, $mode = 'display' ) {
  * Catch Related Links List settings saves and process.
  */
 function openlab_process_related_links_settings_save( $group_id ) {
+	if ( ! isset( $_POST['group-related-link-settings-nonce'] ) ) {
+		return;
+	}
+
+	check_admin_referer( 'group_related_link_settings', 'group-related-link-settings-nonce' );
+
 	if ( ! empty( $_POST['related-links-list-enable'] ) ) {
 		groups_update_groupmeta( $group_id, 'openlab_related_links_list_enable', '1' );
 
@@ -90,14 +96,14 @@ function openlab_related_links_list_group_display() {
 	<div id="group-related-links-sidebar-widget" class="sidebar-widget">
 		<?php if ( $heading ) : ?>
 			<h2 class="sidebar-header">
-				<?php echo esc_html( $heading ) ?>
+				<?php echo esc_html( $heading ); ?>
 			</h2>
 		<?php endif ?>
 
 		<div class="sidebar-block">
 			<ul class="group-related-links-list group-data-list inline-element-list sidebar-sublinks">
 			<?php foreach ( $related_links as $rldata ) : ?>
-				<li><span class="fa fa-external-link"></span> <a href="<?php echo esc_url( $rldata['url'] ) ?>"><?php echo esc_html( $rldata['name'] ) ?></a></li>
+				<li><span class="fa fa-external-link"></span> <a href="<?php echo esc_url( $rldata['url'] ); ?>"><?php echo esc_html( $rldata['name'] ); ?></a></li>
 			<?php endforeach ?>
 			</ul>
 		</div>

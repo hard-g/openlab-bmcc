@@ -98,6 +98,7 @@ h3.cboxol-admin-content-header {
 }
 
 .cboxol-entity-header-actions a {
+	color: #00547A;
 	height: 18px;
 	text-decoration: none;
 }
@@ -126,6 +127,11 @@ a.cboxol-entity-edit-arrow:after {
 
 .cboxol-entity.collapsed a.cboxol-entity-edit-arrow:after {
 	content: "\25BC";
+}
+
+.signup-code-actions a,
+.email-domains-actions a {
+	color: #00547A;
 }
 
 a .action-arrow {
@@ -182,7 +188,7 @@ a .action-arrow {
 	width: 90%;
 }
 
-.associated-group-types > ul > li {
+.associated-group-types > fieldset > ul > li {
 	display: inline;
 	padding-right: 20px;
 }
@@ -249,6 +255,10 @@ a .action-arrow {
 
 .add-new-academic-unit input {
 	margin-bottom: .5rem;
+}
+
+.new-academic-unit-parent label {
+	display: block;
 }
 
 .academic-unit-list {

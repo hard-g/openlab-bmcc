@@ -10,24 +10,27 @@ add_action( 'bp_register_member_types', 'cboxol_membertypes_register_member_type
 add_action( 'xprofile_updated_profile', 'cboxol_membertypes_process_change' );
 
 function cboxol_membertypes_register_post_type() {
-	register_post_type( 'cboxol_member_type', array(
-		'labels' => array(
-			'name' => _x( 'Member Types', 'Post type general name', 'cbox-openlab-core' ),
-			'singular_name' => _x( 'Member Type', 'Post type singular name', 'cbox-openlab-core' ),
-			'add_new_item' => __( 'Add New Member Type', 'cbox-openlab-core' ),
-			'new_item' => __( 'New Member Type', 'cbox-openlab-core' ),
-			'edit_item' => __( 'Edit Member Type', 'cbox-openlab-core' ),
-			'view_item' => __( 'View Member Type', 'cbox-openlab-core' ),
-			'all_item' => __( 'All Member Types', 'cbox-openlab-core' ),
-			'search_items' => __( 'Search Member Types', 'cbox-openlab-core' ),
-			'not_found' => __( 'No member types found.', 'cbox-openlab-core' ),
-			'not_found_in_trash' => __( 'No member types found in Trash.', 'cbox-openlab-core' ),
-		),
-		'public' => false,
-		'publicly_queryable' => false,
-		'show_ui' => true,
-		'show_in_menu' => false,
-	) );
+	register_post_type(
+		'cboxol_member_type',
+		array(
+			'labels'             => array(
+				'name'               => _x( 'Member Types', 'Post type general name', 'commons-in-a-box' ),
+				'singular_name'      => _x( 'Member Type', 'Post type singular name', 'commons-in-a-box' ),
+				'add_new_item'       => __( 'Add New Member Type', 'commons-in-a-box' ),
+				'new_item'           => __( 'New Member Type', 'commons-in-a-box' ),
+				'edit_item'          => __( 'Edit Member Type', 'commons-in-a-box' ),
+				'view_item'          => __( 'View Member Type', 'commons-in-a-box' ),
+				'all_item'           => __( 'All Member Types', 'commons-in-a-box' ),
+				'search_items'       => __( 'Search Member Types', 'commons-in-a-box' ),
+				'not_found'          => __( 'No member types found.', 'commons-in-a-box' ),
+				'not_found_in_trash' => __( 'No member types found in Trash.', 'commons-in-a-box' ),
+			),
+			'public'             => false,
+			'publicly_queryable' => false,
+			'show_ui'            => true,
+			'show_in_menu'       => false,
+		)
+	);
 }
 
 /**
@@ -38,13 +41,16 @@ function cboxol_membertypes_register_member_types() {
 
 	// @todo Conflict checking? Prefixing?
 	foreach ( $saved_types as $saved_type ) {
-		bp_register_member_type( $saved_type->get_slug(), array(
-			'labels' => array(
-				'name' => $saved_type->get_label( 'plural' ),
-				'singular_name' => $saved_type->get_label( 'singular' ),
-			),
-			'has_directory' => true,
-		) );
+		bp_register_member_type(
+			$saved_type->get_slug(),
+			array(
+				'labels'        => array(
+					'name'          => $saved_type->get_label( 'plural' ),
+					'singular_name' => $saved_type->get_label( 'singular' ),
+				),
+				'has_directory' => true,
+			)
+		);
 	}
 }
 
@@ -56,16 +62,18 @@ function cboxol_membertypes_register_member_types() {
  */
 function cboxol_get_member_type( $slug ) {
 	if ( $slug ) {
-		$types = cboxol_get_member_types( array(
-			'enabled' => null,
-		) );
+		$types = cboxol_get_member_types(
+			array(
+				'enabled' => null,
+			)
+		);
 
 		if ( isset( $types[ $slug ] ) ) {
 			return $types[ $slug ];
 		}
 	}
 
-	return new WP_Error( 'no_member_type_found', __( 'No member type exists for this slug.', 'cbox-openlab-core' ), $slug );
+	return new WP_Error( 'no_member_type_found', __( 'No member type exists for this slug.', 'commons-in-a-box' ), $slug );
 }
 
 /**
@@ -78,9 +86,12 @@ function cboxol_get_member_type( $slug ) {
  * }
  */
 function cboxol_get_member_types( $args = array() ) {
-	$r = array_merge( array(
-		'enabled' => true,
-	), $args );
+	$r = array_merge(
+		array(
+			'enabled' => true,
+		),
+		$args
+	);
 
 	$post_status = 'publish';
 	if ( false === $r['enabled'] ) {
@@ -90,17 +101,17 @@ function cboxol_get_member_types( $args = array() ) {
 	}
 
 	$post_args = array(
-		'post_type' => 'cboxol_member_type',
-		'post_status' => $post_status,
+		'post_type'      => 'cboxol_member_type',
+		'post_status'    => $post_status,
 		'posts_per_page' => -1,
-		'orderby' => array(
+		'orderby'        => array(
 			'menu_order' => 'ASC',
-			'title' => 'ASC',
+			'title'      => 'ASC',
 		),
-		'fields' => 'ids',
+		'fields'         => 'ids',
 	);
 
-	$switched = false;
+	$switched     = false;
 	$main_site_id = cboxol_get_main_site_id();
 	if ( get_current_blog_id() !== $main_site_id ) {
 		switch_to_blog( $main_site_id );
@@ -108,8 +119,8 @@ function cboxol_get_member_types( $args = array() ) {
 	}
 
 	$last_changed = wp_cache_get_last_changed( 'posts' );
-	$cache_key = 'cboxol_types_' . md5( json_encode( $post_args ) ) . '_' . $last_changed;
-	$ids = wp_cache_get( $cache_key, 'cboxol_member_types' );
+	$cache_key    = 'cboxol_types_' . md5( wp_json_encode( $post_args ) ) . '_' . $last_changed;
+	$ids          = wp_cache_get( $cache_key, 'cboxol_member_types' );
 	if ( false === $ids ) {
 		$ids = get_posts( $post_args );
 		_prime_post_caches( $ids );
@@ -133,37 +144,52 @@ function cboxol_get_member_types( $args = array() ) {
 function cboxol_membertypes_admin_page() {
 	wp_enqueue_script( 'cbox-ol-app' );
 
-	$types = cboxol_get_member_types( array(
-		'enabled' => null,
-	) );
+	$types = cboxol_get_member_types(
+		array(
+			'enabled' => null,
+		)
+	);
 
 	$type_data = array();
 	foreach ( $types as $type ) {
 		$type_data[ $type->get_slug() ] = $type->get_for_endpoint();
 	}
 
-	$dummy = \CBOX\OL\MemberType::get_dummy();
+	$dummy      = \CBOX\OL\MemberType::get_dummy();
 	$dummy_data = $dummy->get_for_endpoint();
 
 	$app_config = array(
-		'subapp' => 'TypesUI',
+		'subapp'     => 'TypesUI',
 		'objectType' => 'member',
-		'types' => $type_data,
-		'dummy' => $dummy_data,
+		'types'      => $type_data,
+		'dummy'      => $dummy_data,
 	);
 
-	$registration_url = self_admin_url( add_query_arg( array(
-		'page' => cboxol_admin_slug( 'member-settings' ),
-		'cboxol-section' => 'registration',
-	), 'admin.php' ) );
+	$registration_url = self_admin_url(
+		add_query_arg(
+			array(
+				'page'           => cboxol_admin_slug( 'member-settings' ),
+				'cboxol-section' => 'registration',
+			),
+			'admin.php'
+		)
+	);
 
 	?>
 
 	<div class="cboxol-admin-content">
-		<p><?php printf( __( 'Member Types are used to organize your site’s users. Members are able to choose their own Member Type according to the rules that you configure on this page, as well as in <a href="%s">Registration settings</a>.', 'cbox-openlab-core' ), esc_url( $registration_url ) ); ?></p>
+		<p>
+			<?php
+			printf(
+				// translators: link to registration settings panel
+				esc_html__( 'Member Types are used to organize your site’s users. Members are able to choose their own Member Type according to the rules that you configure on this page, as well as in %s.', 'commons-in-a-box' ),
+				sprintf( '<a href="%s">%s</a>', esc_url( $registration_url ), esc_html__( 'Registration settings', 'commons-in-a-box' ) )
+			);
+			?>
+		</p>
 
 		<script type="text/javascript">
-			var CBOXOL_AppConfig = <?php echo json_encode( $app_config ); ?>;
+			var CBOXOL_AppConfig = <?php echo wp_json_encode( $app_config ); ?>;
 		</script>
 
 		<div id="cboxol-admin"></div>
@@ -181,7 +207,7 @@ function cboxol_membertypes_admin_page() {
 function cboxol_get_user_member_type( $user_id ) {
 	$type = bp_get_member_type( $user_id );
 	if ( ! $type ) {
-		return new WP_Error( 'no_member_type', __( 'This user does not have a member type.', 'cbox-openlab-core' ), $user_id );
+		return new WP_Error( 'no_member_type', __( 'This user does not have a member type.', 'commons-in-a-box' ), $user_id );
 	}
 
 	return cboxol_get_member_type( $type );
@@ -194,7 +220,7 @@ function cboxol_get_user_member_type( $user_id ) {
  * @return string
  */
 function cboxol_get_user_member_type_label( $user_id ) {
-	$label = '';
+	$label       = '';
 	$member_type = bp_get_member_type( $user_id );
 	if ( $member_type ) {
 		$member_type_obj = bp_get_member_type_object( $member_type );
@@ -216,7 +242,17 @@ function cboxol_get_selectable_member_types_for_user( $user_id ) {
 	$selectable_types = array();
 
 	$type_obj = cboxol_get_user_member_type( $user_id );
-	if ( ! is_wp_error( $type_obj ) ) {
+	if ( is_wp_error( $type_obj ) ) {
+		// If the user has no member type, allow them to select any non-restricted type.
+		$all_member_types = cboxol_get_member_types();
+		foreach ( $all_member_types as $type ) {
+			if ( $type->get_requires_signup_code() ) {
+				continue;
+			}
+
+			$all_member_types[] = $type->get_slug();
+		}
+	} else {
 		$selectable_types = $type_obj->get_selectable_types();
 	}
 
@@ -253,6 +289,12 @@ function cboxol_user_can_create_courses( $user_id ) {
  * @param int $user_id
  */
 function cboxol_membertypes_process_change( $user_id ) {
+	if ( ! isset( $_POST['change-member-type-nonce'] ) ) {
+		return;
+	}
+
+	check_admin_referer( 'change_member_type', 'change-member-type-nonce' );
+
 	if ( ! isset( $_POST['member-type'] ) ) {
 		return;
 	}
@@ -263,7 +305,7 @@ function cboxol_membertypes_process_change( $user_id ) {
 	$can_change = current_user_can( 'bp_moderate' );
 	if ( ! $can_change ) {
 		$selectable_types = cboxol_get_selectable_member_types_for_user( $user_id );
-		$can_change = in_array( $new_type, $selectable_types, true );
+		$can_change       = in_array( $new_type, $selectable_types, true );
 	}
 
 	// Will return here if there's no change.

@@ -6,16 +6,17 @@ class ItemTypeBase {
 	protected $post_type = '';
 
 	protected $data = array(
-		'slug' => '',
-		'name' => '',
-		'labels' => array(),
+		'slug'           => '',
+		'name'           => '',
+		'labels'         => array(),
 		'can_be_deleted' => true,
-		'is_enabled' => true,
-		'order' => 0,
-		'wp_post_id' => 0,
+		'is_enabled'     => true,
+		'order'          => 0,
+		'wp_post_id'     => 0,
 	);
 
 	// can_be_deleted and is_enabled have special logic, so can't be lumped in.
+	// phpcs:ignore PSR2.Classes.PropertyDeclaration.Underscore
 	protected $_boolean_props = array();
 
 	protected $boolean_props = array();
@@ -23,7 +24,7 @@ class ItemTypeBase {
 	protected $defaults = array();
 
 	public function __construct() {
-		$this->data = array_merge( $this->data, $this->defaults );
+		$this->data          = array_merge( $this->data, $this->defaults );
 		$this->boolean_props = array_merge( $this->_boolean_props, $this->boolean_props );
 	}
 
@@ -38,14 +39,22 @@ class ItemTypeBase {
 	public function get_label( $label_type ) {
 		$label = null;
 		if ( isset( $this->data['labels'][ $label_type ] ) ) {
-			$label = $this->data['labels'][ $label_type ]['value'];
+			$label = $this->data['labels'][ $label_type ];
 		}
 
 		return $label;
 	}
 
 	public function get_labels() {
-		return $this->data['labels'];
+		$retval     = array();
+		$label_info = $this->get_label_types_info();
+		foreach ( $this->data['labels'] as $label_slug => $label_value ) {
+			$label_data            = $label_info[ $label_slug ];
+			$label_data['value']   = $label_value;
+			$retval[ $label_slug ] = $label_data;
+		}
+
+		return $retval;
 	}
 
 	public function get_is_enabled() {
@@ -74,12 +83,8 @@ class ItemTypeBase {
 			$saved_labels = array();
 		}
 
-		foreach ( $this->get_label_types() as $label_type => $label_labels ) {
-			if ( isset( $saved_labels[ $label_type ] ) ) {
-				$label_labels['value'] = $saved_labels[ $label_type ];
-			}
-
-			$this->set_label( $label_type, $label_labels );
+		foreach ( $saved_labels as $label_type => $label_value ) {
+			$this->set_label( $label_type, $label_value );
 		}
 
 		// Enabled.
@@ -90,13 +95,13 @@ class ItemTypeBase {
 
 		foreach ( $this->boolean_props as $bool ) {
 			$method = 'set_' . $bool;
-			$val = get_post_meta( $post->ID, 'cboxol_group_type_' . $bool, true );
+			$val    = get_post_meta( $post->ID, 'cboxol_group_type_' . $bool, true );
 			$this->$method( 'yes' === $val );
 		}
 
 		// Can be deleted.
 		$can_be_deleted_db = get_post_meta( $post->ID, 'cboxol_item_type_is_builtin', true );
-		$can_be_deleted = 'yes' !== $can_be_deleted_db;
+		$can_be_deleted    = 'yes' !== $can_be_deleted_db;
 		$this->set_can_be_deleted( $can_be_deleted );
 
 		// WP post ID.
@@ -113,7 +118,7 @@ class ItemTypeBase {
 
 		$post_params = array(
 			'post_title' => $name,
-			'post_name' => $slug,
+			'post_name'  => $slug,
 			'menu_order' => $this->get_order(),
 		);
 
@@ -128,8 +133,8 @@ class ItemTypeBase {
 			wp_update_post( $post_params );
 		} else {
 			$post_params['post_type'] = $this->post_type;
-			$wp_post_id = wp_insert_post( $post_params );
-			$wp_post = get_post( $wp_post_id );
+			$wp_post_id               = wp_insert_post( $post_params );
+			$wp_post                  = get_post( $wp_post_id );
 			$this->set_wp_post_id( $wp_post_id );
 			$this->set_slug( $wp_post->post_name );
 		}
@@ -146,7 +151,7 @@ class ItemTypeBase {
 
 		// Boolean props are saved to 'yes' or deleted.
 		foreach ( $this->boolean_props as $bool ) {
-			$method = 'get_' . $bool;
+			$method   = 'get_' . $bool;
 			$meta_key = 'cboxol_group_type_' . $bool;
 			if ( $this->$method() ) {
 				update_post_meta( $wp_post_id, $meta_key, 'yes' );
@@ -203,10 +208,10 @@ class ItemTypeBase {
 		}
 
 		switch ( $method_type ) {
-			case 'get' :
+			case 'get':
 				return (bool) $this->data[ $prop ];
 
-			case 'set' :
+			case 'set':
 				$this->data[ $prop ] = (bool) $args[0];
 				break;
 		}

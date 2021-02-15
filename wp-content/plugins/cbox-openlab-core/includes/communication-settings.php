@@ -5,19 +5,25 @@ function cboxol_communication_admin_page_email() {
 
 	$settings = array(
 		array(
-			'title' => __( 'Email Appearance', 'cbox-openlab-core' ),
-			'url' => add_query_arg( array(
-				'post_type' => 'bp-email',
-				'page' => 'bp-emails-customizer-redirect',
-			), $url_base . 'edit.php' ),
-			'description' => __( 'Customize the visual design of emails that will be sent to community members.', 'cbox-openlab-core' ),
+			'title'       => __( 'Email Appearance', 'commons-in-a-box' ),
+			'url'         => add_query_arg(
+				array(
+					'post_type' => 'bp-email',
+					'page'      => 'bp-emails-customizer-redirect',
+				),
+				$url_base . 'edit.php'
+			),
+			'description' => __( 'Customize the visual design of emails that will be sent to community members.', 'commons-in-a-box' ),
 		),
 		array(
-			'title' => __( 'Email Templates', 'cbox-openlab-core' ),
-			'url' => add_query_arg( array(
-				'post_type' => 'bp-email',
-			), $url_base . 'edit.php' ),
-			'description' => __( 'Manage the content that’s included in emails sent automatically to members based on triggers (e.g. a welcome email sent to new members of a group).', 'cbox-openlab-core' ),
+			'title'       => __( 'Email Templates', 'commons-in-a-box' ),
+			'url'         => add_query_arg(
+				array(
+					'post_type' => 'bp-email',
+				),
+				$url_base . 'edit.php'
+			),
+			'description' => __( 'Manage the content that’s included in emails sent automatically to members based on triggers (e.g. a welcome email sent to new members of a group).', 'commons-in-a-box' ),
 		),
 	);
 
@@ -29,17 +35,20 @@ function cboxol_communication_admin_page_email() {
 		}
 
 		$settings[] = array(
-			'title' => __( 'Group Email Options', 'cbox-openlab-core' ),
-			'url' => add_query_arg( array(
-				'page' => 'ass_admin_options',
-			), $ges_base ),
-			'description' => __( 'Update settings related to Daily Digests & Weekly Summaries of group activities in your community; toggle global unsubscribe links; modify group admin abilities related to email subscription settings; and establish spam prevention guidelines.', 'cbox-openlab-core' ),
+			'title'       => __( 'Group Email Options', 'commons-in-a-box' ),
+			'url'         => add_query_arg(
+				array(
+					'page' => 'ass_admin_options',
+				),
+				$ges_base
+			),
+			'description' => __( 'Update settings related to Daily Digests & Weekly Summaries of group activities in your community; toggle global unsubscribe links; modify group admin abilities related to email subscription settings; and establish spam prevention guidelines.', 'commons-in-a-box' ),
 		);
 	}
 
 	?>
 	<div class="cboxol-admin-content">
-		<p><?php esc_html_e( 'Members of your community can be sent various notifications via email. Manage all settings related to emails here.', 'cbox-openlab-core' ); ?></p>
+		<p><?php esc_html_e( 'Members of your community can be sent various notifications via email. Manage all settings related to emails here.', 'commons-in-a-box' ); ?></p>
 
 		<?php cboxol_communication_settings_markup( $settings ); ?>
 	</div>
@@ -55,23 +64,68 @@ function cboxol_communication_admin_page_invitations() {
 
 	$settings = array(
 		array(
-			'title' => __( 'Invite Anyone', 'cbox-openlab-core' ),
-			'url' => add_query_arg( array(
-				'page' => 'invite-anyone',
-			), $base ),
-			'description' => __( 'Manage the invite email content template, control which member types are able to send various kinds of invitations, control address book integration, view sent invitations and related statistics.', 'cbox-openlab-core' ),
+			'title'       => __( 'Invite Anyone', 'commons-in-a-box' ),
+			'url'         => add_query_arg(
+				array(
+					'page' => 'invite-anyone',
+				),
+				$base
+			),
+			'description' => __( 'Manage the invite email content template, control which member types are able to send various kinds of invitations, control address book integration, view sent invitations and related statistics.', 'commons-in-a-box' ),
 		),
 	);
 
 	?>
 	<div class="cboxol-admin-content">
-		<p><?php esc_html_e( 'Invite Anyone allows community members to invite non-members to your community and its groups via email.', 'cbox-openlab-core' ); ?></p>
+		<p><?php esc_html_e( 'Invite Anyone allows community members to invite non-members to your community and its groups via email.', 'commons-in-a-box' ); ?></p>
 
 		<?php cboxol_communication_settings_markup( $settings ); ?>
 	</div>
 	<?php
 }
 
+/**
+ * Badges settings panel under Communication Settings.
+ *
+ * @since 1.2.0
+ */
+function cboxol_badges_admin_page() {
+	$url = add_query_arg(
+		'page',
+		'openlab-badges',
+		network_admin_url( 'admin.php' )
+	);
+
+	$settings = array(
+		array(
+			'title'       => __( 'OpenLab Badges', 'commons-in-a-box' ),
+			'url'         => $url,
+			'description' => __( 'Create and manage group badges on the Badges admin page.', 'commons-in-a-box' ),
+		),
+	);
+
+	?>
+	<div class="cboxol-admin-content">
+		<p><?php esc_html_e( 'OpenLab Badges allows the network administrator to create custom badges that can be awarded to groups. These badges are displayed in group directories and on group home pages, and can be used to find and filter groups in the directories.', 'commons-in-a-box' ); ?></p>
+
+		<?php cboxol_communication_settings_markup( $settings ); ?>
+	</div>
+	<?php
+}
+
+/**
+ * Helper function for building markup on Communication Settings panels.
+ *
+ * @since 1.1.0
+ *
+ * @param array $settings {
+ *   Values for the various parts of the panel interface.
+ *
+ *   @type string $title       Panel title.
+ *   @type string $url         URL for the link.
+ *   @type string $description Description text.
+ * }
+ */
 function cboxol_communication_settings_markup( $settings ) {
 	?>
 		<ul class="cboxol-communication-settings">
