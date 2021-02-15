@@ -4,29 +4,29 @@
 // help navigation via Ambrosite plugin
 function openlab_help_navigation( $loc = 'bottom' ) {
 	$prev_args = array(
-		'order_by' => 'menu_order',
-		'order_2nd' => 'post_date',
-		'post_type' => '"help"',
-		'format' => '<span class="fa fa-chevron-circle-left"></span> %link',
-		'link' => '%title',
+		'order_by'    => 'menu_order',
+		'order_2nd'   => 'post_date',
+		'post_type'   => '"help"',
+		'format'      => '<span class="fa fa-chevron-circle-left"></span> %link',
+		'link'        => '%title',
 		'date_format' => '',
-		'tooltip' => '%title',
-		'ex_posts' => '',
+		'tooltip'     => '%title',
+		'ex_posts'    => '',
 	);
 
 	$next_args = array(
-		'order_by' => 'menu_order',
-		'order_2nd' => 'post_date',
-		'post_type' => '"help"',
-		'format' => '%link <span class="fa fa-chevron-circle-right"></span>',
-		'link' => '%title',
+		'order_by'    => 'menu_order',
+		'order_2nd'   => 'post_date',
+		'post_type'   => '"help"',
+		'format'      => '%link <span class="fa fa-chevron-circle-right"></span>',
+		'link'        => '%title',
 		'date_format' => '',
-		'tooltip' => '%title',
-		'ex_posts' => '',
+		'tooltip'     => '%title',
+		'ex_posts'    => '',
 	);
 
 	if ( function_exists( 'previous_post_link_plus' ) && function_exists( 'next_post_link_plus' ) ) {
-		echo '<nav id="nav-single" class="' . $loc . ' clearfix page-nav">';
+		echo '<nav id="nav-single" class="' . esc_attr( $loc ) . ' clearfix page-nav">';
 		echo '<div class="nav-previous pull-left">';
 		previous_post_link_plus( $prev_args );
 		echo '</div>';
@@ -41,19 +41,27 @@ function openlab_custom_nav_classes( $classes, $item ) {
 	global $post;
 
 	if ( ! ( $post instanceof WP_Post ) ) {
-	    return $classes;
+		return $classes;
 	}
 
-	if ( ($post->post_type == 'help') && $item->title == 'Help' ) {
+	if ( ( 'help' === $post->post_type ) && __( 'Help', 'commons-in-a-box' ) === $item->title ) {
 		$classes[] = ' current-menu-item';
-	} elseif ( get_page_by_path( 'about' ) && $post->post_parent == get_page_by_path( 'about' )->ID && $item->title == 'About' ) {
-		$classes[] = ' current-menu-item';
+	}
+
+	if ( bp_is_groups_directory() ) {
+		$current = bp_get_requested_url();
+		$query   = wp_parse_url( $current, PHP_URL_QUERY );
+		$base    = str_replace( '?' . $query, '', $current );
+
+		if ( $base === $item->url ) {
+			$classes[] = 'current-menu-item';
+		}
 	}
 
 	return $classes;
 }
 
-add_filter( 'nav_menu_css_class','openlab_custom_nav_classes', 10, 2 );
+add_filter( 'nav_menu_css_class', 'openlab_custom_nav_classes', 10, 2 );
 
 /**
  * Filter pagination links on group/member directories to include misc GET params.
@@ -62,19 +70,19 @@ function openlab_loop_pagination_links_filter( $has_items ) {
 	global $groups_template, $members_template;
 	// Only run on directories.
 	$current_page = get_queried_object();
-	if ( ! isset( $current_page->post_name ) || ! in_array( $current_page->post_name, array( 'people', 'courses', 'projects', 'clubs', 'portfolios' ) ) ) {
+	if ( ! isset( $current_page->post_name ) || ! in_array( $current_page->post_name, array( 'people', 'courses', 'projects', 'clubs', 'portfolios' ), true ) ) {
 			return $has_items;
 	}
 	switch ( current_filter() ) {
-		case 'bp_has_groups' :
-			$t = $groups_template;
+		case 'bp_has_groups':
+			$t      = $groups_template;
 			$pagarg = 'grpage';
-			$count = (int) $t->total_group_count;
+			$count  = (int) $t->total_group_count;
 			break;
-		case 'bp_has_members' :
-			$t = $members_template;
+		case 'bp_has_members':
+			$t      = $members_template;
 			$pagarg = 'upage';
-			$count = (int) $t->total_member_count;
+			$count  = (int) $t->total_member_count;
 			break;
 	}
 	if ( empty( $t ) ) {
@@ -83,7 +91,7 @@ function openlab_loop_pagination_links_filter( $has_items ) {
 	if ( $count && (int) $t->pag_num ) {
 		$pag_args = array(
 			$pagarg => '%#%',
-			'num' => $t->pag_num,
+			'num'   => $t->pag_num,
 		);
 
 		if ( isset( $t->sort_by ) ) {
@@ -108,19 +116,23 @@ function openlab_loop_pagination_links_filter( $has_items ) {
 			'usertype',
 		);
 		foreach ( $ol_args as $ol_arg ) {
+			// phpcs:disable WordPress.Security.NonceVerification.Recommended
 			if ( isset( $_GET[ $ol_arg ] ) ) {
 				$pag_args[ $ol_arg ] = urldecode( $_GET[ $ol_arg ] );
 			}
+			// phpcs:enable WordPress.Security.NonceVerification.Recommended
 		}
-		$t->pag_links = paginate_links(array(
-			'base' => add_query_arg( $pag_args, $base ),
-			'format' => '',
-			'total' => ceil( $count / (int) $t->pag_num ),
-			'current' => $t->pag_page,
-			'prev_text' => _x( '&larr;', 'Group pagination previous text', 'buddypress' ),
-			'next_text' => _x( '&rarr;', 'Group pagination next text', 'buddypress' ),
-			'mid_size' => 1,
-		));
+		$t->pag_links = paginate_links(
+			array(
+				'base'      => add_query_arg( $pag_args, $base ),
+				'format'    => '',
+				'total'     => ceil( $count / (int) $t->pag_num ),
+				'current'   => $t->pag_page,
+				'prev_text' => _x( '&larr;', 'Group pagination previous text', 'buddypress' ),
+				'next_text' => _x( '&rarr;', 'Group pagination next text', 'buddypress' ),
+				'mid_size'  => 1,
+			)
+		);
 	}
 	return $has_items;
 }
@@ -131,7 +143,7 @@ add_filter( 'bp_has_members', 'openlab_loop_pagination_links_filter' );
 function openlab_toggle_button( $target = '#menu', $backgroundonly = false ) {
 	$button_out = '';
 
-	$toggle_text = esc_html__( 'Toggle navigation', 'openlab-theme' );
+	$toggle_text = esc_html__( 'Toggle navigation', 'commons-in-a-box' );
 
 	$button = <<<HTML
             <button data-target="{$target}" data-backgroundonly="{$backgroundonly}" class="mobile-toggle direct-toggle pull-right visible-xs" type="button">

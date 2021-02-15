@@ -32,7 +32,7 @@
 			elseif ( bp_is_user_settings() ) :
 				bp_get_template_part( 'members/single/settings' );
 
-			elseif ( bp_current_action() == 'invite-new-members' || bp_current_action() == 'sent-invites' ) :
+			elseif ( bp_current_action() === 'invite-new-members' || bp_current_action() === 'sent-invites' ) :
 				bp_get_template_part( 'members/single/invite-anyone' );
 
 			else :
@@ -49,4 +49,4 @@
 
 <?php do_action( 'bp_after_member_home_content' ); ?>
 
-<?php openlab_bp_sidebar( 'members' ); ?>
+<?php get_template_part( 'parts/sidebar/members' ); ?>

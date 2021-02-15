@@ -1,6 +1,6 @@
 {
   "name": "openlab_theme",
-  "version": "1.1.1",
+  "version": "1.2.4",
   "main": "Gruntfile.js",
   "private": true,
   "scripts": {
@@ -9,12 +9,11 @@
   "author": "OpenLab Team",
   "license": "GPLv2",
   "devDependencies": {
-    "grunt": "^1.0.3",
+    "grunt": "^1.0.4",
     "grunt-contrib-concat": "^0.5.1",
     "grunt-contrib-less": "^2.0.0",
     "grunt-contrib-uglify": "^4.0.0",
     "grunt-contrib-watch": "^1.1.0",
-    "grunt-htmlclean": "^2.7.7",
     "jcarousellite": "^1.9.2",
     "jit-grunt": "^0.9.1"
   },

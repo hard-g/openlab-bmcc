@@ -6,12 +6,12 @@ $group_type = cboxol_get_group_group_type( bp_get_current_group_id() );
 openlab_group_admin_js_data( $group_type );
 ?>
 
-<?php //the following switches out the membership menu for the regular admin menu on membership-based admin pages  ?>
+<?php //the following switches out the membership menu for the regular admin menu on membership-based admin pages ?>
 
 <div class="row"><div class="col-md-24">
 	<div class="submenu">
-		<?php if ( bp_is_group_membership_request() || bp_is_action_variable( 'manage-members', 0 ) || bp_is_action_variable( 'notifications', 0 ) ) :  ?>
-			<?php do_action( 'bp_before_group_members_content' ) ?>
+		<?php if ( bp_is_group_membership_request() || bp_is_action_variable( 'manage-members', 0 ) || bp_is_action_variable( 'notifications', 0 ) ) : ?>
+			<?php do_action( 'bp_before_group_members_content' ); ?>
 
 			<ul class="nav nav-inline">
 				<?php openlab_group_membership_tabs(); ?>
@@ -19,7 +19,7 @@ openlab_group_admin_js_data( $group_type );
 
 		<?php else : ?>
 
-			<div class="submenu-text pull-left bold"><?php esc_html_e( 'Settings:', 'openlab-theme' ) ?></div>
+			<div class="submenu-text pull-left bold"><?php esc_html_e( 'Settings:', 'commons-in-a-box' ); ?></div>
 			<ul class="nav nav-inline">
 				<?php openlab_group_admin_tabs(); ?>
 			</ul>
@@ -27,37 +27,37 @@ openlab_group_admin_js_data( $group_type );
 	</div><!-- .submenu -->
 </div></div>
 
-<form action="<?php bp_group_admin_form_action() ?>" name="group-settings-form" id="openlab-group-settings-form" class="standard-form form-panel" method="post" enctype="multipart/form-data">
+<form action="<?php bp_group_admin_form_action(); ?>" name="group-settings-form" id="openlab-group-settings-form" class="standard-form form-panel" method="post" enctype="multipart/form-data">
 
-	<?php do_action( 'bp_before_group_admin_content' ) ?>
+	<?php do_action( 'bp_before_group_admin_content' ); ?>
 
 	<div class="item-body" id="group-create-body">
 
 		<?php /* Edit Group Details */ ?>
 		<?php if ( bp_is_group_admin_screen( 'edit-details' ) ) : ?>
 
-			<?php do_action( 'template_notices' ) ?>
+			<?php do_action( 'template_notices' ); ?>
 
 			<div class="panel panel-default">
-				<div class="panel-heading"><?php esc_html_e( 'Details', 'openlab-theme' ) ?></div>
+				<div class="panel-heading"><?php esc_html_e( 'Details', 'commons-in-a-box' ); ?></div>
 				<div class="panel-body">
 
 					<?php do_action( 'bp_before_group_details_admin' ); ?>
 
-					<label for="group-name"><?php esc_html_e( 'Name', 'openlab-theme' ) ?> <?php esc_html_e( '(required)', 'openlab-theme' ) ?></label>
-					<input class="form-control" type="text" name="group-name" id="group-name" value="<?php bp_group_name() ?>" />
+					<label for="group-name"><?php esc_html_e( 'Name', 'commons-in-a-box' ); ?> <?php esc_html_e( '(required)', 'commons-in-a-box' ); ?></label>
+					<input class="form-control" type="text" name="group-name" id="group-name" value="<?php bp_group_name(); ?>" />
 
-					<label for="group-desc"><?php esc_html_e( 'Description', 'openlab-theme' ) ?> <?php esc_html_e( '(required)', 'openlab-theme' ) ?></label>
-					<textarea class="form-control" name="group-desc" id="group-desc"><?php bp_group_description_editable() ?></textarea>
+					<label for="group-desc"><?php esc_html_e( 'Description', 'commons-in-a-box' ); ?> <?php esc_html_e( '(required)', 'commons-in-a-box' ); ?></label>
+					<textarea class="form-control" name="group-desc" id="group-desc"><?php bp_group_description_editable(); ?></textarea>
 
-					<?php do_action( 'groups_custom_group_fields_editable' ) ?>
+					<?php do_action( 'groups_custom_group_fields_editable' ); ?>
 
 					<?php if ( ! cboxol_is_portfolio() ) : ?>
 						<div class="notify-settings">
-							<p class="ol-tooltip notify-members"><?php _e( 'Notify group members of changes via email', 'openlab-theme' ); ?></p>
+							<p class="ol-tooltip notify-members"><?php esc_html_e( 'Notify group members of changes via email', 'commons-in-a-box' ); ?></p>
 							<div class="radio">
-								<label><input type="radio" name="group-notify-members" value="1" /> <?php _e( 'Yes', 'openlab-theme' ); ?></label>
-								<label><input type="radio" name="group-notify-members" value="0" checked="checked" /> <?php _e( 'No', 'openlab-theme' ); ?></label>
+								<label><input type="radio" name="group-notify-members" value="1" /> <?php esc_html_e( 'Yes', 'commons-in-a-box' ); ?></label>
+								<label><input type="radio" name="group-notify-members" value="0" checked="checked" /> <?php esc_html_e( 'No', 'commons-in-a-box' ); ?></label>
 							</div>
 						</div>
 
@@ -73,8 +73,8 @@ openlab_group_admin_js_data( $group_type );
 
 			<?php do_action( 'bp_after_group_details_admin' ); ?>
 
-			<p><input class="btn btn-primary" type="submit" value="<?php _e( 'Save Changes', 'openlab-theme' ) ?> &#xf138;" id="save" name="save" /></p>
-			<?php wp_nonce_field( 'groups_edit_group_details' ) ?>
+			<p><input class="btn btn-primary" type="submit" value="<?php esc_html_e( 'Save Changes', 'commons-in-a-box' ); ?> &#xf138;" id="save" name="save" /></p>
+			<?php wp_nonce_field( 'groups_edit_group_details' ); ?>
 		<?php endif; ?>
 
 		<?php /* Manage Group Settings */ ?>
@@ -82,16 +82,37 @@ openlab_group_admin_js_data( $group_type );
 
 			<?php do_action( 'bp_before_group_settings_admin' ); ?>
 
-			<?php do_action( 'template_notices' ) ?>
+			<?php do_action( 'template_notices' ); ?>
 
-			<?php if ( function_exists( 'bbpress' ) && ! cboxol_is_portfolio() ) : ?>
-				<?php $forum_enabled = openlab_is_forum_enabled_for_group() ?>
+			<?php if ( current_user_can( 'grant_badges' ) && class_exists( '\OpenLab\Badges\Template' ) ) : ?>
+				<div id="panel-badges" class="panel panel-default">
+					<div class="panel-heading"><?php esc_html_e( 'Badges', 'commons-in-a-box' ); ?></div>
+					<div class="panel-body">
+						<?php \OpenLab\Badges\Template::group_admin_markup(); ?>
+					</div>
+				</div>
+			<?php endif; ?>
+
+			<?php if ( ! cboxol_is_portfolio() ) : ?>
+				<?php openlab_group_sharing_settings_markup( $group_type ); ?>
+
+				<?php
+					$forum_enabled = openlab_is_forum_enabled_for_group();
+					$docs_enabled  = openlab_is_docs_enabled_for_group();
+					$files_enabled = openlab_is_files_enabled_for_group();
+				?>
 				<div class="panel panel-default">
-					<div class="panel-heading"><?php esc_html_e( 'Discussion Settings', 'openlab-theme' ) ?></div>
+					<div class="panel-heading"><?php esc_html_e( 'Discussion, Docs, and Files Settings', 'commons-in-a-box' ); ?></div>
 					<div class="panel-body">
 						<p id="discussion-settings-tag"><?php echo esc_html( $group_type->get_label( 'settings_help_text_discussion' ) ); ?></p>
-						<div class="checkbox">
-							<label><input type="checkbox" name="openlab-edit-group-forum" id="group-show-forum" value="1"<?php checked( $forum_enabled ) ?> /> <?php _e( 'Enable discussions forum', 'openlab-theme' ) ?></label>
+						<div class="checkbox checkbox-float">
+							<label><input type="checkbox" name="openlab-edit-group-forum" id="group-show-forum" value="1"<?php checked( $forum_enabled ); ?> /> <?php esc_html_e( 'Enable Discussion', 'commons-in-a-box' ); ?></label>
+						</div>
+						<div class="checkbox checkbox-float">
+							<label><input type="checkbox" name="openlab-edit-group-docs" id="group-show-docs" value="1"<?php checked( $docs_enabled ); ?> /> <?php esc_html_e( 'Enable Docs', 'commons-in-a-box' ); ?></label>
+						</div>
+						<div class="checkbox checkbox-float">
+							<label><input type="checkbox" name="openlab-edit-group-files" id="group-show-files" value="1"<?php checked( $files_enabled ); ?> /> <?php esc_html_e( 'Enable Files', 'commons-in-a-box' ); ?></label>
 						</div>
 					</div>
 				</div>
@@ -99,75 +120,88 @@ openlab_group_admin_js_data( $group_type );
 			<?php endif; ?>
 
 			<?php if ( function_exists( 'eo_get_event_fullcalendar' ) && ! cboxol_is_portfolio() ) : ?>
-				<?php $event_create_access = groups_get_groupmeta( bp_get_current_group_id(), 'openlab_bpeo_event_create_access' ); ?>
-				<?php if ( ! $event_create_access ) {
-					$event_create_access = 'admin';
-} ?>
+				<?php
+				$calendar_enabled    = openlab_is_calendar_enabled_for_group();
+				$event_create_access = openlab_get_group_event_create_access_setting( bp_get_current_group_id() );
+				?>
 				<div class="panel panel-default">
-					<div class="panel-heading"><?php esc_html_e( 'Calendar Settings', 'openlab-theme' ); ?></div>
+					<div class="panel-heading"><?php esc_html_e( 'Calendar Settings', 'commons-in-a-box' ); ?></div>
 					<div class="panel-body">
 						<p id="discussion-settings-tag"><?php echo esc_html( $group_type->get_label( 'settings_help_text_calendar' ) ); ?></p>
+
+						<div class="row calendar-settings-toggle">
+							<div class="col-sm-24">
+								<div class="checkbox checkbox-float">
+									<label><input type="checkbox" name="openlab-edit-group-calendar" id="group-show-calendar" value="1"<?php checked( $calendar_enabled ); ?> /> <?php esc_html_e( 'Enable Calendar' ); ?></label>
+								</div>
+							</div>
+						</div>
+
 						<div class="row">
-							<div class="col-sm-23 col-sm-offset-1">
+							<div class="col-sm-23">
 								<div class="radio no-margin no-margin-all spaced-list">
-									<label class="regular"><input type="radio" name="openlab-bpeo-event-create-access" value="members" <?php checked( 'members', $event_create_access ) ?> /> <?php echo esc_html( $group_type->get_label( 'settings_help_text_calendar_members' ) ); ?></label>
-									<label class="regular"><input type="radio" name="openlab-bpeo-event-create-access" value="admin" <?php checked( 'admin', $event_create_access ) ?> /> <?php echo esc_html( $group_type->get_label( 'settings_help_text_calendar_admins' ) ); ?></label>
+									<label class="regular"><input type="radio" name="openlab-bpeo-event-create-access" value="members" <?php checked( 'members', $event_create_access ); ?> /> <?php echo esc_html( $group_type->get_label( 'settings_help_text_calendar_members' ) ); ?></label>
+									<label class="regular"><input type="radio" name="openlab-bpeo-event-create-access" value="admin" <?php checked( 'admin', $event_create_access ); ?> /> <?php echo esc_html( $group_type->get_label( 'settings_help_text_calendar_admins' ) ); ?></label>
 								</div>
 							</div>
 						</div>
 					</div>
 				</div>
 
+				<?php wp_nonce_field( 'openlab_group_bpeo_settings', 'openlab-group-bpeo-settings-nonce', false ); ?>
+
 			<?php endif; ?>
 
 			<?php /* "Related Links List Settings" */ ?>
 			<div class="panel panel-default">
-				<div class="panel-heading"><?php esc_html_e( 'Related Links List Settings', 'openlab-theme' ); ?></div>
+				<div class="panel-heading"><?php esc_html_e( 'Related Links List Settings', 'commons-in-a-box' ); ?></div>
 				<div class="panel-body">
 					<p><?php echo esc_html( $group_type->get_label( 'settings_help_text_relatedlinks' ) ); ?></p>
 					<?php $related_links_list_enable = groups_get_groupmeta( bp_get_current_group_id(), 'openlab_related_links_list_enable' ); ?>
-	<?php $related_links_list_heading = groups_get_groupmeta( bp_get_current_group_id(), 'openlab_related_links_list_heading' ); ?>
-	<?php $related_links_list = openlab_get_group_related_links( bp_get_current_group_id(), 'edit' ); ?>
+			<?php $related_links_list_heading = groups_get_groupmeta( bp_get_current_group_id(), 'openlab_related_links_list_heading' ); ?>
+			<?php $related_links_list = openlab_get_group_related_links( bp_get_current_group_id(), 'edit' ); ?>
 					<div class="checkbox">
-						<label><input type="checkbox" name="related-links-list-enable" id="related-links-list-enable" value="1" <?php checked( $related_links_list_enable ) ?> /> <?php esc_html_e( 'Enable related links list', 'openlab-theme' ); ?></label>
+						<label><input type="checkbox" name="related-links-list-enable" id="related-links-list-enable" value="1" <?php checked( $related_links_list_enable ); ?> /> <?php esc_html_e( 'Enable related links list', 'commons-in-a-box' ); ?></label>
 					</div>
-					<label for="related-links-list-heading"><?php esc_html_e( 'List Heading', 'openlab-theme' ); ?></label>
-					<input name="related-links-list-heading" id="related-links-list-heading" class="form-control" type="text" value="<?php echo esc_attr( $related_links_list_heading ) ?>" />
+					<label for="related-links-list-heading"><?php esc_html_e( 'List Heading', 'commons-in-a-box' ); ?></label>
+					<input name="related-links-list-heading" id="related-links-list-heading" class="form-control" type="text" value="<?php echo esc_attr( $related_links_list_heading ); ?>" />
 					<ul class="related-links-edit-items inline-element-list">
-						<?php $rli = 1 ?>
+						<?php $rli = 1; ?>
 						<?php foreach ( (array) $related_links_list as $rl ) : ?>
 							<li class="form-inline label-combo row">
 								<div class="form-group col-sm-9">
-									<label for="related-links-<?php echo esc_attr( $rli ); ?>-name"><?php esc_html_e( 'Name', 'openlab-theme' ); ?></label> <input name="related-links[<?php echo esc_attr( $rli ) ?>][name]" id="related-links-<?php echo esc_attr( $rli ) ?>-name" class="form-control" value="<?php echo esc_attr( $rl['name'] ) ?>" />
+									<label for="related-links-<?php echo esc_attr( $rli ); ?>-name"><?php esc_html_e( 'Name', 'commons-in-a-box' ); ?></label> <input name="related-links[<?php echo esc_attr( $rli ); ?>][name]" id="related-links-<?php echo esc_attr( $rli ); ?>-name" class="form-control" value="<?php echo esc_attr( $rl['name'] ); ?>" />
 								</div>
 								<div class="form-group col-sm-15">
-									<label for="related-links-<?php echo esc_attr( $rli ) ;?>-url"><?php esc_html_e( 'URL', 'openlab-theme' ); ?></label> <input name="related-links[<?php echo esc_attr( $rli ); ?>][url]" id="related-links-<?php echo esc_attr( $rli ); ?>-url" class="form-control" value="<?php echo esc_attr( $rl['url'] ) ?>" />
+									<label for="related-links-<?php echo esc_attr( $rli ); ?>-url"><?php esc_html_e( 'URL', 'commons-in-a-box' ); ?></label> <input name="related-links[<?php echo esc_attr( $rli ); ?>][url]" id="related-links-<?php echo esc_attr( $rli ); ?>-url" class="form-control" value="<?php echo esc_attr( $rl['url'] ); ?>" />
 									<?php /* Last item - show the plus button */ ?>
-									<?php if ( $rli === count( $related_links_list ) ) : ?>
+									<?php $related_links_count = count( $related_links_list ); ?>
+									<?php if ( $rli === $related_links_count ) : ?>
 										<a href="#" id="add-new-related-link">+</a>
 									<?php endif ?>
 								</div>
 							</li>
-							<?php $rli++ ?>
+							<?php $rli++; ?>
 						<?php endforeach; ?>
+						<?php wp_nonce_field( 'group_related_link_settings', 'group-related-link-settings-nonce' ); ?>
 					</ul>
 				</div>
 			</div>
 
 			<?php if ( ! cboxol_is_portfolio() && cboxol_get_portfolio_group_type() ) : ?>
 				<div class="panel panel-default">
-					<div class="panel-heading"><?php esc_html_e( 'Portfolio List Settings', 'openlab-theme' ); ?></div>
+					<div class="panel-heading"><?php esc_html_e( 'Portfolio List Settings', 'commons-in-a-box' ); ?></div>
 					<div class="panel-body">
 						<p id="portfolio-list-settings-tag"><?php echo esc_html( $group_type->get_label( 'settings_help_text_portfoliolist' ) ); ?></p>
 
-						<?php $portfolio_list_enabled = openlab_portfolio_list_enabled_for_group() ?>
-						<?php $portfolio_list_heading = openlab_portfolio_list_group_heading() ?>
+						<?php $portfolio_list_enabled = openlab_portfolio_list_enabled_for_group(); ?>
+						<?php $portfolio_list_heading = openlab_portfolio_list_group_heading(); ?>
 						<div class="checkbox">
-							<label><input type="checkbox" name="group-show-portfolio-list" id="group-show-portfolio-list" value="1" <?php checked( $portfolio_list_enabled ) ?> /> <?php esc_html_e( 'Enable portfolio list', 'openlab-theme' ); ?></label>
+							<label><input type="checkbox" name="group-show-portfolio-list" id="group-show-portfolio-list" value="1" <?php checked( $portfolio_list_enabled ); ?> /> <?php esc_html_e( 'Enable portfolio list', 'commons-in-a-box' ); ?></label>
 						</div>
 
-						<label for="group-portfolio-list-heading"><?php esc_html_e( 'List Heading', 'openlab-theme' ); ?></label>
-						<input name="group-portfolio-list-heading" id="group-portfolio-list-heading" class="form-control" type="text" value="<?php echo esc_attr( $portfolio_list_heading ) ?>" />
+						<label for="group-portfolio-list-heading"><?php esc_html_e( 'List Heading', 'commons-in-a-box' ); ?></label>
+						<input name="group-portfolio-list-heading" id="group-portfolio-list-heading" class="form-control" type="text" value="<?php echo esc_attr( $portfolio_list_heading ); ?>" />
 					</div>
 				</div>
 			<?php endif; ?>
@@ -175,68 +209,82 @@ openlab_group_admin_js_data( $group_type );
 			<?php /* Braille settings */ ?>
 			<?php openlab_group_braille_toggle_markup(); ?>
 
-			<?php // Output some default BP fields so that the default routine runs properly.  ?>
+			<?php // Output some default BP fields so that the default routine runs properly. ?>
 			<input type="hidden" name="group-status" value="<?php echo esc_attr( groups_get_current_group()->status ); ?>" />
 
-			<p><input class="btn btn-primary" type="submit" value="<?php _e( 'Save Changes', 'openlab-theme' ) ?> &#xf138;" id="save" name="save" /></p>
-			<?php wp_nonce_field( 'groups_edit_group_settings' ) ?>
+			<?php do_action( 'bp_after_group_settings_admin' ); ?>
+			<p><input class="btn btn-primary" type="submit" value="<?php esc_attr_e( 'Save Changes', 'commons-in-a-box' ); ?> &#xf138;" id="save" name="save" /></p>
+			<?php wp_nonce_field( 'groups_edit_group_settings' ); ?>
 
 		<?php endif; ?>
 
 		<?php if ( bp_is_group_admin_screen( 'site-details' ) ) : ?>
-			<?php do_action( 'template_notices' ) ?>
+			<?php do_action( 'template_notices' ); ?>
 
 			<?php openlab_group_site_markup(); ?>
 			<?php openlab_group_site_privacy_settings_markup(); ?>
+			<?php openlab_group_site_member_role_settings_markup(); ?>
 
-			<p><input class="btn btn-primary" type="submit" value="<?php _e( 'Save Changes', 'openlab-theme' ) ?> &#xf138;" id="save" name="save" /></p>
+			<p><input class="btn btn-primary" type="submit" value="<?php esc_attr_e( 'Save Changes', 'commons-in-a-box' ); ?> &#xf138;" id="save" name="save" /></p>
 		<?php endif; ?>
 
 		<?php /* Group Avatar Settings */ ?>
 		<?php if ( bp_is_group_admin_screen( 'group-avatar' ) ) : ?>
 
-			<?php if ( 'upload-image' == bp_get_avatar_admin_step() ) : ?>
+			<?php if ( 'upload-image' === bp_get_avatar_admin_step() ) : ?>
 
 				<div class="panel panel-default">
-					<div class="panel-heading"><?php esc_html_e( 'Upload Avatar', 'openlab-theme' ); ?></div>
+					<div class="panel-heading"><?php esc_html_e( 'Upload Avatar', 'commons-in-a-box' ); ?></div>
 					<div class="panel-body">
 
-						<?php do_action( 'template_notices' ) ?>
+						<?php do_action( 'template_notices' ); ?>
 
 						<div class="row">
 							<div class="col-sm-8">
 								<div id="avatar-wrapper">
 									<div class="padded-img">
 
-										<?php if ( bp_get_group_avatar() ) :  ?>
-											<img class="img-responsive padded" src ="<?php echo bp_core_fetch_avatar( array( 'item_id' => bp_get_group_id(), 'object' => 'group', 'type' => 'full', 'html' => false ) ) ?>" alt="<?php echo bp_get_group_name(); ?>"/>
+										<?php if ( bp_get_group_avatar() ) : ?>
+											<?php
+											// phpcs:disable WordPress.Arrays.MultipleStatementAlignment
+											$group_avatar = bp_core_fetch_avatar(
+												[
+													'item_id' => bp_get_group_id(),
+													'object'  => 'group',
+													'type'    => 'full',
+													'html'    => false,
+												]
+											);
+											// phpcs:enable WordPress.Arrays.MultipleStatementAlignment
+											?>
+											<img class="img-responsive padded" src="<?php echo esc_attr( $group_avatar ); ?>" alt="<?php echo esc_attr( bp_get_group_name() ); ?>"/>
 										<?php else : ?>
-											<img class="img-responsive padded" src ="<?php echo _directory_uri(); ?>/images/avatar_blank.png" alt="avatar-blank"/>
-		<?php endif; ?>
+											<img class="img-responsive padded" src="<?php echo esc_attr( get_template_directory_uri() ); ?>/images/avatar_blank.png" alt="avatar-blank"/>
+										<?php endif; ?>
 
 									</div>
 								</div>
 							</div>
 							<div class="col-sm-16">
 
-								<p class="italics"><?php esc_html_e( 'Upload an image to use as an avatar for this group. The image will be shown on the Profile and in search results.', 'openlab-theme' ) ?></p>
+								<p class="italics"><?php esc_html_e( 'Upload an image to use as an avatar for this group. The image will be shown on the Profile and in search results.', 'commons-in-a-box' ); ?></p>
 
 								<p id="avatar-upload">
 								<div class="form-group form-inline">
 									<div class="form-control type-file-wrapper">
 										<input type="file" name="file" id="file" />
 									</div>
-									<input class="btn btn-primary top-align" type="submit" name="upload" id="upload" value="<?php _e( 'Upload Image', 'openlab-theme' ) ?>" />
+									<input class="btn btn-primary top-align" type="submit" name="upload" id="upload" value="<?php esc_html_e( 'Upload Image', 'commons-in-a-box' ); ?>" />
 									<input type="hidden" name="action" id="action" value="bp_avatar_upload" />
 								</div>
 								</p>
 
 								<?php if ( bp_get_user_has_avatar() ) : ?>
-									<p class="italics"><?php _e( "If you'd like to remove the existing avatar but not upload a new one, please use the delete avatar button.", 'openlab-theme' ) ?></p>
-									<a class="btn btn-primary no-deco" href="<?php echo bp_get_group_avatar_delete_link() ?>" title="<?php _e( 'Delete Avatar', 'openlab-theme' ) ?>"><?php _e( 'Delete Avatar', 'openlab-theme' ) ?></a>
+									<p class="italics"><?php esc_html_e( "If you'd like to remove the existing avatar but not upload a new one, please use the delete avatar button.", 'commons-in-a-box' ); ?></p>
+									<a class="btn btn-primary no-deco" href="<?php echo esc_attr( bp_get_group_avatar_delete_link() ); ?>"><?php esc_html_e( 'Delete Avatar', 'commons-in-a-box' ); ?></a>
 								<?php endif; ?>
 
-								<?php wp_nonce_field( 'bp_avatar_upload' ) ?>
+								<?php wp_nonce_field( 'bp_avatar_upload' ); ?>
 							</div>
 						</div>
 					</div>
@@ -244,27 +292,27 @@ openlab_group_admin_js_data( $group_type );
 
 			<?php endif; ?>
 
-			<?php if ( 'crop-image' == bp_get_avatar_admin_step() ) : ?>
+			<?php if ( 'crop-image' === bp_get_avatar_admin_step() ) : ?>
 
 				<div class="panel panel-default">
-					<div class="panel-heading"><?php esc_html_e( 'Crop Avatar', 'openlab-theme' ); ?></div>
+					<div class="panel-heading"><?php esc_html_e( 'Crop Avatar', 'commons-in-a-box' ); ?></div>
 					<div class="panel-body">
 
-						<img src="<?php bp_avatar_to_crop() ?>" id="avatar-to-crop" class="avatar" alt="<?php _e( 'Avatar to crop', 'openlab-theme' ) ?>" />
+						<img src="<?php bp_avatar_to_crop(); ?>" id="avatar-to-crop" class="avatar" alt="<?php esc_html_e( 'Avatar to crop', 'commons-in-a-box' ); ?>" />
 
 						<div id="avatar-crop-pane">
-							<img src="<?php bp_avatar_to_crop() ?>" id="avatar-crop-preview" class="avatar" alt="<?php _e( 'Avatar preview', 'openlab-theme' ) ?>" />
+							<img src="<?php bp_avatar_to_crop(); ?>" id="avatar-crop-preview" class="avatar" alt="<?php esc_html_e( 'Avatar preview', 'commons-in-a-box' ); ?>" />
 						</div>
 
-						<input class="btn btn-primary" type="submit" name="avatar-crop-submit" id="avatar-crop-submit" value="<?php _e( 'Crop Image', 'openlab-theme' ) ?>" />
+						<input class="btn btn-primary" type="submit" name="avatar-crop-submit" id="avatar-crop-submit" value="<?php esc_html_e( 'Crop Image', 'commons-in-a-box' ); ?>" />
 
-						<input type="hidden" name="image_src" id="image_src" value="<?php bp_avatar_to_crop_src() ?>" />
+						<input type="hidden" name="image_src" id="image_src" value="<?php bp_avatar_to_crop_src(); ?>" />
 						<input type="hidden" id="x" name="x" />
 						<input type="hidden" id="y" name="y" />
 						<input type="hidden" id="w" name="w" />
 						<input type="hidden" id="h" name="h" />
 
-						<?php wp_nonce_field( 'bp_avatar_cropstore' ) ?>
+						<?php wp_nonce_field( 'bp_avatar_cropstore' ); ?>
 					</div>
 				</div>
 
@@ -277,29 +325,42 @@ openlab_group_admin_js_data( $group_type );
 
 			<?php do_action( 'bp_before_group_manage_members_admin' ); ?>
 
-			<?php do_action( 'template_notices' ) ?>
+			<?php do_action( 'template_notices' ); ?>
 
 			<div class="bp-widget">
-				<h4><?php _e( 'Administrators', 'openlab-theme' ); ?></h4>
+				<h4><?php esc_html_e( 'Administrators', 'commons-in-a-box' ); ?></h4>
 
 				<?php if ( bp_has_members( '&include=' . bp_group_admin_ids() ) ) : ?>
 
 					<div id="group-manage-admins-members" class="group-list item-list inline-element-list row group-manage-members">
 
-						<?php while ( bp_members() ) : bp_the_member(); ?>
+						<?php
+						while ( bp_members() ) :
+							bp_the_member();
+
+							$user_avatar = bp_core_fetch_avatar(
+								array(
+									'item_id' => bp_get_member_user_id(),
+									'object'  => 'member',
+									'type'    => 'full',
+									'html'    => false,
+								)
+							);
+							?>
 							<div class="col-md-8 col-xs-12 group-item">
 								<div class="group-item-wrapper admins <?php echo ( count( bp_group_admin_ids( false, 'array' ) ) > 1 ? '' : 'no-btn' ); ?>">
 									<div class="row info-row">
 										<div class="col-md-9 col-xs-7">
-											<a href="<?php bp_member_permalink(); ?>"><img class="img-responsive" src ="<?php echo bp_core_fetch_avatar( array( 'item_id' => bp_get_member_user_id(), 'object' => 'member', 'type' => 'full', 'html' => false ) ) ?>" alt="Profile picture of <?php echo bp_get_member_name(); ?>"/></a>
+											<?php // translators: group administrator name ?>
+											<a href="<?php bp_member_permalink(); ?>"><img class="img-responsive" src="<?php echo esc_attr( $user_avatar ); ?>" alt="<?php echo esc_attr( sprintf( __( 'Profile picture of %s', 'commons-in-a-box' ), bp_get_member_name() ) ); ?>" /></a>
 										</div>
 										<div class="col-md-15 col-xs-17">
 											<p class="h5">
-												<a class="no-deco truncate-on-the-fly hyphenate" href="<?php bp_member_permalink() ?>" data-basevalue="28" data-minvalue="20" data-basewidth="152"><?php bp_member_name(); ?></a><span class="original-copy hidden"><?php bp_member_name(); ?></span>
+												<a class="no-deco truncate-on-the-fly hyphenate" href="<?php bp_member_permalink(); ?>" data-basevalue="28" data-minvalue="20" data-basewidth="152"><?php bp_member_name(); ?></a><span class="original-copy hidden"><?php bp_member_name(); ?></span>
 											</p>
 											<?php if ( count( bp_group_admin_ids( false, 'array' ) ) > 1 ) : ?>
 											<ul class="group-member-actions">
-												<li><a class="confirm admin-demote-to-member admins" href="<?php bp_group_member_demote_link( bp_get_member_user_id() ); ?>"><?php _e( 'Demote to Member', 'openlab-theme' ); ?></a></li>
+												<li><a class="confirm admin-demote-to-member admins" href="<?php bp_group_member_demote_link( bp_get_member_user_id() ); ?>"><?php esc_html_e( 'Demote to Member', 'commons-in-a-box' ); ?></a></li>
 											</ul>
 											<?php endif; ?>
 										</div>
@@ -316,26 +377,39 @@ openlab_group_admin_js_data( $group_type );
 
 			<?php if ( bp_group_has_moderators() ) : ?>
 				<div class="bp-widget">
-					<h4><?php _e( 'Moderators', 'openlab-theme' ); ?></h4>
+					<h4><?php esc_html_e( 'Moderators', 'commons-in-a-box' ); ?></h4>
 
 						<?php if ( bp_has_members( '&include=' . bp_group_mod_ids() ) ) : ?>
 						<div id="group-manage-moderators-members" class="item-list single-line inline-element-list row group-manage-members group-list">
 
-							<?php while ( bp_members() ) : bp_the_member(); ?>
+							<?php
+							while ( bp_members() ) :
+								bp_the_member();
+
+								$user_avatar = bp_core_fetch_avatar(
+									array(
+										'item_id' => bp_get_member_user_id(),
+										'object'  => 'member',
+										'type'    => 'full',
+										'html'    => false,
+									)
+								);
+								?>
 								<div class="col-md-8 col-xs-12 group-item">
 									<div class="group-item-wrapper moderators">
 										<div class="row info-row">
 											<div class="col-md-9 col-xs-7">
-												<a href="<?php bp_member_permalink(); ?>"><img class="img-responsive" src ="<?php echo bp_core_fetch_avatar( array( 'item_id' => bp_get_member_user_id(), 'object' => 'member', 'type' => 'full', 'html' => false ) ) ?>" alt="<?php printf( esc_html__( 'Profile picture of %s', 'openlab-theme' ), esc_attr( bp_get_member_name() ) ); ?>"/></a>
+												<?php // translators: group member name ?>
+												<a href="<?php bp_member_permalink(); ?>"><img class="img-responsive" src="<?php echo esc_attr( $user_avatar ); ?>" alt="<?php printf( esc_html__( 'Profile picture of %s', 'commons-in-a-box' ), esc_attr( bp_get_member_name() ) ); ?>"/></a>
 											</div>
 											<div class="col-md-15 col-xs-17">
 												<p class="h5">
-													<a class="no-deco truncate-on-the-fly hyphenate" href="<?php bp_member_permalink() ?>" data-basevalue="28" data-minvalue="20" data-basewidth="152"><?php bp_member_name(); ?></a><span class="original-copy hidden"><?php bp_member_name(); ?></span>
+													<a class="no-deco truncate-on-the-fly hyphenate" href="<?php bp_member_permalink(); ?>" data-basevalue="28" data-minvalue="20" data-basewidth="152"><?php bp_member_name(); ?></a><span class="original-copy hidden"><?php bp_member_name(); ?></span>
 												</p>
 
 												<ul class="group-member-actions">
-													<li><a href="<?php bp_group_member_promote_admin_link( array( 'user_id' => bp_get_member_user_id() ) ); ?>" class="confirm mod-promote-to-admin" title="<?php _e( 'Promote to Admin', 'openlab-theme' ); ?>"><?php _e( 'Promote to Admin', 'openlab-theme' ); ?></a></li>
-													<li><a class="confirm mod-demote-to-member" href="<?php bp_group_member_demote_link( bp_get_member_user_id() ); ?>"><?php _e( 'Demote to Member', 'openlab-theme' ); ?></a></li>
+													<li><a href="<?php bp_group_member_promote_admin_link( array( 'user_id' => bp_get_member_user_id() ) ); ?>" class="confirm mod-promote-to-admin"><?php esc_html_e( 'Promote to Admin', 'commons-in-a-box' ); ?></a></li>
+													<li><a class="confirm mod-demote-to-member" href="<?php bp_group_member_demote_link( bp_get_member_user_id() ); ?>"><?php esc_html_e( 'Demote to Member', 'commons-in-a-box' ); ?></a></li>
 												</ul>
 											</div>
 										</div>
@@ -351,9 +425,9 @@ openlab_group_admin_js_data( $group_type );
 
 
 			<div class="bp-widget">
-				<h4><?php _e( 'Members', 'openlab-theme' ); ?></h4>
+				<h4><?php esc_html_e( 'Members', 'commons-in-a-box' ); ?></h4>
 
-				<?php if ( bp_group_has_members( 'per_page=15&exclude_banned=false' ) ) : ?>
+				<?php if ( bp_group_has_members( 'per_page=48&exclude_banned=0' ) ) : ?>
 
 					<?php if ( bp_group_member_needs_pagination() ) : ?>
 
@@ -372,33 +446,52 @@ openlab_group_admin_js_data( $group_type );
 						<?php endif; ?>
 
 					<div id="group-manage-members" class="item-list inline-element-list row group-manage-members group-list">
-						<?php while ( bp_group_members() ) : bp_group_the_member(); ?>
+						<?php
+						while ( bp_group_members() ) :
+							bp_group_the_member();
+
+							$user_avatar = bp_core_fetch_avatar(
+								array(
+									'item_id' => bp_get_member_user_id(),
+									'object'  => 'member',
+									'type'    => 'full',
+									'html'    => false,
+								)
+							);
+
+							?>
 
 							<div class="col-md-8 col-xs-12 group-item">
 								<div class="group-item-wrapper members">
 									<div class="row info-row">
 										<div class="col-md-9 col-xs-7">
-											<a href="<?php bp_member_permalink(); ?>"><img class="img-responsive" src ="<?php echo bp_core_fetch_avatar( array( 'item_id' => bp_get_member_user_id(), 'object' => 'member', 'type' => 'full', 'html' => false ) ) ?>" alt="<?php printf( esc_html__( 'Profile picture of %s', 'openlab-theme' ), esc_attr( bp_get_member_name() ) ); ?>"/></a>
-											<span class="italics"><?php if ( bp_get_group_member_is_banned() ) { _e( '(banned)', 'openlab-theme' );} ?></span>
+											<?php // translators: group member name ?>
+											<a href="<?php bp_member_permalink(); ?>"><img class="img-responsive" src="<?php echo esc_attr( $user_avatar ); ?>" alt="<?php printf( esc_html__( 'Profile picture of %s', 'commons-in-a-box' ), esc_attr( bp_get_member_name() ) ); ?>"/></a>
+											<span class="italics">
+											<?php
+											if ( bp_get_group_member_is_banned() ) {
+												esc_html_e( '(banned)', 'commons-in-a-box' );}
+											?>
+											</span>
 										</div>
 										<div class="col-md-15 col-xs-17">
 											<p class="h5">
-												<a class="no-deco truncate-on-the-fly hyphenate" href="<?php bp_member_permalink() ?>" data-basevalue="28" data-minvalue="20" data-basewidth="152"><?php bp_member_name(); ?></a><span class="original-copy hidden"><?php bp_member_name(); ?></span>
+												<a class="no-deco truncate-on-the-fly hyphenate" href="<?php bp_member_permalink(); ?>" data-basevalue="28" data-minvalue="20" data-basewidth="152"><?php bp_member_name(); ?></a><span class="original-copy hidden"><?php bp_member_name(); ?></span>
 											</p>
 
 											<ul class="group-member-actions">
 												<?php if ( bp_get_group_member_is_banned() ) : ?>
-													<li><a href="<?php bp_group_member_unban_link(); ?>" class="confirm member-unban" title="<?php _e( 'Unban this member', 'openlab-theme' ); ?>"><?php _e( 'Remove Ban', 'openlab-theme' ); ?></a></li>
+													<li><a href="<?php bp_group_member_unban_link(); ?>" class="confirm member-unban"><?php esc_html_e( 'Remove Ban', 'commons-in-a-box' ); ?></a></li>
 
 												<?php else : ?>
 
-													<li><a href="<?php bp_group_member_ban_link(); ?>" class="confirm member-ban" title="<?php _e( 'Kick and ban this member', 'openlab-theme' ); ?>"><?php _e( 'Kick &amp; Ban', 'openlab-theme' ); ?></a></li>
-													<li><a href="<?php bp_group_member_promote_mod_link(); ?>" class="confirm member-promote-to-mod" title="<?php _e( 'Promote to Mod', 'openlab-theme' ); ?>"><?php _e( 'Promote to Mod', 'openlab-theme' ); ?></a></li>
-													<li><a href="<?php bp_group_member_promote_admin_link(); ?>" class="confirm member-promote-to-admin" title="<?php _e( 'Promote to Admin', 'openlab-theme' ); ?>"><?php _e( 'Promote to Admin', 'openlab-theme' ); ?></a></li>
+													<li><a href="<?php bp_group_member_ban_link(); ?>" class="confirm member-ban"><?php esc_html_e( 'Kick &amp; Ban', 'commons-in-a-box' ); ?></a></li>
+													<li><a href="<?php bp_group_member_promote_mod_link(); ?>" class="confirm member-promote-to-mod"><?php esc_html_e( 'Promote to Mod', 'commons-in-a-box' ); ?></a></li>
+													<li><a href="<?php bp_group_member_promote_admin_link(); ?>" class="confirm member-promote-to-admin"><?php esc_html_e( 'Promote to Admin', 'commons-in-a-box' ); ?></a></li>
 
 												<?php endif; ?>
 
-												<li><a href="<?php bp_group_member_remove_link(); ?>" class="confirm" title="<?php _e( 'Remove this member', 'openlab-theme' ); ?>"><?php _e( 'Remove from group', 'openlab-theme' ); ?></a></li>
+												<li><a href="<?php bp_group_member_remove_link(); ?>" class="confirm"><?php esc_html_e( 'Remove from group', 'commons-in-a-box' ); ?></a></li>
 
 											</ul>
 
@@ -414,7 +507,7 @@ openlab_group_admin_js_data( $group_type );
 				<?php else : ?>
 
 					<div id="message" class="info">
-						<p class="bold"><?php _e( 'This group has no members.', 'openlab-theme' ); ?></p>
+						<p class="bold"><?php esc_html_e( 'This group has no members.', 'commons-in-a-box' ); ?></p>
 					</div>
 
 				<?php endif; ?>
@@ -430,27 +523,39 @@ openlab_group_admin_js_data( $group_type );
 
 			<?php do_action( 'bp_before_group_membership_requests_admin' ); ?>
 
-			<?php do_action( 'template_notices' ) ?>
+			<?php do_action( 'template_notices' ); ?>
 
 				<?php if ( bp_group_has_membership_requests() ) : ?>
 
 				<div id="group-manage-request-list" class="group-list item-list inline-element-list row group-manage-requests group-manage-members">
-					<?php while ( bp_group_membership_requests() ) : bp_group_the_membership_request(); ?>
+					<?php
+					while ( bp_group_membership_requests() ) :
+						bp_group_the_membership_request();
+
+						$user_avatar = bp_core_fetch_avatar(
+							array(
+								'item_id' => $GLOBALS['requests_template']->request->user_id,
+								'object'  => 'member',
+								'type'    => 'full',
+								'html'    => false,
+							)
+						);
+						?>
 						<div class="col-md-8 col-xs-12 group-item">
 							<div class="group-item-wrapper">
 								<div class="row info-row">
 									<div class="col-md-9 col-xs-7">
-										<img class="img-responsive" src ="<?php echo bp_core_fetch_avatar( array( 'item_id' => $GLOBALS['requests_template']->request->user_id, 'object' => 'member', 'type' => 'full', 'html' => false ) ) ?>" />
+										<img class="img-responsive" src="<?php echo esc_attr( $user_avatar ); ?>" />
 									</div>
 
 									<div class="col-md-15 col-xs-17">
 										<h4>
-											<?php bp_group_request_user_link() ?>
+											<?php bp_group_request_user_link(); ?>
 										</h4>
 
 										<ul class="group-member-actions">
-											<li><a href="<?php bp_group_request_accept_link() ?>"><?php _e( 'Accept', 'openlab-theme' ); ?></a></li>
-											<li><a href="<?php bp_group_request_reject_link() ?>"><?php _e( 'Reject', 'openlab-theme' ); ?></a></li>
+											<li><a href="<?php bp_group_request_accept_link(); ?>"><?php esc_html_e( 'Accept', 'commons-in-a-box' ); ?></a></li>
+											<li><a href="<?php bp_group_request_reject_link(); ?>"><?php esc_html_e( 'Reject', 'commons-in-a-box' ); ?></a></li>
 										</ul>
 									</div>
 								</div>
@@ -463,7 +568,7 @@ openlab_group_admin_js_data( $group_type );
 			<?php else : ?>
 
 				<div id="message" class="info">
-					<p><?php _e( 'There are no pending membership requests.', 'openlab-theme' ); ?></p>
+					<p><?php esc_html_e( 'There are no pending membership requests.', 'commons-in-a-box' ); ?></p>
 				</div>
 
 			<?php endif; ?>
@@ -480,7 +585,7 @@ openlab_group_admin_js_data( $group_type );
 			<?php do_action( 'template_notices' ); ?>
 
 			<div id="message" class="bp-template-notice error margin-bottom">
-				<p><?php esc_html_e( 'WARNING: Deleting this item will completely remove ALL content associated with it. There is no way back, please be careful with this option.', 'openlab-theme' ); ?></p>
+				<p><?php esc_html_e( 'WARNING: Deleting this item will completely remove ALL content associated with it. There is no way back, please be careful with this option.', 'commons-in-a-box' ); ?></p>
 			</div>
 
 			<div class="checkbox no-margin no-margin-bottom">
@@ -490,19 +595,19 @@ openlab_group_admin_js_data( $group_type );
 								} else {
 									document.getElementById('delete-group-button').disabled = 'disabled';
 								}" />
-					<?php esc_html_e( 'I understand the consequences of deletion.', 'openlab-theme' ); ?>
+					<?php esc_html_e( 'I understand the consequences of deletion.', 'commons-in-a-box' ); ?>
 				</label>
 			</div>
 
 			<?php do_action( 'bp_after_group_delete_admin' ); ?>
 
 			<div class="submit">
-				<input class="btn btn-primary btn-margin btn-margin-top" type="submit" disabled="disabled" value="<?php _e( 'Delete', 'openlab-theme' ) ?> &#xf138;" id="delete-group-button" name="delete-group-button" />
+				<input class="btn btn-primary btn-margin btn-margin-top" type="submit" disabled="disabled" value="<?php esc_html_e( 'Delete', 'commons-in-a-box' ); ?> &#xf138;" id="delete-group-button" name="delete-group-button" />
 			</div>
 
-			<input type="hidden" name="group-id" id="group-id" value="<?php bp_group_id() ?>" />
+			<input type="hidden" name="group-id" id="group-id" value="<?php bp_group_id(); ?>" />
 
-			<?php wp_nonce_field( 'groups_delete_group' ) ?>
+			<?php wp_nonce_field( 'groups_delete_group' ); ?>
 
 		<?php endif; ?>
 
@@ -512,10 +617,10 @@ openlab_group_admin_js_data( $group_type );
 		?>
 
 <?php /* This is important, don't forget it */ ?>
-		<input type="hidden" name="group-id" id="group-id" value="<?php bp_group_id() ?>" />
+		<input type="hidden" name="group-id" id="group-id" value="<?php bp_group_id(); ?>" />
 	</div><!--#group-create-body-->
 
-<?php do_action( 'bp_after_group_admin_content' ) ?>
+<?php do_action( 'bp_after_group_admin_content' ); ?>
 
 </form><!-- #openlab-group-settings-form -->
 

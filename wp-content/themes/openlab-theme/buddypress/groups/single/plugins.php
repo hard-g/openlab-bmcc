@@ -18,29 +18,29 @@ if ( function_exists( 'openlab_eo_is_event_detail_screen' ) && openlab_eo_is_eve
 <div id="single-course-body" class="<?php echo esc_attr( $div_class ); ?>">
 	<div class="row submenu-row"><div class="col-md-24">
 			<div class="submenu">
-				<?php if ( $bp->current_action == 'invite-anyone' || $bp->current_action == 'notifications' ) : ?>
+				<?php if ( bp_is_current_action( 'invite-anyone' ) || bp_is_current_action( 'notifications' ) ) : ?>
 
 					<ul class="nav nav-inline">
 						<?php openlab_group_membership_tabs(); ?>
 					</ul>
-				<?php elseif ( $bp->current_action == 'docs' ) :  ?>
+				<?php elseif ( bp_is_current_action( 'docs' ) ) : ?>
 
 					<ul class="nav nav-inline">
 						<?php openlab_docs_tabs(); ?>
 					</ul>
 
-				<?php elseif ( $bp->current_action == BP_GROUP_DOCUMENTS_SLUG ) :  ?>
+				<?php elseif ( bp_is_current_action( BP_GROUP_DOCUMENTS_SLUG ) ) : ?>
 
 					<div class="row">
 						<div class="submenu col-sm-17">
 							<ul class="nav nav-inline">
-								<li class="current-menu-item"><a href=""><?php esc_html_e( 'Files', 'openlab-theme' ); ?></a></li>
+								<li class="current-menu-item"><a href=""><?php esc_html_e( 'Files', 'commons-in-a-box' ); ?></a></li>
 							</ul>
 						</div>
-						<div class="group-count col-sm-7 pull-right"><?php echo openlab_get_files_count(); ?></div>
+						<div class="group-count col-sm-7 pull-right"><?php echo esc_html( openlab_get_files_count() ); ?></div>
 					</div>
 
-				<?php elseif ( $bp->current_component === 'events' || $bp->current_action === 'events' ) :  ?>
+				<?php elseif ( bp_is_current_component( 'events' ) || bp_is_current_action( 'events' ) ) : ?>
 
 					<?php //do nothing - event sub nav is handled via template override in buddypress/groups/single/subnav-events.php ?>
 

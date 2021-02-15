@@ -22,16 +22,16 @@ function openlab_bp_docs_template( $template ) {
 	global $bp;
 
 	switch ( $bp->bp_docs->current_view ) {
-		case 'edit' :
-		case 'create' :
+		case 'edit':
+		case 'create':
 			$template = bp_locate_template( 'docs/single/edit.php' );
 			break;
 
-		case 'single' :
+		case 'single':
 			$template = bp_locate_template( 'docs/single/index.php' );
 			break;
 
-		case 'list' :
+		case 'list':
 			$template = bp_locate_template( 'docs/docs-loop.php' );
 			break;
 	}
@@ -39,10 +39,13 @@ function openlab_bp_docs_template( $template ) {
 }
 add_filter( 'bp_docs_template', 'openlab_bp_docs_template' );
 
-add_action( 'bp_docs_setup_theme_compat', function( $theme_compat ) {
-	remove_action( 'bp_replace_the_content', array( $theme_compat, 'single_content' ) );
-	remove_action( 'bp_replace_the_content', array( $theme_compat, 'create_content' ) );
-} );
+add_action(
+	'bp_docs_setup_theme_compat',
+	function( $theme_compat ) {
+		remove_action( 'bp_replace_the_content', array( $theme_compat, 'single_content' ) );
+		remove_action( 'bp_replace_the_content', array( $theme_compat, 'create_content' ) );
+	}
+);
 
 /**
  * BuddyPress Docs directory filters should be disabled.
@@ -63,7 +66,7 @@ add_filter( 'bp_docs_force_enable_at_group_creation', '__return_true' );
  * @param type $menu_template
  * @return string
  */
-function openlab_hide_docs_native_menu( $menu_template ) {
+function openlab_hide_docs_native_menu() {
 	return bp_locate_template( 'docs/docs-header.php' );
 }
 add_filter( 'bp_docs_header_template', 'openlab_hide_docs_native_menu' );
@@ -79,12 +82,12 @@ add_filter( 'bp_docs_header_template', 'openlab_hide_docs_native_menu' );
 function openlab_allow_super_admins_to_edit_bp_docs( $user_can, $action ) {
 	global $bp;
 
-	if ( 'edit' == $action ) {
-		if ( is_super_admin() || bp_loggedin_user_id() == get_the_author_meta( 'ID' ) || $user_can ) {
-			$user_can = true;
+	if ( 'edit' === $action ) {
+		if ( is_super_admin() || bp_loggedin_user_id() === get_the_author_meta( 'ID' ) || $user_can ) {
+			$user_can                                 = true;
 			$bp->bp_docs->current_user_can[ $action ] = 'yes';
 		} else {
-			$user_can = false;
+			$user_can                                 = false;
 			$bp->bp_docs->current_user_can[ $action ] = 'no';
 		}
 	}
@@ -99,11 +102,13 @@ add_filter( 'bp_docs_current_user_can', 'openlab_allow_super_admins_to_edit_bp_d
  */
 function openlab_get_group_doc_count( $group_id ) {
 	$cache_key = $group_id . wp_cache_get_last_changed( 'posts' );
-	$count = wp_cache_get( $cache_key, 'bp_docs_group_doc_counts' );
+	$count     = wp_cache_get( $cache_key, 'bp_docs_group_doc_counts' );
 	if ( false === $count ) {
-		$dq = new BP_Docs_Query( array(
-			'group_id' => $group_id,
-		) );
+		$dq = new BP_Docs_Query(
+			array(
+				'group_id' => $group_id,
+			)
+		);
 
 		add_filter( 'bp_docs_pre_query_args', 'openlab_filter_docs_query_for_count' );
 		$doc_query = $dq->get_wp_query();
@@ -117,7 +122,7 @@ function openlab_get_group_doc_count( $group_id ) {
 }
 
 function openlab_filter_docs_query_for_count( $args ) {
-	$args['fields'] = 'ids';
+	$args['fields']         = 'ids';
 	$args['posts_per_page'] = -1;
 	return $args;
 }
@@ -181,3 +186,29 @@ function openlab_docs_associated_group_id_field() {
 	printf( '<input type="hidden" name="associated_group_id" id="associated_group_id" value="%s" />', esc_attr( bp_get_current_group_id() ) );
 }
 add_action( 'bp_docs_closing_meta_box', 'openlab_docs_associated_group_id_field' );
+
+/**
+ * Checks whether Docs is enabled for a group.
+ *
+ * @param int $group_id Group ID.
+ * @return bool
+ */
+function openlab_is_docs_enabled_for_group( $group_id = null ) {
+	if ( null === $group_id ) {
+		$group_id = bp_get_current_group_id();
+	}
+
+	// Default to true in case no value is found.
+	if ( ! $group_id ) {
+		return true;
+	}
+
+	$group_settings = bp_docs_get_group_settings( $group_id );
+
+	// Default to true in case no value is found.
+	if ( ! $group_settings || ! isset( $group_settings['group-enable'] ) ) {
+		return true;
+	}
+
+	return ! empty( $group_settings['group-enable'] );
+}

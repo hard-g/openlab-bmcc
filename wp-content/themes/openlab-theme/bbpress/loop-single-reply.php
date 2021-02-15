@@ -18,7 +18,7 @@
 		<?php if ( bbp_is_single_user_replies() ) : ?>
 
 			<span class="bbp-header">
-				<?php _e( 'in reply to: ', 'bbpress' ); ?>
+				<?php esc_html_e( 'in reply to: ', 'bbpress' ); ?>
 				<a class="bbp-topic-permalink" href="<?php bbp_topic_permalink( bbp_get_reply_topic_id() ); ?>"><?php bbp_topic_title( bbp_get_reply_topic_id() ); ?></a>
 			</span>
 
@@ -42,7 +42,14 @@
 
 		<?php do_action( 'bbp_theme_before_reply_author_details' ); ?>
 
-		<?php bbp_reply_author_link( array( 'sep' => '<br />', 'show_role' => true ) ); ?>
+		<?php
+		bbp_reply_author_link(
+			array(
+				'sep'       => '<br />',
+				'show_role' => true,
+			)
+		);
+		?>
 
 		<?php if ( bbp_is_user_keymaster() ) : ?>
 

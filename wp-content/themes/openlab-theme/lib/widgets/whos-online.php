@@ -15,14 +15,14 @@ class OpenLab_WhosOnline_Widget extends WP_Widget {
 	 */
 	public function __construct() {
 		$this->default_args = array(
-			'title' => __( 'Who\'s Online?', 'openlab-theme' ),
+			'title' => __( 'Who\'s Online?', 'commons-in-a-box' ),
 		);
 
 		$widget_ops = array(
 			'classname'   => 'whos-online',
-			'description' => __( 'Avatars of recently active members.', 'openlab-theme' ),
+			'description' => __( 'Avatars of recently active members.', 'commons-in-a-box' ),
 		);
-		parent::__construct( 'openlab-whos-online', __( 'Who\'s Online?', 'openlab-theme' ), $widget_ops );
+		parent::__construct( 'openlab-whos-online', __( 'Who\'s Online?', 'commons-in-a-box' ), $widget_ops );
 	}
 
 	/**
@@ -36,12 +36,12 @@ class OpenLab_WhosOnline_Widget extends WP_Widget {
 	public function widget( $args, $instance ) {
 		global $wpdb, $bp;
 		$avatar_args = array(
-			'type' => 'full',
-			'width' => 45,
+			'type'   => 'full',
+			'width'  => 45,
 			'height' => 45,
-			'class' => 'avatar',
-			'id' => false,
-			'alt' => __( 'Member avatar', 'buddypress' ),
+			'class'  => 'avatar',
+			'id'     => false,
+			'alt'    => __( 'Member avatar', 'buddypress' ),
 		);
 
 		$r = array_merge( $this->default_args, $instance );
@@ -49,47 +49,56 @@ class OpenLab_WhosOnline_Widget extends WP_Widget {
 		$rs = wp_cache_get( 'whos_online', 'openlab' );
 		if ( ! $rs ) {
 			$sql = "SELECT user_id FROM {$bp->members->table_name_last_activity} where component = 'members' AND type ='last_activity' and date_recorded >= DATE_SUB( UTC_TIMESTAMP(), INTERVAL 1 HOUR ) order by date_recorded desc limit 20";
+			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 			$rs = $wpdb->get_col( $sql );
 			wp_cache_set( 'whos_online', $rs, 'openlab', 5 * 60 );
 		}
 
 		$ids = array_map( 'intval', $rs );
 
+		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		echo $args['before_widget'];
 
 		if ( $ids ) {
 			$members_args = array(
 				'include' => $ids,
-				'type' => 'active',
+				'type'    => 'active',
 			);
 
-			$x = 0;
-            ?><h2 class="title uppercase"><?php echo esc_html( $r['title'] ); ?></h2><?php
-			if ( bp_has_members( $members_args ) ) :
-				$x += 1;
-				?>
+			?><h2 class="title uppercase"><?php echo esc_html( $r['title'] ); ?></h2>
+			<?php if ( bp_has_members( $members_args ) ) : ?>
 
 				<div class="avatar-block left-block-content clearfix">
-					<?php
-					while ( bp_members() ) : bp_the_member();
-						global $members_template;
-						$member = $members_template->member;
+				<?php
+				while ( bp_members() ) :
+					bp_the_member();
+					global $members_template;
+					$member = $members_template->member;
 
-						$member_type = cboxol_get_user_member_type( $member->ID );
-						$member_type_label = ! is_wp_error( $member_type ) ? $member_type->get_label( 'singular' ) : '';
-						?>
+					$member_type       = cboxol_get_user_member_type( $member->ID );
+					$member_type_label = ! is_wp_error( $member_type ) ? $member_type->get_label( 'singular' ) : '';
 
-						<?php ?>
+					$user_avatar = bp_core_fetch_avatar(
+						array(
+							'item_id' => $member->ID,
+							'object'  => 'member',
+							'type'    => 'full',
+							'html'    => false,
+						)
+					);
+					?>
+
 						<div class="cuny-member">
 							<div class="item-avatar">
-								<a href="<?php bp_member_permalink() ?>"><img class="img-responsive" src ="<?php echo bp_core_fetch_avatar( array( 'item_id' => $member->ID, 'object' => 'member', 'type' => 'full', 'html' => false ) ) ?>" alt="<?php echo $member->fullname; ?>"/></a>
+								<a href="<?php bp_member_permalink(); ?>"><img class="img-responsive" src="<?php echo esc_attr( $user_avatar ); ?>" alt="<?php echo esc_attr( $member->fullname ); ?>"/></a>
 							</div>
 							<div class="cuny-member-info">
-								<a href="<?php bp_member_permalink() ?>"><?php bp_member_name() ?></a><br />
-								<?php
-								do_action( 'bp_directory_members_item' );
-								?><?php echo esc_html( $member_type_label ); ?>,
-								<?php bp_member_last_active() ?>
+								<a href="<?php bp_member_permalink(); ?>"><?php bp_member_name(); ?></a><br />
+							<?php
+							do_action( 'bp_directory_members_item' );
+							?>
+								<?php echo esc_html( $member_type_label ); ?>,
+								<?php bp_member_last_active(); ?>
 							</div>
 						</div>
 
@@ -99,6 +108,7 @@ class OpenLab_WhosOnline_Widget extends WP_Widget {
 			endif;
 		}
 
+		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		echo $args['after_widget'];
 	}
 
@@ -113,7 +123,7 @@ class OpenLab_WhosOnline_Widget extends WP_Widget {
 		$r = array_merge( $this->default_args, $instance );
 
 		?>
-		<p><label for="<?php echo $this->get_field_id( 'title' ); ?>"><?php esc_html_e( 'Title:', 'openlab-theme' ); ?> <input class="widefat" id="<?php echo $this->get_field_id( 'title' ); ?>" name="<?php echo $this->get_field_name( 'title' ); ?>" type="text" value="<?php echo esc_attr( $r['title'] ); ?>" style="width: 100%" /></label></p>
+		<p><label for="<?php echo esc_attr( $this->get_field_id( 'title' ) ); ?>"><?php esc_html_e( 'Title:', 'commons-in-a-box' ); ?> <input class="widefat" id="<?php echo esc_attr( $this->get_field_id( 'title' ) ); ?>" name="<?php echo esc_attr( $this->get_field_name( 'title' ) ); ?>" type="text" value="<?php echo esc_attr( $r['title'] ); ?>" style="width: 100%" /></label></p>
 		<?php
 	}
 
@@ -125,9 +135,10 @@ class OpenLab_WhosOnline_Widget extends WP_Widget {
 	 * @param array $new_instance New options.
 	 * @param array $old_instance Old options.
 	 */
+	// phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundInExtendedClassAfterLastUsed
 	public function update( $new_instance, $old_instance ) {
 		return array(
-			'title' => sanitize_text_field( strip_tags( $new_instance['title'] ) ),
+			'title' => sanitize_text_field( wp_strip_all_tags( $new_instance['title'] ) ),
 		);
 	}
 }

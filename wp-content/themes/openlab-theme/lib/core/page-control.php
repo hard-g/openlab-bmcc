@@ -15,10 +15,10 @@
  */
 function openlab_custom_page( $slug, $title, $parent_obj = null ) {
 
-	$post_id = -1;
-	$author_id = 1;
+	$post_id    = -1;
+	$author_id  = 1;
 	$check_path = $slug;
-	$parent_id = 0;
+	$parent_id  = 0;
 
 	if ( $parent_obj && ! empty( $parent_obj ) ) {
 		$ancestor_path = array();
@@ -28,7 +28,7 @@ function openlab_custom_page( $slug, $title, $parent_obj = null ) {
 			}
 
 			$ancestor_path[] = $parent->post_name;
-			$parent_id = $parent->ID;
+			$parent_id       = $parent->ID;
 		}
 
 		$check_path = implode( '/', $ancestor_path ) . '/' . $slug;
@@ -38,13 +38,13 @@ function openlab_custom_page( $slug, $title, $parent_obj = null ) {
 		$post_id = wp_insert_post(
 			array(
 				'comment_status' => 'closed',
-				'ping_status' => 'closed',
-				'post_author' => $author_id,
-				'post_name' => $slug,
-				'post_title' => $title,
-				'post_status' => 'publish',
-				'post_type' => 'page',
-				'post_parent' => $parent_id,
+				'ping_status'    => 'closed',
+				'post_author'    => $author_id,
+				'post_name'      => $slug,
+				'post_title'     => $title,
+				'post_status'    => 'publish',
+				'post_type'      => 'page',
+				'post_parent'    => $parent_id,
 			)
 		);
 	} else {
@@ -59,9 +59,9 @@ function openlab_custom_page( $slug, $title, $parent_obj = null ) {
  */
 function openlab_custom_pages() {
 	$about_page_obj = get_page_by_path( 'about' );
-	openlab_custom_page( 'calendar', __( 'Calendar', 'openlab-theme' ), array( $about_page_obj ) );
+	openlab_custom_page( 'calendar', __( 'Calendar', 'commons-in-a-box' ), array( $about_page_obj ) );
 
 	$calendar_page_obj = get_page_by_path( 'about/calendar' );
-	openlab_custom_page( 'upcoming', __( 'Calendar: Upcoming', 'openlab-theme' ), array( $about_page_obj, $calendar_page_obj ) );
+	openlab_custom_page( 'upcoming', __( 'Calendar: Upcoming', 'commons-in-a-box' ), array( $about_page_obj, $calendar_page_obj ) );
 }
 add_filter( 'after_setup_theme', 'openlab_custom_pages' );

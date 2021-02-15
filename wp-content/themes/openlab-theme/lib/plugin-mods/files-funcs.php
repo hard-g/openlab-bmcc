@@ -9,7 +9,6 @@
  * Dequeue inherit styling from plugin
  */
 function openlab_dequeue_bp_files_styles() {
-	global $bp;
 	wp_dequeue_style( 'bp-group-documents' );
 }
 add_action( 'wp_print_styles', 'openlab_dequeue_bp_files_styles', 999 );
@@ -25,27 +24,31 @@ function openlab_get_files_count() {
 	global $wpdb, $bp;
 
 	$start_record = 1;
-	$page = 1;
+	$page         = 1;
 
 	$group_id = bp_get_group_id();
-	$table = BP_GROUP_DOCUMENTS_TABLE;
+	$table    = BP_GROUP_DOCUMENTS_TABLE;
 
 	$sql = "SELECT COUNT(*) FROM {$table} WHERE group_id = %d ";
 
+	// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 	$total_records = $wpdb->get_var( $wpdb->prepare( $sql, $group_id ) );
 
 	$items_per_page = get_option( 'bp_group_documents_items_per_page' );
-	$total_pages = ceil( $total_records / $items_per_page );
+	$total_pages    = ceil( $total_records / $items_per_page );
 
+	// phpcs:disable WordPress.Security.NonceVerification
 	if ( isset( $_GET['page'] ) && ctype_digit( $_GET['page'] ) ) {
-		$page = $_GET['page'];
-		$start_record = (($page - 1) * $items_per_page) + 1;
+		$page         = $_GET['page'];
+		$start_record = ( ( $page - 1 ) * $items_per_page ) + 1;
 	}
+	// phpcs:enable WordPress.Security.NonceVerification
 
 	$last_possible = $items_per_page * $page;
-	$end_record = ($total_records < $last_possible) ? $total_records : $last_possible;
+	$end_record    = ( $total_records < $last_possible ) ? $total_records : $last_possible;
 
-	printf( __( 'Viewing item %1$s to %1$s (of %1$s items)', 'bp-group-documents' ), $start_record, $end_record, $total_records );
+	// translators: 1. pagination start number, 2. pagination end number, 3. total item count
+	echo esc_html( sprintf( __( 'Viewing item %1$s to %1$s (of %1$s items)', 'commons-in-a-box' ), $start_record, $end_record, $total_records ) );
 }
 
 /**
@@ -98,8 +101,35 @@ add_filter( 'option_bp_group_documents_use_categories', '__return_false' );
 /**
  * Filter the success language.
  */
-add_filter( 'bp_core_render_message_content', function( $message ) {
-	$old = __( 'Document successfully uploaded', 'bp-group-documents' );
-	$new = __( 'File successfully uploaded', 'openlab-theme' );
-	return str_replace( $old, $new, $message );
-} );
+add_filter(
+	'bp_core_render_message_content',
+	function( $message ) {
+		$old = __( 'Document successfully uploaded', 'commons-in-a-box' );
+		$new = __( 'File successfully uploaded', 'commons-in-a-box' );
+		return str_replace( $old, $new, $message );
+	}
+);
+
+// Don't force Files to be active on all groups.
+add_filter( 'pre_option_bp_group_documents_enable_all_groups', '__return_zero' );
+
+/**
+ * Checks whether Files tab is enabled for a group.
+ *
+ * @param int $group_id Group id.
+ * @return bool
+ */
+function openlab_is_files_enabled_for_group( $group_id = null ) {
+	if ( null === $group_id ) {
+		$group_id = bp_get_current_group_id();
+	}
+
+	// Default to true in case no value is found.
+	if ( ! $group_id ) {
+		return true;
+	}
+
+	$is_disabled = groups_get_groupmeta( $group_id, 'group_documents_documents_disabled' );
+
+	return empty( $is_disabled );
+}

@@ -13,25 +13,30 @@ function openlab_is_admin_truly_member( $group = false ) {
 	return apply_filters( 'bp_group_is_member', ! empty( $group->is_member ) );
 }
 
-function openlab_flush_user_cache_on_save( $user_id, $posted_field_ids, $errors ) {
+function openlab_flush_user_cache_on_save( $user_id ) {
 
 	clean_user_cache( $user_id );
 }
-
-add_action( 'xprofile_updated_profile', 'openlab_flush_user_cache_on_save', 10, 3 );
+add_action( 'xprofile_updated_profile', 'openlab_flush_user_cache_on_save' );
 
 /**
- *     People archive page
+ * People archive page
  */
-function openlab_list_members( $view ) {
+function openlab_list_members() {
 	global $wpdb, $bp, $members_template, $wp_query;
 
 	// Set up variables
 	// There are two ways to specify user type: through the page name, or a URL param
-	$sequence_type = $search_terms = $user_school = $user_dept = '';
+	$sequence_type = '';
+	$search_terms  = '';
+	$user_school   = '';
+	$user_dept     = '';
 
-	if ( ! empty( $_GET['group_sequence'] ) ) {
-		$sequence_type = $_GET['group_sequence'];
+	// phpcs:disable WordPress.Security.NonceVerification.Recommended
+	// phpcs:disable WordPress.Security.NonceVerification.Missing
+
+	if ( ! empty( $_GET['sort'] ) ) {
+		$sequence_type = $_GET['sort'];
 	}
 
 	if ( ! empty( $_POST['people_search'] ) ) {
@@ -42,26 +47,40 @@ function openlab_list_members( $view ) {
 		$search_terms = $_POST['group_search'];
 	}
 
-	if ( ! empty( $_GET['school'] ) ) {
-		$user_school = urldecode( $_GET['school'] );
-
-		// Sanitize
-		$schools = openlab_get_school_list();
-		if ( ! isset( $schools[ $user_school ] ) ) {
-			$user_school = '';
+	// @todo 'all' needs special treatment once tax queries work without shim.
+	$academic_units = array();
+	foreach ( $_GET as $get_key => $get_value ) {
+		if ( 'academic-unit-' !== substr( $get_key, 0, 14 ) ) {
+			continue;
 		}
+
+		$academic_units[] = urldecode( wp_unslash( $get_value ) );
 	}
 
-	$user_department = null;
-	if ( ! empty( $_GET['department'] ) ) {
-		$user_department = urldecode( $_GET['department'] );
+	// phpcs:enable WordPress.Security.NonceVerification.Recommended
+	// phpcs:enable WordPress.Security.NonceVerification.Missing
+
+	$academic_units = array_filter( $academic_units );
+
+	if ( ! empty( $academic_units ) ) {
+		$academic_units_tax_query = cboxol_get_tax_query_for_academic_units(
+			array(
+				'units'       => $academic_units,
+				'object_type' => 'group',
+			)
+		);
 	}
 
 	// Set up the bp_has_members() arguments
 	// Note that we're not taking user_type into account. We'll do that with a query filter
 	$args = array(
-		'per_page' => 48,
+		'per_page'  => 48,
+		'tax_query' => array( 'relation' => 'AND' ),
 	);
+
+	if ( ! empty( $academic_units_tax_query ) ) {
+		$args['tax_query']['academic_units'] = $academic_units_tax_query;
+	}
 
 	if ( $sequence_type ) {
 		$args['type'] = $sequence_type;
@@ -72,16 +91,16 @@ function openlab_list_members( $view ) {
 	}
 
 	$avatar_args = array(
-		'type' => 'full',
-		'width' => 72,
+		'type'   => 'full',
+		'width'  => 72,
 		'height' => 72,
-		'class' => 'avatar',
-		'id' => false,
-		'alt' => __( 'Member avatar', 'buddypress' ),
+		'class'  => 'avatar',
+		'id'     => false,
+		'alt'    => __( 'Member avatar', 'buddypress' ),
 	);
-	?>
 
-	<?php if ( bp_has_members( $args ) ) : ?>
+	if ( bp_has_members( $args ) ) {
+		?>
 		<div class="row group-archive-header-row">
 			<div class="current-group-filters current-portfolio-filters col-md-18 col-sm-16">
 				<?php openlab_current_directory_filters(); ?>
@@ -90,53 +109,67 @@ function openlab_list_members( $view ) {
 		</div>
 
 		<div id="group-members-list" class="group-list item-list row">
-	<?php
-	while ( bp_members() ) :
-		bp_the_member();
-		// the following checks the current $id agains the passed list from the query
-		$member_id = $members_template->member->id;
+		<?php
+		while ( bp_members() ) {
+			bp_the_member();
 
-		$registered = bp_format_time( strtotime( $members_template->member->user_registered ), true )
-		?>
-	  <div class="group-item col-md-8 col-xs-12">
-	   <div class="group-item-wrapper">
-		<div class="row">
-		<div class="item-avatar col-md-10 col-xs-8">
-			<a href="<?php bp_member_permalink(); ?>"><img class="img-responsive" src ="
-				<?php
-				echo bp_core_fetch_avatar( array(
+			// the following checks the current $id agains the passed list from the query
+			$member_id   = $members_template->member->id;
+			$registered  = bp_format_time( strtotime( $members_template->member->user_registered ), true );
+			$user_avatar = bp_core_fetch_avatar(
+				array(
 					'item_id' => bp_get_member_user_id(),
-					'object' => 'member',
-					'type' => 'full',
-					'html' => false,
-					)
-				);
-				?> " alt="<?php bp_member_name(); ?>"/></a>
-		</div>
-		<div class="item col-md-14 col-xs-16">
-								<h2 class="item-title"><a class="no-deco" href="<?php bp_member_permalink(); ?>" title="<?php bp_member_name(); ?>"><?php bp_member_name(); ?></a></h2>
-								<span class="member-since-line timestamp">Member since <?php echo $registered; ?></span>
-								<?php if ( bp_get_member_latest_update() ) : ?>
-									<span class="update"><?php bp_member_latest_update( 'length=10' ); ?></span>
-								<?php endif; ?>
-		</div>
-	   </div>
-	  </div>
-	 </div>
+					'object'  => 'member',
+					'type'    => 'full',
+					'html'    => false,
+				)
+			);
+			?>
 
-	<?php endwhile; ?>
+			<div class="group-item col-md-8 col-xs-12">
+				<div class="group-item-wrapper">
+					<div class="row">
+						<div class="item-avatar col-md-10 col-xs-8">
+							<a href="<?php bp_member_permalink(); ?>"><img class="img-responsive" src="<?php echo esc_attr( $user_avatar ); ?>" alt="<?php bp_member_name(); ?>"/></a>
+						</div>
+
+						<div class="item col-md-14 col-xs-16">
+							<h2 class="item-title"><a class="no-deco" href="<?php bp_member_permalink(); ?>" title="<?php bp_member_name(); ?>"><?php bp_member_name(); ?></a></h2>
+
+							<span class="member-since-line timestamp">
+								<?php
+								echo esc_html(
+									sprintf(
+										// translators: user registration date
+										__( 'Member since %s', 'commons-in-a-box' ),
+										$registered
+									)
+								);
+								?>
+							</span>
+
+							<?php if ( bp_get_member_latest_update() ) : ?>
+								<span class="update"><?php bp_member_latest_update( 'length=10' ); ?></span>
+							<?php endif; ?>
+						</div>
+					</div>
+				</div>
+			</div>
+
+		<?php } // endwhile ?>
 		</div>
 		<div id="pag-top" class="pagination">
 
 			<div class="pagination-links" id="member-dir-pag-top">
+				<?php // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 				<?php echo openlab_members_pagination_links(); ?>
 			</div>
 
 		</div>
 
-	<?php
-	else :
-	?>
+		<?php
+	} else {
+		?>
 		<div class="row group-archive-header-row">
 			<div class="current-group-filters current-portfolio-filters col-sm-18">
 				<?php openlab_current_directory_filters(); ?>
@@ -145,12 +178,12 @@ function openlab_list_members( $view ) {
 
 		<div id="group-members-list" class="item-list group-list row">
 			<div class="widget-error query-no-results col-sm-24">
-				<p class="bold"><?php esc_html_e( 'There are no people to display.', 'openlab-theme' ); ?></p>
+				<p class="bold"><?php esc_html_e( 'There are no people to display.', 'commons-in-a-box' ); ?></p>
 			</div>
 		</div>
 
-	<?php
-	endif;
+		<?php
+	}
 }
 
 function openlab_members_pagination_links( $page_args = 'upage' ) {
@@ -158,14 +191,14 @@ function openlab_members_pagination_links( $page_args = 'upage' ) {
 
 	$pagination = paginate_links(
 		array(
-			'base' => add_query_arg( $page_args, '%#%' ),
-			'format' => '',
-			'total' => ceil( (int) $members_template->total_member_count / (int) $members_template->pag_num ),
-			'current' => (int) $members_template->pag_page,
-			'prev_text' => _x( '<i class="fa fa-angle-left" aria-hidden="true"></i><span class="sr-only">Previous</span>', 'Group pagination previous text', 'openlab-theme' ),
-			'next_text' => _x( '<i class="fa fa-angle-right" aria-hidden="true"></i><span class="sr-only">Next</span>', 'Group pagination next text', 'openlab-theme' ),
-			'mid_size' => 3,
-			'type' => 'list',
+			'base'      => add_query_arg( $page_args, '%#%' ),
+			'format'    => '',
+			'total'     => ceil( (int) $members_template->total_member_count / (int) $members_template->pag_num ),
+			'current'   => (int) $members_template->pag_page,
+			'prev_text' => _x( '<i class="fa fa-angle-left" aria-hidden="true"></i><span class="sr-only">Previous</span>', 'Group pagination previous text', 'commons-in-a-box' ),
+			'next_text' => _x( '<i class="fa fa-angle-right" aria-hidden="true"></i><span class="sr-only">Next</span>', 'Group pagination next text', 'commons-in-a-box' ),
+			'mid_size'  => 3,
+			'type'      => 'list',
 		)
 	);
 
@@ -174,7 +207,7 @@ function openlab_members_pagination_links( $page_args = 'upage' ) {
 }
 
 // a variation on bp_members_pagination_count() to match design
-function cuny_members_pagination_count( $member_name ) {
+function cuny_members_pagination_count() {
 	global $bp, $members_template;
 
 	if ( empty( $members_template->type ) ) {
@@ -182,15 +215,17 @@ function cuny_members_pagination_count( $member_name ) {
 	}
 
 	$start_num = intval( ( $members_template->pag_page - 1 ) * $members_template->pag_num ) + 1;
-	$from_num = bp_core_number_format( $start_num );
-	$to_num = bp_core_number_format( ( $start_num + ( $members_template->pag_num - 1 ) > $members_template->total_member_count ) ? $members_template->total_member_count : $start_num + ( $members_template->pag_num - 1 ) );
-	$total = bp_core_number_format( $members_template->total_member_count );
+	$from_num  = bp_core_number_format( $start_num );
+	$to_num    = bp_core_number_format( ( $start_num + ( $members_template->pag_num - 1 ) > $members_template->total_member_count ) ? $members_template->total_member_count : $start_num + ( $members_template->pag_num - 1 ) );
+	$total     = bp_core_number_format( $members_template->total_member_count );
 
+	// translators: 1. Pagination start number, 2. Pagination end number, 3. Pagination total number
 	$pag = sprintf( __( '%1$s to %2$s (of %3$s members)', 'buddypress' ), $from_num, $to_num, $total );
-	echo $pag;
+	echo esc_html( $pag );
 }
 
 function openlab_displayed_user_account_type() {
+	// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 	echo openlab_get_displayed_user_account_type();
 }
 
@@ -213,20 +248,20 @@ function openlab_group_status_message( $group = null ) {
 
 	$group_type = cboxol_get_group_group_type( $group->id );
 
-    $site_id = openlab_get_site_id_by_group_id( $group->id );
-    $site_url = openlab_get_group_site_url( $group->id );
+	$site_id  = openlab_get_site_id_by_group_id( $group->id );
+	$site_url = openlab_get_group_site_url( $group->id );
 
-    $site_status = 1;
-    if ( $site_url ) {
+	$site_status = 1;
+	if ( $site_url ) {
 		// If we have a site URL but no ID, it's an external site, and is public
 		if ( ! $site_id ) {
 			$site_status = 1;
 		} else {
 			$site_status = get_blog_option( $site_id, 'blog_public' );
 		}
-    }
+	}
 
-    $site_status = (float) $site_status;
+	$site_status = (float) $site_status;
 
 	$message = '';
 
@@ -275,40 +310,42 @@ function openlab_get_groups_of_user( $args = array() ) {
 	global $bp, $wpdb;
 
 	$retval = array(
-		'group_ids' => array(),
+		'group_ids'     => array(),
 		'group_ids_sql' => '',
-		'activity' => array(),
+		'activity'      => array(),
 	);
 
 	$defaults = array(
-		'user_id' => bp_loggedin_user_id(),
-		'show_hidden' => true,
-		'group_type' => 'club',
+		'user_id'      => bp_loggedin_user_id(),
+		'show_hidden'  => true,
+		'group_type'   => 'club',
 		'get_activity' => true,
 	);
-	$r = wp_parse_args( $args, $defaults );
+	$r        = wp_parse_args( $args, $defaults );
 
-	$select = $where = '';
+	$select = '';
+	$where  = '';
 
 	$select = "SELECT a.group_id FROM {$bp->groups->table_name_members} a";
-	$where = $wpdb->prepare( 'WHERE a.is_confirmed = 1 AND a.is_banned = 0 AND a.user_id = %d', $r['user_id'] );
+	$where  = $wpdb->prepare( 'WHERE a.is_confirmed = 1 AND a.is_banned = 0 AND a.user_id = %d', $r['user_id'] );
 
 	if ( ! $r['show_hidden'] ) {
 		$select .= " JOIN {$bp->groups->table_name} c ON ( c.id = a.group_id ) ";
-		$where .= " AND c.status != 'hidden' ";
+		$where  .= " AND c.status != 'hidden' ";
 	}
 
-	if ( 'all' != $r['group_type'] ) {
+	if ( 'all' !== $r['group_type'] ) {
 		// Sanitize
-		$group_type = in_array( strtolower( $r['group_type'] ), array( 'club', 'project', 'course' ) ) ? strtolower( $r['group_type'] ) : 'club';
+		$group_type = in_array( strtolower( $r['group_type'] ), array( 'club', 'project', 'course' ), true ) ? strtolower( $r['group_type'] ) : 'club';
 
 		$select .= " JOIN {$bp->groups->table_name_groupmeta} d ON ( a.group_id = d.group_id ) ";
-		$where .= $wpdb->prepare( " AND d.meta_key = 'wds_group_type' AND d.meta_value = %s ", $group_type );
+		$where  .= $wpdb->prepare( " AND d.meta_key = 'wds_group_type' AND d.meta_value = %s ", $group_type );
 	}
 
 	$sql = $select . ' ' . $where;
 
-	$group_ids = $wpdb->get_col( $sql );
+	// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+	$group_ids = array_map( 'intval', $wpdb->get_col( $sql ) );
 
 	$retval['group_ids'] = $group_ids;
 
@@ -319,15 +356,16 @@ function openlab_get_groups_of_user( $args = array() ) {
 
 		if ( $r['get_activity'] ) {
 			// bp_has_activities() doesn't allow arrays of item_ids, so query manually
+			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 			$activities = $wpdb->get_results( "SELECT id,item_id, content FROM {$bp->activity->table_name} WHERE component = 'groups' AND item_id IN ( {$retval['group_ids_sql']} ) ORDER BY id DESC" );
 
 			// Now walk down the list and try to match with a group. Once one is found, remove
 			// that group from the stack
 			$group_activity_items = array();
 			foreach ( (array) $activities as $act ) {
-				if ( ! empty( $act->content ) && in_array( $act->item_id, $group_ids ) && ! isset( $group_activity_items[ $act->item_id ] ) ) {
+				if ( ! empty( $act->content ) && in_array( (int) $act->item_id, $group_ids, true ) && ! isset( $group_activity_items[ $act->item_id ] ) ) {
 					$group_activity_items[ $act->item_id ] = $act->content;
-					$key = array_search( $act->item_id, $group_ids );
+					$key                                   = array_search( (int) $act->item_id, $group_ids, true );
 					unset( $group_ids[ $key ] );
 				}
 			}
@@ -343,57 +381,56 @@ function openlab_profile_group_type_activity_block( \CBOX\OL\GroupType $type ) {
 	global $wpdb, $bp;
 
 	$group_args = array(
-		'user_id' => bp_displayed_user_id(),
+		'user_id'     => bp_displayed_user_id(),
 		'show_hidden' => false,
-		'group_type' => $type->get_slug(),
-		'per_page' => 20,
+		'group_type'  => $type->get_slug(),
+		'per_page'    => 20,
 	);
 
 	$title = $type->get_label( 'plural' );
 
-	if ( bp_has_groups( $group_args ) ) :
-	?>
+	if ( bp_has_groups( $group_args ) ) {
+		?>
 		<div id="<?php echo esc_attr( $type->get_slug() ); ?>-activity-stream" class="<?php echo esc_attr( $type->get_slug() ); ?>-list activity-list item-list col-sm-8 col-xs-12">
 			<?php
 			$href = add_query_arg( 'group_type', $type->get_slug(), bp_displayed_user_domain() . 'groups/' );
+			$x    = 0;
 			?>
-			<?php ;/* @todo font awesome is loaded from openlab-toolbar.php */ ?>
-		 <h2 class="title activity-title"><a class="no-deco" href="<?php echo $href; ?>"><?php echo esc_html( $title ); ?><span class="fa fa-chevron-circle-right font-size font-18" aria-hidden="true"></span></a></h2>
-			<?php $x = 0; ?>
+			<?php /* @todo font awesome is loaded from openlab-toolbar.php */ ?>
+			<h2 class="title activity-title"><a class="no-deco" href="<?php echo esc_attr( $href ); ?>"><?php echo esc_html( $title ); ?><span class="fa fa-chevron-circle-right font-size font-18" aria-hidden="true"></span></a></h2>
+
 			<?php
 			while ( bp_groups() ) :
 				bp_the_group();
-	?>
+
+				$group_avatar = bp_core_fetch_avatar(
+					array(
+						'item_id' => bp_get_group_id(),
+						'object'  => 'group',
+						'type'    => 'full',
+						'html'    => false,
+					)
+				);
+				?>
 
 				<div class="panel panel-default">
 					<div class="panel-body">
 						<div class="row">
 							<div class="activity-avatar col-sm-10 col-xs-8">
-								<a href="<?php bp_group_permalink(); ?>"><img class="img-responsive" src ="
-																		<?php
-																		echo bp_core_fetch_avatar(
-																			array(
-																				'item_id' => bp_get_group_id(),
-																				'object' => 'group',
-																				'type' => 'full',
-																				'html' => false,
-																			)
-																		);
-	?>
-	" alt="<?php echo bp_get_group_name(); ?>"/></a>
+								<a href="<?php bp_group_permalink(); ?>"><img class="img-responsive" src="<?php echo esc_attr( $group_avatar ); ?>" alt="<?php echo esc_attr( bp_get_group_name() ); ?>"/></a>
 							</div>
 
 							<div class="activity-content truncate-combo col-sm-14 col-xs-16">
 
 								<p class="overflow-hidden h6">
-									<a class="font-size font-14 no-deco truncate-name truncate-on-the-fly hyphenate" href="<?php bp_group_permalink(); ?>" data-basevalue="34" data-minvalue="20" data-basewidth="143" data-srprovider="true"><?php echo bp_get_group_name(); ?></a>
-									<span class="original-copy hidden"><?php echo bp_get_group_name(); ?></span>
+									<a class="font-size font-14 no-deco truncate-name truncate-on-the-fly hyphenate" href="<?php bp_group_permalink(); ?>" data-basevalue="34" data-minvalue="20" data-basewidth="143" data-srprovider="true"><?php echo esc_html( bp_get_group_name() ); ?></a>
+									<span class="original-copy hidden"><?php echo esc_html( bp_get_group_name() ); ?></span>
 								</p>
 
-								<?php $activity = strip_tags( bp_get_group_description() ); ?>
+								<?php $activity = wp_strip_all_tags( bp_get_group_description() ); ?>
 								<div class="truncate-wrapper overflow-hidden">
-									<p class="truncate-on-the-fly hyphenate" data-link="<?php echo bp_get_group_permalink(); ?>" data-includename="<?php echo bp_get_group_name(); ?>" data-basevalue="65" data-basewidth="143"><?php echo $activity; ?></p>
-									<p class="original-copy hidden"><?php echo $activity; ?></p>
+									<p class="truncate-on-the-fly hyphenate" data-link="<?php echo esc_attr( bp_get_group_permalink() ); ?>" data-includename="<?php echo esc_attr( bp_get_group_name() ); ?>" data-basevalue="65" data-basewidth="143"><?php echo esc_html( $activity ); ?></p>
+									<p class="original-copy hidden"><?php echo esc_html( $activity ); ?></p>
 								</div>
 
 							</div>
@@ -403,31 +440,31 @@ function openlab_profile_group_type_activity_block( \CBOX\OL\GroupType $type ) {
 					</div>
 				</div>
 
-				<?php ;/* Increment */ ?>
-				<?php $x += 1; ?>
-
-				<?php ;/* Only show 5 items max */ ?>
 				<?php
-				if ( $x == 5 ) {
+				/* Only show 5 items max */
+				$x++;
+				if ( 5 === $x ) {
 					break;
 				}
 				?>
 
 			<?php endwhile; ?>
 
-	 </div>
-	<?php else : ?>
+		</div>
+		<?php
+	} else {
+		?>
 		<div id="<?php echo esc_attr( $type->get_slug() ); ?>-activity-stream" class="<?php echo esc_attr( $type->get_slug() ); ?>-list activity-list item-list col-sm-8 col-xs-12">
 			<h4><?php echo esc_html( $title ); ?></h4>
 
 			<div class="panel panel-default">
 				<div class="panel-body">
-					<p><?php esc_html_e( 'None found.', 'openlab-theme' ); ?></p>
+					<p><?php esc_html_e( 'None found.', 'commons-in-a-box' ); ?></p>
 				</div>
 			</div>
 		</div>
-	<?php endif; ?>
-	<?php
+		<?php
+	}
 }
 
 function cuny_member_profile_header() {
@@ -435,23 +472,23 @@ function cuny_member_profile_header() {
 
 function openlab_custom_add_friend_button( $button ) {
 
-	if ( $button['id'] == 'not_friends' ) {
-		$button['link_text'] = '<span class="pull-left"><i class="fa fa-user no-margin no-margin-left" aria-hidden="true"></i> Add Friend</span><i class="fa fa-plus-circle pull-right no-margin no-margin-right" aria-hidden="true"></i>';
-		if ( bp_current_action() == 'my-friends' ) {
+	if ( 'not_friends' === $button['id'] ) {
+		$button['link_text'] = '<span class="pull-left"><i class="fa fa-user no-margin no-margin-left" aria-hidden="true"></i> ' . esc_html__( 'Add Friend', 'commons-in-a-box' ) . '</span><i class="fa fa-plus-circle pull-right no-margin no-margin-right" aria-hidden="true"></i>';
+		if ( bp_is_current_action( 'my-friends' ) ) {
 			$button['link_class'] = $button['link_class'] . ' btn btn-primary btn-xs link-btn clearfix';
 		} else {
 			$button['link_class'] = $button['link_class'] . ' btn btn-default btn-block btn-primary link-btn clearfix';
 		}
-	} elseif ( $button['id'] == 'pending' ) {
-		$button['link_text'] = '<span class="pull-left"><i class="fa fa-user no-margin no-margin-left" aria-hidden="true"></i> Pending Friend</span><i class="fa fa-clock-o pull-right no-margin no-margin-right" aria-hidden="true"></i>';
-		if ( bp_current_action() == 'my-friends' ) {
+	} elseif ( 'pending' === $button['id'] ) {
+		$button['link_text'] = '<span class="pull-left"><i class="fa fa-user no-margin no-margin-left" aria-hidden="true"></i> ' . esc_html__( 'Pending Friend', 'commons-in-a-box' ) . '</span><i class="fa fa-clock-o pull-right no-margin no-margin-right" aria-hidden="true"></i>';
+		if ( bp_is_current_action( 'my-friends' ) ) {
 			$button['link_class'] = $button['link_class'] . ' btn btn-primary btn-xs link-btn clearfix';
 		} else {
 			$button['link_class'] = $button['link_class'] . ' btn btn-default btn-block btn-primary link-btn clearfix';
 		}
 	} else {
-		$button['link_text'] = '<span class="pull-left"><i class="fa fa-user" aria-hidden="true"></i> Friend</span><i class="fa fa-check-circle pull-right" aria-hidden="true"></i>';
-		if ( bp_current_action() == 'my-friends' ) {
+		$button['link_text'] = '<span class="pull-left"><i class="fa fa-user" aria-hidden="true"></i> ' . esc_html__( 'Friend', 'commons-in-a-box' ) . '</span><i class="fa fa-check-circle pull-right" aria-hidden="true"></i>';
+		if ( bp_is_current_action( 'my-friends' ) ) {
 			$button['link_class'] = $button['link_class'] . ' btn btn-primary btn-xs link-btn clearfix';
 		} else {
 			$button['link_class'] = $button['link_class'] . ' btn btn-default btn-block btn-primary link-btn clearfix';
@@ -470,12 +507,13 @@ function openlab_member_header() {
 	?>
 
 	<div class="entry-title">
-		<h1 class="profile-title clearfix"><span class="profile-name"><?php echo esc_html( sprintf( __( '%s&rsquo;s Profile', 'openlab-theme' ), bp_get_displayed_user_fullname() ) ); ?></span></h1>
+		<?php // translators: Profile owner's display name ?>
+		<h1 class="profile-title clearfix"><span class="profile-name"><?php echo esc_html( sprintf( __( '%s&rsquo;s Profile', 'commons-in-a-box' ), bp_get_displayed_user_fullname() ) ); ?></span></h1>
 
 		<div class="directory-title-meta">
 			<span class="profile-type pull-right hidden-xs"><?php echo esc_html( $account_type ); ?></span>
 			<button data-target="#sidebar-mobile" class="mobile-toggle direct-toggle pull-right visible-xs" type="button">
-				<span class="sr-only"><?php esc_html_e( 'Toggle navigation', 'openlab-theme' ); ?></span>
+				<span class="sr-only"><?php esc_html_e( 'Toggle navigation', 'commons-in-a-box' ); ?></span>
 				<span class="icon-bar"></span>
 				<span class="icon-bar"></span>
 				<span class="icon-bar"></span>
@@ -504,18 +542,19 @@ function openlab_messages_pagination() {
 	if ( (int) $messages_template->total_thread_count && (int) $messages_template->pag_num ) {
 		$pagination = paginate_links(
 			array(
-				'base' => add_query_arg(
-					$page_arg, array(
+				'base'      => add_query_arg(
+					$page_arg,
+					array(
 						'mpage' => '%#%',
 					)
 				),
-				'format' => '',
-				'total' => ceil( (int) $messages_template->total_thread_count / (int) $messages_template->pag_num ),
-				'current' => $messages_template->pag_page,
+				'format'    => '',
+				'total'     => ceil( (int) $messages_template->total_thread_count / (int) $messages_template->pag_num ),
+				'current'   => $messages_template->pag_page,
 				'prev_text' => _x( '<i class="fa fa-angle-left" aria-hidden="true"></i>', 'Group pagination previous text', 'buddypress' ),
 				'next_text' => _x( '<i class="fa fa-angle-right" aria-hidden="true"></i>', 'Group pagination next text', 'buddypress' ),
-				'mid_size' => 3,
-				'type' => 'list',
+				'mid_size'  => 3,
+				'type'      => 'list',
 			)
 		);
 	}
@@ -533,13 +572,13 @@ function openlab_get_custom_activity_action( $activity = null ) {
 	}
 
 	// the things we do...
-	$action_output = '';
+	$action_output     = '';
 	$action_output_raw = $activity->action;
 	$action_output_ary = explode( '<a', $action_output_raw );
-	$count = 0;
+	$count             = 0;
 	foreach ( $action_output_ary as $action_redraw ) {
 		if ( ! ctype_space( $action_redraw ) ) {
-			$class = ( $count == 0 ? 'activity-user' : 'activity-action' );
+			$class          = 0 === $count ? 'activity-user' : 'activity-action';
 			$action_output .= '<a class="' . $class . '"' . $action_redraw;
 			$count++;
 		}
@@ -547,26 +586,26 @@ function openlab_get_custom_activity_action( $activity = null ) {
 
 	$time_since = apply_filters_ref_array( 'bp_activity_time_since', array( '<span class="time-since">' . bp_core_time_since( $activity->date_recorded ) . '</span>', &$activity ) );
 
-	$title = '<p class="item inline-links semibold hyphenate">' . $action_output . '</p>';
+	$title  = '<p class="item inline-links semibold hyphenate">' . $action_output . '</p>';
 	$title .= '<p class="item timestamp"><span class="fa fa-undo" aria-hidden="true"></span> ' . $time_since . '</p>';
 
 	return $title;
 }
 
 function openlab_trim_member_name( $name ) {
-	global $post, $bp;
+	global $post;
 
 	$trim_switch = false;
 
-	if ( $post->post_name == 'people' || $bp->current_action == 'members' ) {
+	if ( 'people' === $post->post_name || bp_is_members_component() ) {
 		$trim_switch = true;
 	}
 
 	if ( $trim_switch ) {
 		$process_name = explode( ' ', $name );
-		$new_name = '';
+		$new_name     = '';
 		foreach ( $process_name as $process ) {
-			$new_name .= ' ' . openlab_shortened_text( $process, 12, false );
+			$new_name .= ' ' . bp_create_excerpt( $process, 12 );
 		}
 
 		$name = $new_name;
@@ -577,10 +616,8 @@ function openlab_trim_member_name( $name ) {
 add_filter( 'bp_member_name', 'openlab_trim_member_name' );
 
 function openlab_trim_message_subject( $subject ) {
-	global $bp;
-
-	if ( $bp->current_component == 'messages' && ($bp->current_action == 'inbox' || $bp->current_action == 'sentbox') ) {
-		$subject = openlab_shortened_text( $subject, 20, false );
+	if ( bp_is_messages_component() && ( bp_is_current_action( 'inbox' ) || bp_is_current_action( 'sentbox' ) ) ) {
+		$subject = bp_create_excerpt( $subject, 20 );
 	}
 
 	return $subject;
@@ -600,39 +637,38 @@ function openlab_get_register_fields( $account_type = '', $post_data = array() )
 
 	$return = '';
 
-	if ( function_exists( 'bp_has_profile' ) ) :
-		if ( bp_has_profile(
-			array(
-				'member_type' => $account_type,
-			)
-		) ) :
-			while ( bp_profile_groups() ) :
-				bp_the_profile_group();
-				while ( bp_profile_fields() ) :
-					bp_the_profile_field();
+	if ( ! function_exists( 'bp_has_profile' ) ) {
+		return;
+	}
 
-					$required = bp_get_the_profile_field_is_required() ? 'required' : '';
-					$return .= '<div class="editfield form-group">';
-					if ( 'textbox' == bp_get_the_profile_field_type() ) :
+	$args = [
+		'member_type' => $account_type,
+	];
+
+	if ( bp_has_profile( $args ) ) {
+		while ( bp_profile_groups() ) {
+			bp_the_profile_group();
+			while ( bp_profile_fields() ) {
+				bp_the_profile_field();
+
+				$required = bp_get_the_profile_field_is_required() ? 'required' : '';
+				$return  .= '<div class="editfield form-group">';
+
+				switch ( bp_get_the_profile_field_type() ) {
+					case 'textbox':
 						$return .= '<label class="control-label" for="' . bp_get_the_profile_field_input_name() . '">' . bp_get_the_profile_field_name();
 
 						if ( bp_get_the_profile_field_is_required() ) {
-							$return .= ' ' . __( '(required)', 'openlab-theme' );
+							$return .= ' ' . __( '(required)', 'commons-in-a-box' );
 						}
 
 						$return .= '</label>';
 
-						$return .= '<input
-						class="form-control"
-						type="text"
-						name="' . bp_get_the_profile_field_input_name() . '"
-						id="' . bp_get_the_profile_field_input_name() . '"
-						value="' . bp_get_the_profile_field_edit_value() . '"
-						' . openlab_profile_field_input_attributes() . '
-						' . $required . '
+						$return .= '<input class="form-control" type="text" name="' . bp_get_the_profile_field_input_name() . '" id="' . bp_get_the_profile_field_input_name() . '" value="' . bp_get_the_profile_field_edit_value() . '" ' . openlab_profile_field_input_attributes() . ' ' . $required . '
 						/>';
-					endif;
-					if ( 'textarea' == bp_get_the_profile_field_type() ) :
+						break;
+
+					case 'textarea':
 						$return .= '<label for="' . bp_get_the_profile_field_input_name() . '">' . bp_get_the_profile_field_name();
 						if ( bp_get_the_profile_field_is_required() ) :
 							$return .= ' (required)';
@@ -640,65 +676,54 @@ function openlab_get_register_fields( $account_type = '', $post_data = array() )
 						$return .= '</label>';
 						$return .= '<textarea class="form-control" rows="5" cols="40" name="' . bp_get_the_profile_field_input_name() . '" id="' . bp_get_the_profile_field_input_name() . '">' . bp_get_the_profile_field_edit_value();
 						$return .= '</textarea>';
-					endif;
-					if ( 'selectbox' == bp_get_the_profile_field_type() ) :
+						break;
+
+					case 'selectbox':
 						$return .= '<label class="control-label" for="' . bp_get_the_profile_field_input_name() . '">' . bp_get_the_profile_field_name();
 						if ( bp_get_the_profile_field_is_required() ) :
-							$return .= ' (required)';
+							$return .= ' ' . esc_html__( '(required)', 'commons-in-a-box' );
 						endif;
 						$return .= '</label>';
-						//WDS ADDED $$$
 
-						$onchange = '';
-
-						$return .= '<select
-						class="form-control"
-						name="' . bp_get_the_profile_field_input_name() . '"
-						id="' . bp_get_the_profile_field_input_name() . '" ' .
-						  $onchange .
-						  openlab_profile_field_input_attributes() .
-						  ' >';
-						if ( 'Account Type' == bp_get_the_profile_field_name() ) {
-							$return .= '<option selected="selected" value=""> ---- </option>';
-						}
-						  $return .= bp_get_the_profile_field_options();
+						$return .= '<select class="form-control" name="' . bp_get_the_profile_field_input_name() . '" id="' . bp_get_the_profile_field_input_name() . '" ' . openlab_profile_field_input_attributes() . ' >';
+						$return .= bp_get_the_profile_field_options();
 						$return .= '</select>';
+						break;
 
-					endif;
-					if ( 'multiselectbox' == bp_get_the_profile_field_type() ) :
+					case 'multiselectbox':
 						$return .= '<label for="' . bp_get_the_profile_field_input_name() . '">' . bp_get_the_profile_field_name();
 						if ( bp_get_the_profile_field_is_required() ) :
-							$return .= ' (required)';
+							$return .= ' ' . esc_html__( '(required)', 'commons-in-a-box' );
 						endif;
 						$return .= '</label>';
 						$return .= '<select class="form-control" name="' . bp_get_the_profile_field_input_name() . '" id="' . bp_get_the_profile_field_input_name() . '" multiple="multiple">';
-						 $return .= bp_get_the_profile_field_options();
+						$return .= bp_get_the_profile_field_options();
 						$return .= '</select>';
-					endif;
-					if ( 'radio' == bp_get_the_profile_field_type() ) :
+						break;
+
+					case 'radio':
 						$return .= '<div class="radio">';
 						$return .= '<span class="label">' . bp_get_the_profile_field_name();
 						if ( bp_get_the_profile_field_is_required() ) :
-							$return .= ' (required)';
+							$return .= ' ' . esc_html__( '(required)', 'commons-in-a-box' );
 						endif;
 						$return .= '</span>';
 						$return .= bp_get_the_profile_field_options();
-						if ( ! bp_get_the_profile_field_is_required() ) :
-							//$return.='<a class="clear-value" href="javascript:clear( \''.bp_get_the_profile_field_input_name().'\' );">'._e( 'Clear', 'buddypress' ).'</a>';
-						endif;
 						$return .= '</div>';
-					endif;
-					if ( 'checkbox' == bp_get_the_profile_field_type() ) :
+						break;
+
+					case 'checkbox':
 						$return .= '<div class="checkbox">';
 						$return .= '<span class="label">' . bp_get_the_profile_field_name();
 						if ( bp_get_the_profile_field_is_required() ) :
-							$return .= ' (required)';
+							$return .= ' ' . esc_html__( '(required)', 'commons-in-a-box' );
 						endif;
 						$return .= '</span>';
 						$return .= bp_get_the_profile_field_options();
 						$return .= '</div>';
-					endif;
-					if ( 'datebox' == bp_get_the_profile_field_type() ) :
+						break;
+
+					case 'datebox':
 						$return .= '<div class="datebox">';
 						$return .= '<label for="' . bp_get_the_profile_field_input_name() . '_day">' . bp_get_the_profile_field_name();
 						if ( bp_get_the_profile_field_is_required() ) :
@@ -706,34 +731,36 @@ function openlab_get_register_fields( $account_type = '', $post_data = array() )
 						endif;
 						$return .= '</label>';
 						$return .= '<select name="' . bp_get_the_profile_field_input_name() . '_day" id="' . bp_get_the_profile_field_input_name() . '_day">';
-						 $return .= bp_get_the_profile_field_options( 'type=day' );
+						$return .= bp_get_the_profile_field_options( 'type=day' );
 						$return .= '</select>';
 						$return .= '<select name="' . bp_get_the_profile_field_input_name() . '_month" id="' . bp_get_the_profile_field_input_name() . '_month">';
-						 $return .= bp_get_the_profile_field_options( 'type=month' );
+						$return .= bp_get_the_profile_field_options( 'type=month' );
 						$return .= '</select>';
 						$return .= '<select name="' . bp_get_the_profile_field_input_name() . '_year" id="' . bp_get_the_profile_field_input_name() . '_year">';
-						 $return .= bp_get_the_profile_field_options( 'type=year' );
+						$return .= bp_get_the_profile_field_options( 'type=year' );
 						$return .= '</select>';
 						$return .= '</div>';
-					endif;
-					$return .= do_action( 'bp_custom_profile_edit_fields' );
-					$return .= '<p class="description">' . bp_get_the_profile_field_description() . '</p>';
-					$return .= '</div>';
-							endwhile;
-
-				$profile_field_ids = bp_get_the_profile_group_field_ids();
-
-				$pfids_a = explode( ',', $profile_field_ids );
-				if ( ! in_array( 1, $pfids_a ) ) {
-					 $pfids_a[] = 1;
-					 $profile_field_ids = implode( ',', $pfids_a );
+						break;
 				}
 
-				$return .= '<input type="hidden" name="signup_profile_field_ids" id="signup_profile_field_ids" value="' . $profile_field_ids . '" />';
+				$return .= do_action( 'bp_custom_profile_edit_fields' );
+				$return .= '<p class="description">' . bp_get_the_profile_field_description() . '</p>';
+				$return .= '</div>';
+			}
 
-		endwhile;
-		endif;
-	endif;
+			$profile_field_ids = bp_get_the_profile_group_field_ids();
+
+			$pfids_a = array_map( 'intval', explode( ',', $profile_field_ids ) );
+			if ( ! in_array( 1, $pfids_a, true ) ) {
+				$pfids_a[]         = 1;
+				$profile_field_ids = implode( ',', $pfids_a );
+			}
+
+			$return .= '<input type="hidden" name="signup_profile_field_ids" id="signup_profile_field_ids" value="' . $profile_field_ids . '" />';
+
+		}
+	}
+
 	return $return;
 }
 

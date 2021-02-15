@@ -1,9 +1,52 @@
 <?php
-
 /**
  * Calendar control
  * Hooks into Events Organiser and BuddyPress Event Organiser
  */
+
+/**
+ * Checks whether Calendar is enabled for a group.
+ *
+ * @param int $group_id Group ID.
+ * @return bool
+ */
+function openlab_is_calendar_enabled_for_group( $group_id = null ) {
+	if ( null === $group_id ) {
+		$group_id = bp_get_current_group_id();
+	}
+
+	// Default to true in case no value is found.
+	if ( ! $group_id ) {
+		return true;
+	}
+
+	// Default to true in case no setting is found, except for portfolios.
+	$is_disabled = groups_get_groupmeta( $group_id, 'calendar_is_disabled', true );
+	if ( '' === $is_disabled && cboxol_is_portfolio( $group_id ) ) {
+		$is_disabled = 1;
+	}
+
+	return ! $is_disabled;
+}
+
+/**
+ * Disable Calendar subnav if not enabled for group.
+ */
+add_action(
+	'bp_screens',
+	function() {
+		if ( ! bp_is_group() ) {
+			return;
+		}
+
+		if ( openlab_is_calendar_enabled_for_group() ) {
+			return;
+		}
+
+		bp_core_remove_subnav_item( groups_get_current_group()->slug, 'events', 'groups' );
+	},
+	9
+);
 
 /**
  * Google maps API now requires a key
@@ -15,7 +58,7 @@ function openlab_custom_calendar_assets() {
 	}
 
 	wp_deregister_script( 'eo_GoogleMap' );
-	wp_register_script( 'eo_GoogleMap', '//maps.googleapis.com/maps/api/js?key=' . eventorganiser_get_google_maps_api_key() . '&sensor=false&language=' . substr( get_locale(), 0, 2 ), array(), openlab_get_asset_version() );
+	wp_register_script( 'eo_GoogleMap', '//maps.googleapis.com/maps/api/js?key=' . eventorganiser_get_google_maps_api_key() . '&sensor=false&language=' . substr( get_locale(), 0, 2 ), array(), openlab_get_asset_version(), true );
 }
 
 add_action( 'wp_enqueue_scripts', 'openlab_custom_calendar_assets', 999 );
@@ -45,10 +88,10 @@ function openlab_eo_get_single_event_query_obj() {
 	$obj_out = array();
 
 	// Set up query args
-	$query_args = array();
+	$query_args                     = array();
 	$query_args['suppress_filters'] = true;
-	$query_args['orderby'] = 'none';
-	$query_args['post_status'] = array( 'publish', 'pending', 'private', 'draft', 'future', 'trash' );
+	$query_args['orderby']          = 'none';
+	$query_args['post_status']      = array( 'publish', 'pending', 'private', 'draft', 'future', 'trash' );
 
 	// this is a draft with no slug
 	if ( false !== strpos( bp_current_action(), 'draft-' ) ) {
@@ -108,10 +151,14 @@ add_filter( 'eventorganiser_register_taxonomy_event-venue', 'openlab_control_ven
 function openlab_control_event_action_links( $links ) {
 	global $post;
 
-	if ( $post->post_type === 'event' && ! bp_current_action() ) {
-		$links = array();
-		$back_link = get_permalink( get_page_by_path( 'about/calendar' ) );
-		$links['back'] = "<a href='$back_link'>← Back</a>";
+	if ( 'event' === $post->post_type && ! bp_current_action() ) {
+		$links         = array();
+		$back_link     = get_permalink( get_page_by_path( 'about/calendar' ) );
+		$links['back'] = sprintf(
+			"<a href='%s'>← %s</a>",
+			esc_attr( $back_link ),
+			esc_html__( 'Back', 'commons-in-a-box' )
+		);
 	}
 
 	return $links;
@@ -150,16 +197,16 @@ function openlab_event_page_controller( $wp ) {
 	 * For now there are no events pages for members
 	 * Attempting to go to an events page will redirect to the member's profile page
 	 */
-	if ( strpos( $wp->request, '/events' ) !== false && strpos( $wp->request, 'members/' ) !== false ) {
+	if ( false !== strpos( $wp->request, '/events' ) && false !== strpos( $wp->request, 'members/' ) ) {
 
-		$request_url = $wp->request;
+		$request_url  = $wp->request;
 		$redirect_url = explode( '/events', $request_url );
 
 		if ( is_array( $redirect_url ) ) {
-			wp_redirect( get_site_url() . '/' . $redirect_url[0] );
+			wp_safe_redirect( get_site_url() . '/' . $redirect_url[0] );
 			exit;
 		} else {
-			wp_redirect( get_site_url() );
+			wp_safe_redirect( get_site_url() );
 			exit;
 		}
 	}
@@ -169,19 +216,19 @@ function openlab_event_page_controller( $wp ) {
 	 * and the group calendar settings are set to only allow admins and mods the ability to
 	 * create new events, then the member will be redirected
 	 */
-	if ( strpos( $wp->request, '/events/' ) !== false && strpos( $wp->request, '/new-event' ) !== false ) {
+	if ( false !== strpos( $wp->request, '/events/' ) && false !== strpos( $wp->request, '/new-event' ) ) {
 
 		$event_create_access = openlab_get_group_event_create_access_setting( bp_get_current_group_id() );
-		if ( $event_create_access === 'admin' && ! bp_is_item_admin() && ! bp_is_item_mod() ) {
+		if ( 'admin' === $event_create_access && ! bp_is_item_admin() && ! bp_is_item_mod() ) {
 
-			$request_url = $wp->request;
+			$request_url  = $wp->request;
 			$redirect_url = explode( '/new-event', $request_url );
 
 			if ( is_array( $redirect_url ) ) {
-				wp_redirect( get_site_url() . '/' . $redirect_url[0] );
+				wp_safe_redirect( get_site_url() . '/' . $redirect_url[0] );
 				exit;
 			} else {
-				wp_redirect( get_site_url() );
+				wp_safe_redirect( get_site_url() );
 				exit;
 			}
 		}
@@ -213,7 +260,7 @@ add_filter( 'eventorganiser_options', 'openlab_eventorganiser_custom_options' );
 function openlab_eventorganiser_custom_content_after_title() {
 
 	if ( bpeo_is_action( 'new' ) || bpeo_is_action( 'edit' ) ) {
-		echo '<h3 class="outside-title"><span class="font-size font-18">Event Description</span></h3>';
+		echo '<h3 class="outside-title"><span class="font-size font-18">' . esc_html__( 'Event Description', 'commons-in-a-box' ) . '</span></h3>';
 	}
 }
 
@@ -221,7 +268,7 @@ add_action( 'edit_form_after_title', 'openlab_eventorganiser_custom_content_afte
 
 function openlab_manage_media_buttons( $editor_id ) {
 
-	if ( bp_current_action() === 'events' && $editor_id === 'editor-content' ) {
+	if ( bp_is_current_action( 'events' ) && 'editor-content' === $editor_id ) {
 
 		$remove_button = <<<HTML
                 <script type="text/javascript">
@@ -232,16 +279,12 @@ function openlab_manage_media_buttons( $editor_id ) {
                             });
                 </script>
 HTML;
+		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		echo $remove_button;
 	}
 }
 
 add_action( 'media_buttons', 'openlab_manage_media_buttons' );
-
-/**
- * Remove Event Categories
- */
-//add_filter( 'eventorganiser_register_taxonomy_event-category', '__return_false' );
 
 /**
  * Remove Event Tags
@@ -257,12 +300,17 @@ remove_action( 'eventorganiser_additional_event_meta', 'bpeo_list_author' );
  * Custom markup for author listing on event detail page
  */
 function openlab_bpeo_list_author() {
-	$event = get_post( get_the_ID() );
+	$event     = get_post( get_the_ID() );
 	$author_id = $event->post_author;
 
+	// translators: author name
 	$base = __( '<strong>Author:</strong> %s', 'bp-event-organiser' );
 
-	echo sprintf( '<li>' . wp_filter_kses( $base ) . '</li>', bp_core_get_user_displayname( $author_id ) );
+	echo sprintf(
+		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+		'<li>' . wp_filter_kses( $base ) . '</li>',
+		esc_html( bp_core_get_user_displayname( $author_id ) )
+	);
 }
 
 add_action( 'eventorganiser_additional_event_meta', 'openlab_bpeo_list_author', 5 );
@@ -289,15 +337,15 @@ function _eventorganiser_details_metabox_openlab_custom( $post ) {
 
 	// Sets the format as php understands it, and textual.
 	$php_format = eventorganiser_get_option( 'dateformat' );
-	if ( 'd-m-Y' == $php_format ) {
+	if ( 'd-m-Y' === $php_format ) {
 		$format = 'dd &ndash; mm &ndash; yyyy'; // Human form
-	} elseif ( 'Y-m-d' == $php_format ) {
+	} elseif ( 'Y-m-d' === $php_format ) {
 		$format = 'yyyy &ndash; mm &ndash; dd'; // Human form
 	} else {
 		$format = 'mm &ndash; dd &ndash; yyyy'; // Human form
 	}
 
-	$is24 = eventorganiser_blog_is_24();
+	$is24        = eventorganiser_blog_is_24();
 	$time_format = $is24 ? 'H:i' : 'g:ia';
 
 	// Get the starting day of the week
@@ -307,29 +355,30 @@ function _eventorganiser_details_metabox_openlab_custom( $post ) {
 	// Retrieve event details
 	$schedule_arr = eo_get_event_schedule( $post->ID );
 
-	$schedule = $schedule_arr['schedule'];
-	$start = $schedule_arr['start'];
-	$end = $schedule_arr['end'];
-	$all_day = $schedule_arr['all_day'];
-	$frequency = $schedule_arr['frequency'];
+	$schedule      = $schedule_arr['schedule'];
+	$start         = $schedule_arr['start'];
+	$end           = $schedule_arr['end'];
+	$all_day       = $schedule_arr['all_day'];
+	$frequency     = $schedule_arr['frequency'];
 	$schedule_meta = $schedule_arr['schedule_meta'];
-	$occurs_by = $schedule_arr['occurs_by'];
-	$until = $schedule_arr['until'];
-	$include = $schedule_arr['include'];
-	$exclude = $schedule_arr['exclude'];
+	$occurs_by     = $schedule_arr['occurs_by'];
+	$until         = $schedule_arr['until'];
+	$include       = $schedule_arr['include'];
+	$exclude       = $schedule_arr['exclude'];
 
-	$venues = eo_get_venues();
+	$venues   = eo_get_venues();
 	$venue_id = (int) eo_get_venue( $post->ID );
 
 	// $sche_once is used to disable date editing unless the user specifically requests it.
 	// But a new event might be recurring (via filter), and we don't want to 'lock' new events.
 	// See https://wordpress.org/support/topic/wrong-default-in-input-element
 	$the_action = isset( get_current_screen()->action ) ? get_current_screen()->action : null;
-	$sche_once = ( 'once' == $schedule || $the_action );
+	$sche_once  = ( 'once' === $schedule || $the_action );
 
 	if ( ! $sche_once ) {
 		$notices = sprintf(
-			'<label for="eo-event-recurrring-notice">%s</label>', __( 'This is a recurring event. Check to edit this event and its recurrences', 'eventorganiser' )
+			'<label for="eo-event-recurrring-notice">%s</label>',
+			__( 'This is a recurring event. Check to edit this event and its recurrences', 'eventorganiser' )
 		)
 				. ' <input type="checkbox" id="eo-event-recurrring-notice" name="eo_input[AlterRe]" value="yes">';
 	} else {
@@ -345,20 +394,22 @@ function _eventorganiser_details_metabox_openlab_custom( $post ) {
 	$notices = apply_filters( 'eventorganiser_event_metabox_notice', $notices, $post );
 	if ( $notices ) {
 		// updated class used for backwards compatability see https://core.trac.wordpress.org/ticket/27418
+		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		echo '<div class="notice notice-success updated inline"><p>' . $notices . '</p></div>';
 	}
 
+	// translators: Date format
 	$date_desc = sprintf( __( 'Enter date in %s format', 'eventorganiser' ), $format );
 	$time_desc = $is24 ? __( 'Enter time in 24-hour hh colon mm format', 'eventorganiser' ) : __( 'Enter time in 12-hour hh colon mm am or pm format', 'eventorganiser' );
 
 	// variables pulled from meta box markup
 	$recurrence_schedules = array(
-		'once' => __( 'none', 'eventorganiser' ),
-	'daily' => __( 'daily', 'eventorganiser' ),
-	'weekly' => __( 'weekly', 'eventorganiser' ),
+		'once'    => __( 'none', 'eventorganiser' ),
+		'daily'   => __( 'daily', 'eventorganiser' ),
+		'weekly'  => __( 'weekly', 'eventorganiser' ),
 		'monthly' => __( 'monthly', 'eventorganiser' ),
-	'yearly' => __( 'yearly', 'eventorganiser' ),
-	'custom' => __( 'custom', 'eventorganiser' ),
+		'yearly'  => __( 'yearly', 'eventorganiser' ),
+		'custom'  => __( 'custom', 'eventorganiser' ),
 	);
 
 	if ( ! empty( $include ) ) {
@@ -376,25 +427,26 @@ function _eventorganiser_details_metabox_openlab_custom( $post ) {
 	}
 
 	if ( taxonomy_exists( 'event-venue' ) ) :
-		$address_fields = _eventorganiser_get_venue_address_fields();
-		$address = array();
+		$address_fields    = _eventorganiser_get_venue_address_fields();
+		$address           = array();
 		$venue_stored_name = '';
 
 		// check for stored fields when editing
-		if ( bp_action_variables() && in_array( 'edit', bp_action_variables() ) ) {
+		if ( bp_action_variables() && bp_is_action_variable( 'edit' ) ) {
 
 			if ( $venue_id && $venue_id > 0 ) {
-				$venue_obj = get_term_by( 'id', $venue_id, 'event-venue' );
+				$venue_obj         = get_term_by( 'id', $venue_id, 'event-venue' );
 				$venue_stored_name = $venue_obj->name;
-				$address = eo_get_venue_address( $venue_id );
+				$address           = eo_get_venue_address( $venue_id );
 			}
 		}
 	endif;
 
 	ob_start();
-	include( locate_template( 'parts/plugin-mods/calendar-custom-event-meta-box.php' ) );
+	include locate_template( 'parts/plugin-mods/calendar-custom-event-meta-box.php' );
 	$custom_meta_box = ob_get_clean();
 
+	// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 	echo $custom_meta_box;
 }
 
@@ -415,6 +467,12 @@ function openlab_get_group_event_create_access_setting( $group_id ) {
  * Save calendar group settings
  */
 function openlab_process_group_calendar_settings( $group_id ) {
+	if ( ! isset( $_POST['openlab-group-bpeo-settings-nonce'] ) ) {
+		return;
+	}
+
+	check_admin_referer( 'openlab_group_bpeo_settings', 'openlab-group-bpeo-settings-nonce' );
+
 	if ( ! empty( $_POST['openlab-bpeo-event-create-access'] ) ) {
 
 		$access_level = sanitize_text_field( $_POST['openlab-bpeo-event-create-access'] );
@@ -427,17 +485,6 @@ function openlab_process_group_calendar_settings( $group_id ) {
 
 add_action( 'groups_group_settings_edited', 'openlab_process_group_calendar_settings' );
 
-function openlab_group_calendar_media_settings( $settings, $post ) {
-
-	if ( $post instanceof WP_Post && 'event' === $post->post_type ) {
-
-	}
-
-	return $settings;
-}
-
-add_filter( 'media_view_settings', 'openlab_group_calendar_media_settings', 10, 2 );
-
 /**
  * Saving some extra meta when inserting a venue
  * This is not utilized yet, but will be, and I wanted to get it set up
@@ -447,6 +494,7 @@ add_filter( 'media_view_settings', 'openlab_group_calendar_media_settings', 10, 
  * @param type $venue_id
  */
 function openlab_bpeo_extra_venue_meta( $venue_id ) {
+	// phpcs:disable
 
 	// attaching venue to group posts
 	if ( ! is_admin() ) {
@@ -459,7 +507,7 @@ function openlab_bpeo_extra_venue_meta( $venue_id ) {
 			if ( $post_ids && ! empty( $post_ids ) ) {
 
 				$post_ids[] = $_POST['post_ID'];
-				$post_ids = array_unique( $post_ids );
+				$post_ids   = array_unique( $post_ids );
 			} else {
 
 				$post_ids = array( $_POST['post_ID'] );
@@ -477,7 +525,7 @@ function openlab_bpeo_extra_venue_meta( $venue_id ) {
 			if ( $user_ids && ! empty( $user_ids ) ) {
 
 				$user_ids[] = $_POST['user_ID'];
-				$user_ids = array_unique( $user_ids );
+				$user_ids   = array_unique( $user_ids );
 			} else {
 
 				$user_ids = array( $_POST['user_ID'] );
@@ -495,6 +543,6 @@ function openlab_bpeo_extra_venue_meta( $venue_id ) {
 		eo_update_venue_meta( $venue_id, '_lat', 0.00000 );
 		eo_update_venue_meta( $venue_id, '_lng', 0.00000 );
 	}
+	// phpcs:enable
 }
-
 add_action( 'eventorganiser_save_venue', 'openlab_bpeo_extra_venue_meta' );

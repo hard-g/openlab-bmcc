@@ -2,22 +2,21 @@
 // Get the displayed user's base domain
 // This is required because the my-* pages aren't really displayed user pages from BP's
 // point of view
-if ( ! $dud = bp_displayed_user_domain() ) {
+$dud = bp_displayed_user_domain();
+if ( ! $dud ) {
 	$dud = bp_loggedin_user_domain(); // will always be the logged in user on my-*
+}
+
+if ( ( bp_is_user_activity() || ! bp_current_component() ) && ! ( strpos( $post->post_name, 'my-' ) > -1 ) ) {
+	$mobile_hide = true;
+	$el_id       = 'portfolio-sidebar-widget';
+} else {
+	$mobile_hide = false;
+	$el_id       = 'portfolio-sidebar-inline-widget';
 }
 ?>
 
-<?php /* Portfolio links */ ?>
-
-	<?php if ( (bp_is_user_activity() || ! bp_current_component()) && ! (strpos( $post->post_name,'my-' ) > -1) ) :
-		$mobile_hide = true;
-		$id = 'portfolio-sidebar-widget';
-	 else :
-			$mobile_hide = false;
-			$id = 'portfolio-sidebar-inline-widget';
-	 endif; ?>
-
-<div class="sidebar-widget mol-menu" id="<?php echo $id ?>">
+<div class="sidebar-widget mol-menu" id="<?php echo esc_attr( $el_id ); ?>">
 
 	<?php openlab_members_sidebar_blocks( $mobile_hide ); ?>
 	<?php openlab_member_sidebar_menu(); ?>
@@ -34,28 +33,32 @@ if ( ! $dud = bp_displayed_user_domain() ) {
 $user_id = bp_is_user() ? bp_displayed_user_id() : bp_loggedin_user_id();
 
 $activity_args = array(
-	'user_id' => $user_id,
-	'per_page' => openlab_is_my_profile() ? 4 : 2, // Legacy. Not sure why
-	'scope' => bp_is_user_friends() ? 'friends' : '',
+	'user_id'     => $user_id,
+	'per_page'    => openlab_is_my_profile() ? 4 : 2, // Legacy. Not sure why
+	'scope'       => bp_is_user_friends() ? 'friends' : '',
 	'show_hidden' => openlab_is_my_profile(),
-	'primary_id' => false,
+	'primary_id'  => false,
 );
 ?>
 
 <?php if ( bp_is_user_friends() ) : ?>
-	<h2 class="sidebar-header">Recent Friend Activity</h2>
+	<h2 class="sidebar-header"><?php esc_html_e( 'Recent Friend Activity', 'commons-in-a-box' ); ?></h2>
 <?php else : ?>
-	<h2 class="sidebar-header">Recent Activity</h2>
+	<h2 class="sidebar-header"><?php esc_html_e( 'Recent Activity', 'commons-in-a-box' ); ?></h2>
 <?php endif ?>
 
 <div class="activity-wrapper">
 	<?php if ( bp_has_activities( $activity_args ) ) : ?>
 		<div id="activity-stream" class="activity-list item-list inline-element-list sidebar-sublinks">
-			<?php while ( bp_activities() ) : bp_the_activity(); ?>
+			<?php
+			while ( bp_activities() ) :
+				bp_the_activity();
+				?>
 				<div class="sidebar-block activity-block">
 					<div class="row activity-row">
 						<div class="activity-avatar col-sm-8 col-xs-7">
-							<a href="<?php bp_activity_user_link() ?>">
+							<a href="<?php bp_activity_user_link(); ?>">
+								<?php // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 								<?php echo openlab_activity_user_avatar(); ?>
 							</a>
 						</div>
@@ -63,6 +66,7 @@ $activity_args = array(
 						<div class="activity-content overflow-hidden col-sm-16 col-xs-17">
 
 							<div class="activity-header">
+								<?php // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 								<?php echo openlab_get_custom_activity_action(); ?>
 							</div>
 
@@ -76,7 +80,7 @@ $activity_args = array(
 			<div class="sidebar-block">
 				<div class="row activity-row">
 					<div id="message" class="info col-sm-24">
-						<p><?php _e( 'No recent activity.', 'buddypress' ) ?></p>
+						<p><?php esc_html_e( 'No recent activity.', 'commons-in-a-box' ); ?></p>
 					</div>
 				</div>
 			</div>

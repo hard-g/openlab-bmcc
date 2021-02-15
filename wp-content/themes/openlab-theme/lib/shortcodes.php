@@ -8,25 +8,27 @@ function openlab_callout_list_shortcode( $atts, $content ) {
 	$result = array();
 
 	// Attributes
+	// phpcs:ignore WordPress.PHP.DontExtract.extract_extract
 	extract( shortcode_atts( array(), $atts ) );
 
 	$index = 0;
 
 	$doc = new DOMDocument();
 	$doc->loadHTML( '<?xml encoding="UTF-8">' . $content );
-	$domx = new DOMXPath( $doc );
-	$list_items = $domx->evaluate( '//li' );
+	$domx            = new DOMXPath( $doc );
+	$list_items      = $domx->evaluate( '//li' );
 	$list_items_html = array();
 	foreach ( $list_items as $list_item ) {
-	    $list_items_html[] = $list_item->ownerDocument->saveHTML( $list_item );
+		// phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
+		$list_items_html[] = $list_item->ownerDocument->saveHTML( $list_item );
 	}
 
 	if ( count( $list_items_html ) > 0 ) {
-		$index = 1;
+		$index         = 1;
 		$final_content = '<div class="callout-list">';
 		foreach ( $list_items_html as $this_item ) {
 			preg_match( '|<li[^>]*>(.*)</li>|s', $this_item, $matches );
-			$item_content = $matches[1];
+			$item_content   = $matches[1];
 			$final_content .= <<<HTML
                     <div class="row">
                         <div class="col-xs-2 callout-list-number">
